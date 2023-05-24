@@ -54,8 +54,8 @@ export default function SideBar() {
     >
       <Menu
         mode="inline"
-        defaultSelectedKeys={["1"]}
-        defaultOpenKeys={["sub1"]}
+        defaultSelectedKeys={[""]}
+        defaultOpenKeys={[""]}
         style={{
           height: "100%",
           borderRight: 0,

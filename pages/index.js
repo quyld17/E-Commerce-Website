@@ -2,7 +2,7 @@ import React from "react";
 import Head from "next/head";
 import SideBar from "./side-bar";
 import NavigationBar from "./navigation-bar";
-import ProductDisplay from "./product-display";
+import ProductShowcase from "./product-showcase";
 
 import { Layout, theme } from "antd";
 const { Content } = Layout;
@@ -33,13 +33,7 @@ export default function Home() {
             }}
           >
             <h1>
-              <ProductDisplay />
-              <ProductDisplay />
-              <ProductDisplay />
-              <ProductDisplay />
-              <ProductDisplay />
-              <ProductDisplay />
-              <ProductDisplay />
+              <ProductShowcase />
             </h1>
           </Content>
         </Layout>
