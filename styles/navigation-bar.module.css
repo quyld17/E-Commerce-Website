@@ -1,0 +1,31 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.websiteLogo {
+  color: white;
+  margin-left: 20px;
+}
+
+.searchBar {
+  max-width: 1000px;
+  margin-left: 50px;
+}
+
+.cartLogo {
+  color: white;
+  display: right;
+  margin: 0 20px;
+  font-size: 30px;
+  margin-top: 20px;
+}
+
+.userLogo {
+  color: white;
+  justify-content: flex-end;
+  cursor: pointer;
+  font-size: 30px;
+  margin-top: 25px;
+}

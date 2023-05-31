@@ -1,54 +1,50 @@
 import Link from "next/link";
+import styles from "../styles/navigation-bar.module.css";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { BiUserCircle } from "react-icons/bi";
-import { Input, Layout } from "antd";
+import { Input, Layout, Dropdown } from "antd";
 const { Search } = Input;
 const { Header } = Layout;
 
 export default function NavigationBar() {
-  const onSearch = (value) => console.log(value);
+  const items = [
+    {
+      key: "1",
+      label: <Link href="/sign-in">Sign in</Link>,
+    },
+    {
+      key: "2",
+      label: <Link href="/sign-up">Sign up</Link>,
+    },
+  ];
+
   return (
-    <Header
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-    >
-      <div
-        style={{ color: "white", marginLeft: "20px" }}
-        className="website-logo"
-      >
+    <Header className={styles.header}>
+      <div className={styles.websiteLogo}>
         <Link href="/">Logo</Link>
       </div>
 
-      <Search
-        placeholder="input search text"
-        onSearch={onSearch}
-        style={{
-          maxWidth: 1000,
-          marginLeft: "50px",
-        }}
-      />
+      <Search placeholder="input search text" className={styles.searchBar} />
 
-      <div
-        style={{ color: "white", display: "right", margin: "0 20px" }}
-        className="cart-logo"
-      >
+      <div>
         <Link href="/cart-page">
-          <ShoppingCartOutlined
-            style={{ fontSize: "30px", marginTop: "20px" }}
-          />
+          <ShoppingCartOutlined className={styles.cartLogo} />
         </Link>
       </div>
 
-      <div
-        style={{ color: "white", justifyContent: "flex-end" }}
-        className="profile-logo"
-      >
-        <Link href="/profile-page">
-          <BiUserCircle style={{ fontSize: "30px", marginTop: "25px" }} />
-        </Link>
+      <div className="profile-logo">
+        <Dropdown
+          menu={{
+            items,
+          }}
+          trigger={["click"]}
+          placement="bottom"
+        >
+          <BiUserCircle
+            onClick={(e) => e.preventDefault()}
+            className={styles.userLogo}
+          />
+        </Dropdown>
       </div>
     </Header>
   );

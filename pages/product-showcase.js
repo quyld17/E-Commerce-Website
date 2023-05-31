@@ -15,30 +15,6 @@ export default function ProductShowcase() {
       >
         This is a product!
       </Link>
-      <Link
-        href="./product-page"
-        style={{ width: "150px", height: "150px", margin: "25px" }}
-      >
-        This is a product!
-      </Link>
-      <Link
-        href="./product-page"
-        style={{ width: "150px", height: "150px", margin: "25px" }}
-      >
-        This is a product!
-      </Link>
-      <Link
-        href="./product-page"
-        style={{ width: "150px", height: "150px", margin: "25px" }}
-      >
-        This is a product!
-      </Link>
-      <Link
-        href="./product-page"
-        style={{ width: "150px", height: "150px", margin: "25px" }}
-      >
-        This is a product!
-      </Link>
     </div>
   );
 }
