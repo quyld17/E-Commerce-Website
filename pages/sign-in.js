@@ -2,6 +2,7 @@ import { useState } from "react";
 import styles from "../styles/sign-in.module.css";
 import Link from "next/link";
 import Head from "next/head";
+import validator from "validator";
 import { Layout, theme, Form, Input, Button } from "antd";
 const { Content, Header } = Layout;
 
@@ -12,6 +13,43 @@ export default function SignInPage() {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    //Check if the email address is invalid
+    if (!validator.isEmail(email)) {
+      alert("Invalid email address! Please try again");
+      return;
+    }
+    const user = {
+      email,
+      password,
+    };
+
+    // Make a POST request to create an acount
+    fetch("http://localhost:8080/sign-in", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response data
+        if (data.error) {
+          alert(data.error);
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch((error) => {
+        // Handle any errors
+        console.error(error);
+      });
+  };
+
   return (
     <Layout>
       <Head>
@@ -77,7 +115,7 @@ export default function SignInPage() {
             <p className={styles.forgotPassword}>Forgot Password</p>
 
             <Form.Item className={styles.signInButton}>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" onClick={handleSubmit}>
                 Sign in
               </Button>
             </Form.Item>
