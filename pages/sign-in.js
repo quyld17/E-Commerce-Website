@@ -8,7 +8,6 @@ const { Content, Header } = Layout;
 export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  console.log(email, password);
 
   const {
     token: { colorBgContainer },
@@ -34,11 +33,11 @@ export default function SignInPage() {
       >
         <Content className={styles.content}>
           <Form
-            labelCol={{ span: 7 }}
+            labelCol={{ span: 6 }}
             className={styles.signInForm}
             autoComplete="off"
           >
-            <h1 className={styles.signInTitle}>Sign in</h1>
+            <p className={styles.signInTitle}>Sign in</p>
             <Form.Item
               label="Email"
               name="email"

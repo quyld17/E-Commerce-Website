@@ -1,6 +1,7 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Head from "next/head";
+import validator from "validator";
 import styles from "../styles/sign-up.module.css";
 import { Layout, Form, Input, Button } from "antd";
 const { Content, Header } = Layout;
@@ -10,11 +11,47 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  function handleSubmit() {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    //Check if the password and confirmPassword are matched or not
     if (password !== confirmPassword) {
       alert("password does not match");
+      return;
     }
-  }
+
+    //Check if the email address is invalid
+    if (!validator.isEmail(email)) {
+      alert("Invalid email address! Please try again");
+      return;
+    }
+    const user = {
+      email,
+      password,
+    };
+
+    // Make a POST request to create an acount
+    fetch("http://localhost:8080/sign-up", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response data
+        if (data.error) {
+          alert(data.error);
+        } else {
+          window.location.href = "/sign-up-complete ";
+        }
+      })
+      .catch((error) => {
+        // Handle any errors
+        console.error(error);
+      });
+  };
 
   return (
     <Layout>
@@ -35,7 +72,7 @@ export default function SignUpPage() {
             className={styles.signUpForm}
             autoComplete="off"
           >
-            <h1 className={styles.signUpTitle}>Sign up</h1>
+            <p className={styles.signUpTitle}>Sign up</p>
             <Form.Item
               label="Email"
               name="email"

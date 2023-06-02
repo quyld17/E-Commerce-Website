@@ -1,5 +1,6 @@
 import React from "react";
 import Head from "next/head";
+import Link from "next/link";
 import SideBar from "./side-bar";
 import NavigationBar from "./navigation-bar";
 import ProductShowcase from "./product-showcase";
@@ -35,6 +36,7 @@ export default function Home() {
             <h1>
               <ProductShowcase />
             </h1>
+            <p><Link href="/sign-up-complete">Click here</Link></p>
           </Content>
         </Layout>
       </Layout>
