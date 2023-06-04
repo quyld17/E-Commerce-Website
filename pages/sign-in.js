@@ -17,6 +17,14 @@ export default function SignInPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (email === "") {
+      alert("Email is empty! Please try again");
+      return;
+    } else if (password === "") {
+      alert("Password is empty! Please try again");
+      return;
+    }
+
     //Check if the email address is invalid
     if (!validator.isEmail(email)) {
       alert("Invalid email address! Please try again");
@@ -76,37 +84,17 @@ export default function SignInPage() {
             autoComplete="off"
           >
             <p className={styles.signInTitle}>Sign in</p>
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter your email",
-                },
-              ]}
-            >
+            <Form.Item label="Email">
               <Input
                 type="email"
-                name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </Form.Item>
 
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter your password",
-                },
-              ]}
-            >
+            <Form.Item label="Password">
               <Input.Password
                 type="password"
-                name="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />

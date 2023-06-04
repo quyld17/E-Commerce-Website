@@ -10,13 +10,14 @@
 }
 
 .content {
-    padding: 24px;
-    display: flex;
-    align-self: center;
-    width: 500px;
-    background-color: #f5f6f7;
-    border-radius: 14px;
-  }
+  padding: 24px;
+  display: flex;
+  align-self: center;
+  width: 500px;
+  border-radius: 14px;
+  background-color: #fff; 
+  box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1)
+}
 
 .signInForm {
   width: 452px;
@@ -32,7 +33,6 @@
 .forgotPassword {
   display: flex;
   justify-content: right;
-
 }
 
 .signInButton {

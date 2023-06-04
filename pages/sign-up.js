@@ -3,7 +3,7 @@ import Link from "next/link";
 import Head from "next/head";
 import validator from "validator";
 import styles from "../styles/sign-up.module.css";
-import { Layout, Form, Input, Button } from "antd";
+import { Layout, Form, Input, Button, message } from "antd";
 const { Content, Header } = Layout;
 
 export default function SignUpPage() {
@@ -14,17 +14,30 @@ export default function SignUpPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    //Check if the password and confirmPassword are matched or not
-    if (password !== confirmPassword) {
-      alert("password does not match");
+    //Check if every field is filled or not
+    if (email === "") {
+      alert("Email must not be empty! Please try again");
+      return;
+    } else if (password === "") {
+      alert("Password must not be empty! Please try again");
+      return;
+    } else if (confirmPassword === "") {
+      alert("Confirm password must not be empty! Please try again");
       return;
     }
 
     //Check if the email address is invalid
     if (!validator.isEmail(email)) {
-      alert("Invalid email address! Please try again");
+      alert("Invalid email address! Email must inlcude '@' and address");
       return;
     }
+
+    //Check if the password and confirmPassword are matched or not
+    if (password !== confirmPassword) {
+      alert("Passwords not matched! Please try again ");
+      return;
+    }
+
     const user = {
       email,
       password,
@@ -46,10 +59,6 @@ export default function SignUpPage() {
         } else {
           window.location.href = "/sign-up-complete ";
         }
-      })
-      .catch((error) => {
-        // Handle any errors
-        console.error(error);
       });
   };
 
@@ -73,16 +82,7 @@ export default function SignUpPage() {
             autoComplete="off"
           >
             <p className={styles.signUpTitle}>Sign up</p>
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter your email",
-                },
-              ]}
-            >
+            <Form.Item label="Email" name="email" required>
               <Input
                 type="email"
                 name="email"
@@ -91,16 +91,7 @@ export default function SignUpPage() {
               />
             </Form.Item>
 
-            <Form.Item
-              label="Password"
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter your password",
-                },
-              ]}
-            >
+            <Form.Item label="Password" name="password" required>
               <Input.Password
                 type="password"
                 name="password"
@@ -112,12 +103,7 @@ export default function SignUpPage() {
             <Form.Item
               label="Confirm password"
               name="confirm password"
-              rules={[
-                {
-                  required: true,
-                  message: "Please confirm your password",
-                },
-              ]}
+              required
             >
               <Input.Password
                 type="password"
@@ -126,7 +112,6 @@ export default function SignUpPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </Form.Item>
-            {/* {if valid ? :} */}
 
             <Form.Item className={styles.signUpButton}>
               <Button type="primary" htmlType="submit" onClick={handleSubmit}>

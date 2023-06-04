@@ -16,19 +16,19 @@
 .content {
   margin: 24px 0;
   padding: 24px;
-  /* display: flex; */
   text-align: center;
   align-self: center;
   width: 500px;
-  background-color: #f5f6f7;
   border-radius: 14px;
+  background-color: #fff;
+  box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
 }
 
 .signUpCompleteTitle {
-    font-size: 40px;
-    margin-bottom: 20px;
+  font-size: 40px;
+  margin-bottom: 20px;
 }
 
 .redirect {
-    color: lightskyblue;
+  color: lightskyblue;
 }

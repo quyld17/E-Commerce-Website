@@ -19,8 +19,9 @@
   display: flex;
   align-self: center;
   width: 500px;
-  background-color: #f5f6f7;
   border-radius: 14px;
+  background-color: #fff;
+  box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
 }
 
 .signUpForm {
@@ -35,14 +36,14 @@
 }
 
 .signUpButton {
-    margin-top: 40px;
-    text-align: center;
+  margin-top: 40px;
+  text-align: center;
 }
 
 .alreadyHadAnAccount {
-    text-align: center;
+  text-align: center;
 }
 
 .signInButton {
-    color: lightskyblue;
+  color: lightskyblue;
 }
