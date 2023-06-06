@@ -30,6 +30,7 @@ export default function SignInPage() {
       alert("Invalid email address! Please try again");
       return;
     }
+    
     const user = {
       email,
       password,
@@ -51,10 +52,6 @@ export default function SignInPage() {
         } else {
           alert(data.message);
         }
-      })
-      .catch((error) => {
-        // Handle any errors
-        console.error(error);
       });
   };
 
