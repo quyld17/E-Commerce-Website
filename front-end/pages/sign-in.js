@@ -2,11 +2,12 @@ import { useState } from "react";
 import styles from "../styles/sign-in.module.css";
 import Link from "next/link";
 import Head from "next/head";
-import validator from "validator";
+import handleSubmit from "./validators/sign-in-validator";
 import { Layout, theme, Form, Input, Button } from "antd";
 const { Content, Header } = Layout;
 
 export default function SignInPage() {
+  //Declare states to store user's input
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -14,45 +15,10 @@ export default function SignInPage() {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const handleSubmit = async (e) => {
+  //Call handleSubmit component to validate and process
+  const handleSignIn = (e) => {
     e.preventDefault();
-
-    if (email === "") {
-      alert("Email is empty! Please try again");
-      return;
-    } else if (password === "") {
-      alert("Password is empty! Please try again");
-      return;
-    }
-
-    //Check if the email address is invalid
-    if (!validator.isEmail(email)) {
-      alert("Invalid email address! Please try again");
-      return;
-    }
-    
-    const user = {
-      email,
-      password,
-    };
-
-    // Make a POST request to create an acount
-    fetch("http://localhost:8080/sign-in", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Handle the response data
-        if (data.error) {
-          alert(data.error);
-        } else {
-          alert(data.message);
-        }
-      });
+    handleSubmit(email, password);
   };
 
   return (
@@ -68,10 +34,10 @@ export default function SignInPage() {
       </Header>
       <Layout
         style={{
+          background: colorBgContainer,
           padding: 24,
           margin: 0,
           minHeight: 280,
-          background: colorBgContainer,
         }}
       >
         <Content className={styles.content}>
@@ -100,7 +66,7 @@ export default function SignInPage() {
             <p className={styles.forgotPassword}>Forgot Password</p>
 
             <Form.Item className={styles.signInButton}>
-              <Button type="primary" htmlType="submit" onClick={handleSubmit}>
+              <Button type="primary" htmlType="submit" onClick={handleSignIn}>
                 Sign in
               </Button>
             </Form.Item>

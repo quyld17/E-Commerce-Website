@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Head from "next/head";
 import styles from "../styles/sign-up-complete.module.css";
-import { Layout, Form, Input, Button } from "antd";
+import { Layout } from "antd";
 const { Content, Header } = Layout;
 
 export default function SignUpPage() {
