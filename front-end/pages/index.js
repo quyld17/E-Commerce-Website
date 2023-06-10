@@ -1,42 +1,54 @@
 import React from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import SideBar from "./side-bar";
 import NavigationBar from "./navigation-bar";
 import ProductShowcase from "./product-showcase";
 
-import { Layout, theme } from "antd";
+import { Layout } from "antd";
 const { Content } = Layout;
 
 export default function Home() {
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    // Retrieve the JWT token from cookie or local storage
+    const storedToken = localStorage.getItem("token");
+    setToken(storedToken);
+  }, []);
+  console.log(token);
+
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{ minHeight: "100vh", backgroundColor: "white" }}>
       <Head>
         <title>E-Commerce Website</title>
       </Head>
       <NavigationBar />
-      <Layout>
+      <Layout
+        style={{
+          backgroundColor: "white",
+        }}
+      >
         <SideBar />
         <Layout
           style={{
-            padding: "24px",
+            margin: "24px",
+            backgroundColor: "white",
           }}
         >
           <Content
             style={{
+              borderRadius: 14,
               padding: 24,
               margin: 0,
               minHeight: 280,
-              background: colorBgContainer,
+              boxShadow: "0 2px 30px rgba(0, 0, 0, 0.1)",
             }}
           >
             <h1>
               <ProductShowcase />
             </h1>
-            <p><Link href="/sign-up-complete">Click here</Link></p>
           </Content>
         </Layout>
       </Layout>

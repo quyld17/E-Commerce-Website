@@ -21,7 +21,8 @@ const handleSignInAPI = (email, password) => {
       if (data.error) {
         message.error(data.error);
       } else {
-        message.success(data.message);
+        localStorage.setItem("token", data.token);
+        window.location.href = "/";
       }
     });
 };

@@ -42,15 +42,10 @@ export default function SideBar() {
       getItem("Electronics", "6", <LaptopOutlined />),
     ]),
   ];
-  const {
-    token: { colorBgContainer },
-  } = theme.useToken();
   return (
     <Sider
       width={200}
-      style={{
-        background: "colorBgContainer",
-      }}
+      style={{ margin: "24px 0 24px 24px ", backgroundColor: "white" }}
     >
       <Menu
         mode="inline"
@@ -59,6 +54,8 @@ export default function SideBar() {
         style={{
           height: "100%",
           borderRight: 0,
+          borderRadius: 14,
+          boxShadow: "0 2px 30px rgba(0, 0, 0, 0.1)",
         }}
         items={items}
       />
