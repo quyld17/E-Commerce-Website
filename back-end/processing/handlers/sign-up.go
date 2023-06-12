@@ -11,7 +11,7 @@ import (
 func SignUp(c *gin.Context, db *sql.DB) {
     var newUser User
 
-    //Extract data from JSON file received to newUser
+    //Extract data from received JSON file to newUser
     if err := c.ShouldBindJSON(&newUser); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return

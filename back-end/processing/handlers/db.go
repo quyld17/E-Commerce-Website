@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"database/sql"
+	// "database/sql"
 	"time"
 )
 
-var db *sql.DB
+// var db *sql.DB
 
 type User struct {
 	Email      string    `json:"email"`
