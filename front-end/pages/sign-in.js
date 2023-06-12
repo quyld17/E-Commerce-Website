@@ -1,10 +1,30 @@
 import { useState } from "react";
-import styles from "../styles/sign-in.module.css";
 import Link from "next/link";
 import Head from "next/head";
-import handleSubmit from "./validators/sign-in-validator";
-import { Layout, theme, Form, Input, Button } from "antd";
+import validator from "validator";
+import styles from "../styles/sign-in.module.css";
+import handleSignInAPI from "./api-handlers/sign-in";
+import { Layout, theme, Form, Input, Button, message } from "antd";
 const { Content, Header } = Layout;
+
+const signInValidate = (email, password) => {
+  //Credentials validation
+  const formValidate = () => {
+    if (!email) {
+      return "Email must not be empty! Please try again";
+    } else if (!password) {
+      return "Password must not be empty! Please try again";
+    } else if (!validator.isEmail(email)) {
+      return "Invalid email address! Email must include '@' and a domain";
+    }
+    return null;
+  };
+
+  const validationError = formValidate();
+  if (validationError) {
+    return message.error(validationError);
+  }
+};
 
 export default function SignInPage() {
   //Declare states to store user's input
@@ -15,10 +35,13 @@ export default function SignInPage() {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  //Call handleSubmit component to validate and process
+  //Call signInValidate component to validate credentials
   const handleSignIn = (e) => {
     e.preventDefault();
-    handleSubmit(email, password);
+    //If there is no errors, call the API handler
+    if (!signInValidate(email, password)) {
+      handleSignInAPI(email, password);
+    }
   };
 
   return (

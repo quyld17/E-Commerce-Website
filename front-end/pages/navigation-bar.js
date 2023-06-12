@@ -31,7 +31,12 @@ export default function NavigationBar() {
     // Clear the JWT token and user's email local storage
     localStorage.removeItem("token");
     setToken("");
+    setUserEmail("");
   };
+
+  // const handleProfileRedirect = () => {
+
+  // }
 
   const items = [
     {
@@ -60,29 +65,18 @@ export default function NavigationBar() {
 
       {token ? (
         <>
-          {/* <div>{userEmail}</div> */}
-          <div className="profile-logo">
-            <Dropdown
-              menu={{
-                items: [
-                  {
-                    key: "3",
-                    label: <span onClick={handleSignOut}>Sign Out</span>,
-                  },
-                ],
-              }}
-              trigger={["click"]}
-              placement="bottom"
-            >
-              <p style={{ color: "white" }}>{userEmail}</p>
-            </Dropdown>
-          </div>
-        </>
-      ) : (
-        <div className="profile-logo">
           <Dropdown
             menu={{
-              items,
+              items: [
+                {
+                  key: "3",
+                  label: <span>Profile</span>,
+                },
+                {
+                  key: "4",
+                  label: <span onClick={handleSignOut}>Sign out</span>,
+                },
+              ],
             }}
             trigger={["click"]}
             placement="bottom"
@@ -91,8 +85,22 @@ export default function NavigationBar() {
               onClick={(e) => e.preventDefault()}
               className={styles.userLogo}
             />
+            {/* <p className={styles.userEmail}>{userEmail}</p> */}
           </Dropdown>
-        </div>
+        </>
+      ) : (
+        <Dropdown
+          menu={{
+            items,
+          }}
+          trigger={["click"]}
+          placement="bottom"
+        >
+          <BiUserCircle
+            onClick={(e) => e.preventDefault()}
+            className={styles.userLogo}
+          />
+        </Dropdown>
       )}
     </Header>
   );

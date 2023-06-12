@@ -26,10 +26,14 @@
   margin-top: 20px;
 }
 
+.userEmail {
+  color: white;
+  cursor: pointer;
+}
+
 .userLogo {
   color: white;
   justify-content: flex-end;
   cursor: pointer;
   font-size: 30px;
-  margin-top: 25px;
 }
