@@ -10,7 +10,7 @@ export default function ProductShowcase() {
       }}
     >
       <Link
-        href="./product-page"
+        href="./product-details"
         style={{ width: "150px", height: "150px", margin: "25px" }}
       >
         This is a product!

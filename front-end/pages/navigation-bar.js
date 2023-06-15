@@ -81,11 +81,11 @@ export default function NavigationBar() {
             trigger={["click"]}
             placement="bottom"
           >
-            <BiUserCircle
+            {/* <BiUserCircle
               onClick={(e) => e.preventDefault()}
               className={styles.userLogo}
-            />
-            {/* <p className={styles.userEmail}>{userEmail}</p> */}
+            /> */}
+            <p className={styles.userEmail}>{userEmail}</p>
           </Dropdown>
         </>
       ) : (
