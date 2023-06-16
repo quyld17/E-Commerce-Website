@@ -45,7 +45,16 @@ export default function SideBar() {
   return (
     <Sider
       width={200}
-      style={{ margin: "24px 0 24px 24px ", backgroundColor: "white" }}
+      style={{
+        // margin: "24px 0 24px 24px ",
+        backgroundColor: "white",
+        // position: "fixed",
+        // overflow: "auto",
+        // height: "100vh",
+        // position: "fixed",
+        // left: 0,
+        // top: 64,
+      }}
     >
       <Menu
         mode="inline"
@@ -54,7 +63,7 @@ export default function SideBar() {
         style={{
           height: "100%",
           borderRight: 0,
-          borderRadius: 14,
+          // borderRadius: 14,
           boxShadow: "0 2px 30px rgba(0, 0, 0, 0.1)",
         }}
         items={items}

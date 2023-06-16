@@ -35,6 +35,12 @@ CREATE TABLE `product` (
   `in_stock_quantity` INT NOT NULL
 );
 
+CREATE TABLE `product_image` (
+  `product_id` INT PRIMARY KEY NOT NULL,
+  `image_url` VARCHAR(255) NOT NULL,
+  `is_thumbnail` TINYINT NOT NULL
+);
+
 CREATE TABLE `category` (
   `category_id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `category_name` VARCHAR(255) NOT NULL
@@ -61,3 +67,5 @@ ALTER TABLE `product` ADD FOREIGN KEY (`category_id`) REFERENCES `category` (`ca
 ALTER TABLE `cart` ADD FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
 
 ALTER TABLE `cart` ADD FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`);
+
+ALTER TABLE `product_image` ADD FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`);

@@ -27,16 +27,12 @@ export default function NavigationBar() {
     }
   }, []);
 
+  // Clear the JWT token and user's email local storage after signing out
   const handleSignOut = () => {
-    // Clear the JWT token and user's email local storage
     localStorage.removeItem("token");
     setToken("");
     setUserEmail("");
   };
-
-  // const handleProfileRedirect = () => {
-
-  // }
 
   const items = [
     {
@@ -50,7 +46,10 @@ export default function NavigationBar() {
   ];
 
   return (
-    <Header className={styles.header}>
+    <Header
+      className={styles.header}
+      // style={{ position: "fixed", zIndex: 1, width: "100%" }}
+    >
       <div className={styles.websiteLogo}>
         <Link href="/">Logo</Link>
       </div>
@@ -81,10 +80,6 @@ export default function NavigationBar() {
             trigger={["click"]}
             placement="bottom"
           >
-            {/* <BiUserCircle
-              onClick={(e) => e.preventDefault()}
-              className={styles.userLogo}
-            /> */}
             <p className={styles.userEmail}>{userEmail}</p>
           </Dropdown>
         </>
