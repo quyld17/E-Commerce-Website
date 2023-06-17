@@ -27,7 +27,7 @@ const signInValidate = (email, password) => {
 };
 
 export default function SignInPage() {
-  //Declare states to store user's input
+  // Declare states to store user's input
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -35,10 +35,10 @@ export default function SignInPage() {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  //Call signInValidate component to validate credentials
   const handleSignIn = (e) => {
     e.preventDefault();
-    //If there is no errors, call the API handler
+    // Call signInValidate component to validate credentials
+    // If there is no errors, call the API handler
     if (!signInValidate(email, password)) {
       handleSignInAPI(email, password);
     }

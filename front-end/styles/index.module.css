@@ -1,0 +1,22 @@
+.mainLayout {
+  min-height: 100vh;
+  background-color: white;
+}
+
+.body {
+  background-color: white;
+}
+
+.contentLayout {
+  margin: 24px;
+  background-color: white;
+  padding: 0;
+}
+
+.content {
+  border-radius: 14px;
+  margin: 0;
+  min-height: 280px;
+  box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
+  padding: 0;
+}
