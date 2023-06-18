@@ -46,10 +46,7 @@ export default function NavigationBar() {
   ];
 
   return (
-    <Header
-      className={styles.header}
-      // style={{ position: "fixed", zIndex: 1, width: "100%" }}
-    >
+    <Header className={styles.header}>
       <div className={styles.websiteLogo}>
         <Link href="/">Logo</Link>
       </div>

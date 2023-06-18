@@ -1,16 +1,16 @@
 import getMethodAPI from "../api-types/get-method-api";
 import { message } from "antd";
 
-export default function handleProductShowcaseAPI(setProducts) {
+export default function handleCategoryRetrievalAPI(setCategories) {
   // Declare endpoint for product showcase
-  const endpoint = "/products";
+  const endpoint = "/categories";
 
   // Call getMethodAPI to handle API request
   getMethodAPI(
     endpoint,
     // Success callback
     (data) => {
-      setProducts(data);
+      setCategories(data);
     },
     // Error callback
     (error) => {
