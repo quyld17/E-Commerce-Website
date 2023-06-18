@@ -8,13 +8,15 @@ import (
 )
 
 type ProductDetail struct {
-	ProductName string `json:"product_name"`
-	Price       int    `json:"price"`
-	ImageURL    string `json:"image_url"`
+	ProductName string 	`json:"product_name"`
+	Price       int    	`json:"price"`
+	ImageURL    string 	`json:"image_url"`
+	CategoryID 	int 	`json:"category_id"`
 }
 
+// Rename 
 func GetAllImageURLs(c *gin.Context, db *sql.DB) {
-    rows, err := db.Query("SELECT product.product_name, product.price, product_image.image_url FROM product, product_image WHERE product.product_id = product_image.product_id;")
+    rows, err := db.Query("SELECT product.product_name, product.price, product_image.image_url, product.category_id FROM product, product_image WHERE product.product_id = product_image.product_id;")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -23,7 +25,7 @@ func GetAllImageURLs(c *gin.Context, db *sql.DB) {
     productDetails := []ProductDetail{}
 	for rows.Next() {
 		var product ProductDetail
-		err := rows.Scan(&product.ProductName, &product.Price, &product.ImageURL)
+		err := rows.Scan(&product.ProductName, &product.Price, &product.ImageURL, &product.CategoryID)
 		if err != nil {
 			log.Fatal(err)
 		}

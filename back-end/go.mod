@@ -1,4 +1,4 @@
-module processing/main
+module github.com/quyld17/E-Commerce-Website/main
 
 go 1.20
 

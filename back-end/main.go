@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"log"
 
-	"processing/main/handlers"
+	"github.com/quyld17/E-Commerce-Website/handlers"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -39,9 +39,14 @@ func main() {
     router.POST("/sign-in", func(c *gin.Context) {
         handlers.SignIn(c, db)
     })
-    router.GET("/images", func(c *gin.Context) {
+    router.GET("/products", func(c *gin.Context) {
         handlers.GetAllImageURLs(c, db)
+    })
+    router.GET("/categories", func(c *gin.Context) {
+        handlers.GetAllCategoryNames(c, db)
     })
 
     router.Run("localhost:8080")
 }
+
+// func 
