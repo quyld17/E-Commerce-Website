@@ -23,9 +23,9 @@ export default function ProductShowcase({ sortingKey }) {
       products.sort((a, b) => a.product_name.localeCompare(b.product_name));
     } else if (sortingKey === 4) {
       products.sort((a, b) => b.product_name.localeCompare(a.product_name));
-    } 
+    }
     // else if (sortingKey > 4) {
-     
+
     // }
 
     return products.map((product, index) => (
@@ -38,7 +38,11 @@ export default function ProductShowcase({ sortingKey }) {
             title={product.product_name}
             description={
               <div>
-                Price: {product.price} VNĐ
+                Price:{" "}
+                {Intl.NumberFormat("vi-VI", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(product.price)}
                 <Button type="primary" className={styles.addToCartButton}>
                   Add to cart
                 </Button>

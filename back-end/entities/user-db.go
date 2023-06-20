@@ -1,4 +1,4 @@
-package handlers
+package entities
 
 import (
 	// "database/sql"

@@ -4,17 +4,23 @@ import (
 	"database/sql"
 	"log"
 
-	"github.com/quyld17/E-Commerce-Website/handlers"
+	"github.com/quyld17/E-Commerce-Website/entities"
+	handlers "github.com/quyld17/E-Commerce-Website/handlers/authentication"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
 )
 
+func main() {
+    setUpMySQL()
+	
+    registerAPIHandlers()
+}
+
 var db *sql.DB
 
-func main() {
-    // Capture connection properties.
+func setUpMySQL() {
     cfg := mysql.Config{
         User:   "root",
         Passwd: "quyld17",
@@ -24,14 +30,16 @@ func main() {
 		AllowNativePasswords: true,
     }
 
-    // Get a database handle.
+    // Get a database handler.
     var err error
     db, err = sql.Open("mysql", cfg.FormatDSN())
     if err != nil {
         log.Fatal(err)
     }
+}
 
-	router := gin.Default()
+func registerAPIHandlers() {
+    router := gin.Default()
 	router.Use(cors.Default())
     router.POST("/sign-up", func(c *gin.Context) {
         handlers.SignUp(c, db)
@@ -40,13 +48,10 @@ func main() {
         handlers.SignIn(c, db)
     })
     router.GET("/products", func(c *gin.Context) {
-        handlers.GetAllImageURLs(c, db)
+        entities.GetAllProductInfos(c, db)
     })
     router.GET("/categories", func(c *gin.Context) {
-        handlers.GetAllCategoryNames(c, db)
+        entities.GetAllCategoryNames(c, db)
     })
-
     router.Run("localhost:8080")
 }
-
-// func 

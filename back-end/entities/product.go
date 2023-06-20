@@ -1,4 +1,4 @@
-package handlers
+package entities
 
 import (
 	"database/sql"
@@ -15,7 +15,7 @@ type ProductDetail struct {
 }
 
 // Rename 
-func GetAllImageURLs(c *gin.Context, db *sql.DB) {
+func GetAllProductInfos(c *gin.Context, db *sql.DB) {
     rows, err := db.Query("SELECT product.product_name, product.price, product_image.image_url, product.category_id FROM product, product_image WHERE product.product_id = product_image.product_id;")
 	if err != nil {
 		log.Fatal(err)
