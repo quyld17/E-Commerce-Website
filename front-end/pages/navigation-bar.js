@@ -88,10 +88,9 @@ export default function NavigationBar() {
           trigger={["click"]}
           placement="bottom"
         >
-          <BiUserCircle
-            onClick={(e) => e.preventDefault()}
-            className={styles.userLogo}
-          />
+          <div className={styles.userLogoWrapper}>
+            <BiUserCircle className={styles.userLogo} />
+          </div>
         </Dropdown>
       )}
     </Header>

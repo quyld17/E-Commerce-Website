@@ -3,7 +3,14 @@ package entities
 import (
 	"database/sql"
 	"fmt"
+	"time"
 )
+
+type User struct {
+	Email      string    `json:"email"`
+	Password   string    `json:"password"`
+	Created_at time.Time `json:"signUpDate"`
+}
 
 func GetUserByEmail(account User, db *sql.DB) error {
 	//Select email, password from user table if email=account.Email and password=account.Password

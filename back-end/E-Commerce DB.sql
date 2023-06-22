@@ -35,7 +35,7 @@ CREATE TABLE `product` (
 );
 
 CREATE TABLE `product_image` (
-  `product_id` INT PRIMARY KEY NOT NULL,
+  `product_id` INT KEY NOT NULL,
   `image_url` VARCHAR(255) NOT NULL,
   `is_thumbnail` TINYINT NOT NULL
 );

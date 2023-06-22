@@ -16,11 +16,14 @@ export default function postMethodAPI(
   })
     .then((response) => response.json())
     .then((data) => {
-      // Handle the response data
+      // Check if the response data has an 'error' property
       if (data.error) {
         errorCallback(data.error);
       } else {
         successCallback(data);
       }
+    })
+    .catch((error) => {
+      errorCallback(error.message);
     });
 }

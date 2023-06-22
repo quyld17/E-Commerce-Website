@@ -5,7 +5,8 @@ import (
 	"log"
 
 	"github.com/quyld17/E-Commerce-Website/entities"
-	handlers "github.com/quyld17/E-Commerce-Website/handlers/authentication"
+	"github.com/quyld17/E-Commerce-Website/handlers"
+   
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -47,11 +48,16 @@ func registerAPIHandlers() {
     router.POST("/sign-in", func(c *gin.Context) {
         handlers.SignIn(c, db)
     })
+    router.POST("/product-detail", func(c *gin.Context) {
+        handlers.GetProductDetails(c, db)
+    })
     router.GET("/products", func(c *gin.Context) {
-        entities.GetAllProductInfos(c, db)
+        entities.GetAllProducts(c, db)
     })
     router.GET("/categories", func(c *gin.Context) {
         entities.GetAllCategoryNames(c, db)
     })
+    
+    
     router.Run("localhost:8080")
 }

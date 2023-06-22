@@ -1,0 +1,81 @@
+.layout {
+  min-height: 100vh;
+}
+
+.mainPage {
+  min-height: 280px;
+  background: white;
+}
+
+.productField {
+  display: flex;
+  width: 1100px;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+  border-radius: 14px;
+  background-color: #fff;
+  box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
+}
+
+.productImages {
+  width: 50%;
+}
+
+.thumbnail {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.imageList {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.productInfos {
+  width: 50%;
+  padding: 20px;
+}
+
+.productName {
+  font-size: 35px;
+  margin-bottom: 30px;
+}
+
+.productPrice {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.priceTitle {
+  font-size: 20px;
+  margin-right: 20px;
+}
+
+.priceNumber {
+  font-size: 30px;
+}
+
+.quantitySelection {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.quantityTitle {
+  margin-right: 20px;
+  font-size: 20px;
+}
+
+.quantityInput {
+  margin-right: 10px;
+}
+
+.quantityAvailable {
+  font-size: 15px;
+}
