@@ -26,7 +26,6 @@ func GetProductDetails(c *gin.Context, db *sql.DB) {
 
 	var productDetail entities.Product
 	productImages := []entities.ProductImage{}
-	// var err error
 
 	//Call function GetSpecificProductDetail to retrieve product's detail
     if productDetail, productImages, err = entities.GetSpecificProductDetail(productID, c, db); err != nil {

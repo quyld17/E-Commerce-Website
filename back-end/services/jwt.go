@@ -17,7 +17,7 @@ func GenerateAuthorizedToken(email string) (string, error) {
 	// Token expiration time (1 day)
 
 	// Set the secret key for signing the token
-	secret := []byte("quydeptrai")
+	secret := []byte("quyld17")
 	tokenString, err := token.SignedString(secret)
 	if err != nil {
 		return "", err

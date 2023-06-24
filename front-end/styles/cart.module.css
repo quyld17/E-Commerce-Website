@@ -1,0 +1,83 @@
+.layout {
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.content {
+  width: 1200px;
+  margin-top: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+  border-radius: 14px;
+  background-color: #fff;
+  box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
+}
+
+.titleBar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.titleBarAllProductsCheckbox {
+  width: 40%;
+}
+
+.productSection {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.productDetail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.productNameAndThumbnail {
+  display: flex;
+  align-items: center;
+  width: 40%;
+}
+
+.productCheckbox {
+  margin-right: 10px;
+}
+
+.productThumbnail {
+  margin-right: 10px;
+  width: 100px;
+}
+
+.checkoutBar {
+  width: 300px;
+  margin-top: 10px;
+  margin-left: auto;
+}
+
+.checkoutBarSubtotal {
+  display: flex;
+  justify-content: space-between;
+}
+
+.checkoutBarShippingToTal {
+  display: flex;
+  justify-content: space-between;
+}
+
+.checkoutBarTotal {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.checkoutButton {
+  /* width: 74px;
+  margin-left: auto; */
+  display: flex;
+  justify-content: flex-end;
+}

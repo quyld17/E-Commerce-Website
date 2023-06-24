@@ -15,6 +15,7 @@ type Product struct {
 	Price       	int    	`json:"price"`
 	InStockQuantity int		`json:"in_stock_quantity"`
 	ImageURL    	string 	`json:"image_url"`
+	Quantity 		int 	`json:"quantity"`
 }
 
 type ProductImage struct {
@@ -76,4 +77,36 @@ func GetSpecificProductDetail(productID int, c *gin.Context, db *sql.DB) (Produc
 	}
 
 	return productDetail, productImages, nil
+}
+
+func AddProductToCart(email string, productID int, quantity int, c *gin.Context, db *sql.DB) error {
+	// Get the user's ID from the email extracted from JWT
+	row := db.QueryRow("SELECT user_id FROM user WHERE email = ?", email)
+	var userID int
+	if err := row.Scan(&userID); err != nil {
+		log.Fatal(err)
+	}
+
+	// Check if the product already exists in the cart
+	row = db.QueryRow("SELECT product_id FROM cart_product WHERE user_id = ? AND product_id = ?", userID, productID)
+	var existingProductID int
+	if err := row.Scan(&existingProductID); err != nil {
+		if err == sql.ErrNoRows {
+			// Product doesn't exist in the cart, insert a new row
+			_, err = db.Exec("INSERT INTO cart_product (user_id, product_id, quantity) VALUES (?, ?, ?)", userID, productID, quantity)
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else {
+			log.Fatal(err)
+		}
+	} else {
+			// Product already exists in the cart, update the quantity
+			_, err = db.Exec("UPDATE cart_product SET quantity = quantity + ? WHERE user_id = ? AND product_id = ?", quantity, userID, productID)
+			if err != nil {
+				log.Fatal(err)
+			}
+	}
+
+	return nil
 }

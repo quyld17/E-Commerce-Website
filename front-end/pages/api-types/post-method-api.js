@@ -5,12 +5,15 @@ export default function postMethodAPI(
   errorCallback
 ) {
   const baseURL = "http://localhost:8080";
+  const token = localStorage.getItem("token");
+  // console.log(token);
 
   // Make a POST API to backend
   fetch(baseURL + endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `${token}`,
     },
     body: JSON.stringify(credentials),
   })

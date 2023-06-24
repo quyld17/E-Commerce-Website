@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import styles from "../styles/navigation-bar.module.css";
@@ -11,6 +12,7 @@ const { Header } = Layout;
 export default function NavigationBar() {
   const [token, setToken] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     // Retrieve the JWT token from local storage
@@ -26,6 +28,14 @@ export default function NavigationBar() {
       setUserEmail(userEmail);
     }
   }, []);
+
+  const handleCartLogoClick = () => {
+    if (!token) {
+      router.push("/sign-in");
+    } else {
+      router.push("/cart");
+    }
+  };
 
   // Clear the JWT token and user's email local storage after signing out
   const handleSignOut = () => {
@@ -54,9 +64,10 @@ export default function NavigationBar() {
       <Search placeholder="input search text" className={styles.searchBar} />
 
       <div>
-        <Link href="/cart-page">
-          <ShoppingCartOutlined className={styles.cartLogo} />
-        </Link>
+        <ShoppingCartOutlined
+          className={styles.cartLogo}
+          onClick={handleCartLogoClick}
+        />
       </div>
 
       {token ? (

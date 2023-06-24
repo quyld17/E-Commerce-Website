@@ -19,7 +19,7 @@ CREATE TABLE `order` (
 );
 
 CREATE TABLE `order_products` (
-  `order_id` INT PRIMARY KEY NOT NULL,
+  `order_id` INT NOT NULL,
   `product_id` INT NOT NULL,
   `product_name` VARCHAR(255) NOT NULL,
   `quantity` INT NOT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE `product` (
 );
 
 CREATE TABLE `product_image` (
-  `product_id` INT KEY NOT NULL,
+  `product_id` INT NOT NULL,
   `image_url` VARCHAR(255) NOT NULL,
   `is_thumbnail` TINYINT NOT NULL
 );
@@ -45,15 +45,15 @@ CREATE TABLE `category` (
   `category_name` VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE `cart_item` (
-  `user_id` INT PRIMARY KEY NOT NULL,
+CREATE TABLE `cart_product` (
+  `user_id` INT NOT NULL,
   `product_id` INT NOT NULL,
   `quantity` INT NOT NULL
 );
 
 CREATE UNIQUE INDEX `order_products_index_0` ON `order_products` (`order_id`, `product_id`);
 
-CREATE UNIQUE INDEX `cart_item_index_1` ON `cart_item` (`user_id`, `product_id`);
+CREATE UNIQUE INDEX `cart_product_index_1` ON `cart_product` (`user_id`, `product_id`);
 
 ALTER TABLE `order` ADD FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
 
@@ -63,8 +63,8 @@ ALTER TABLE `order_products` ADD FOREIGN KEY (`product_id`) REFERENCES `product`
 
 ALTER TABLE `product` ADD FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`);
 
-ALTER TABLE `cart_item` ADD FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
+ALTER TABLE `cart_product` ADD FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`);
 
-ALTER TABLE `cart_item` ADD FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`);
+ALTER TABLE `cart_product` ADD FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`);
 
 ALTER TABLE `product_image` ADD FOREIGN KEY (`product_id`) REFERENCES `product` (`product_id`);

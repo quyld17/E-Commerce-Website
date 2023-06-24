@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import handleProductShowcaseAPI from "./api-handlers/product-showcase";
-import handleProductDetailAPI from "./api-handlers/product-detail";
+import handleAddToCartAPI from "./api-handlers/add-to-cart";
 
 import styles from "../styles/product-showcase.module.css";
 import { Card, Button } from "antd";
 const { Meta } = Card;
 
-export default function ProductShowcase({ sortingKey }) {
+export default function ProductShowcase() {
   // Declare states to store received data
   const [products, setProducts] = useState([]);
   const router = useRouter();
@@ -22,43 +22,45 @@ export default function ProductShowcase({ sortingKey }) {
     router.push(`/product/${id}`);
   };
 
-  const productsDisplay = () => {
-    if (sortingKey === 1) {
-      products.sort((a, b) => b.price - a.price);
-    } else if (sortingKey === 2) {
-      products.sort((a, b) => a.price - b.price);
-    } else if (sortingKey === 3) {
-      products.sort((a, b) => a.product_name.localeCompare(b.product_name));
-    } else if (sortingKey === 4) {
-      products.sort((a, b) => b.product_name.localeCompare(a.product_name));
-    }
-
-    return products.map((product) => (
-      <Card
-        className={styles.card}
-        hoverable
-        cover={<img alt="Image ${index}" src={product.image_url}></img>}
-        key={product.product_id}
-        onClick={() => handleClick(product.product_id)}
-      >
-        <Meta
-          title={product.product_name}
-          description={
-            <div>
-              Price:{" "}
-              {Intl.NumberFormat("vi-VI", {
-                style: "currency",
-                currency: "VND",
-              }).format(product.price)}
-              <Button type="primary" className={styles.addToCartButton}>
-                Add to cart
-              </Button>
-            </div>
-          }
-        ></Meta>
-      </Card>
-    ));
+  const handleAddToCartClick = (event, id) => {
+    event.stopPropagation();
+    const quantity = 1;
+    handleAddToCartAPI(id, quantity);
   };
 
-  return <div className={styles.overall}>{productsDisplay()}</div>;
+  return (
+    <div className={styles.overall}>
+      {products.map((product) => (
+        <Card
+          className={styles.card}
+          hoverable
+          cover={<img alt="Image ${index}" src={product.image_url}></img>}
+          key={product.product_id}
+          onClick={() => handleClick(product.product_id)}
+        >
+          <Meta
+            title={product.product_name}
+            description={
+              <div>
+                Price:{" "}
+                {Intl.NumberFormat("vi-VI", {
+                  style: "currency",
+                  currency: "VND",
+                }).format(product.price)}
+                <Button
+                  type="primary"
+                  className={styles.addToCartButton}
+                  onClick={(event) =>
+                    handleAddToCartClick(event, product.product_id)
+                  }
+                >
+                  Add to cart
+                </Button>
+              </div>
+            }
+          ></Meta>
+        </Card>
+      ))}
+    </div>
+  );
 }

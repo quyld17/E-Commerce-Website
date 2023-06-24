@@ -1,15 +1,16 @@
 import postMethodAPI from "../api-types/post-method-api";
 import { message } from "antd";
 
-export default function handleProductDetailAPI(product_id_string) {
+export default function handleAddToCartAPI(product_id, quantity) {
   return new Promise((resolve, reject) => {
-    // Declare an object to store product's ID
+    // Declare an object to store token and product's id
     const info = {
-      product_id_string,
+      product_id,
+      quantity,
     };
 
     // Declare endpoint for getting product's detail
-    const endpoint = "/product-detail";
+    const endpoint = "/add-to-cart";
 
     // Call postMethodAPI to handle API request
     postMethodAPI(

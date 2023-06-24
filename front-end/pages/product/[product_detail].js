@@ -4,14 +4,16 @@ import Head from "next/head";
 import NavigationBar from "../navigation-bar";
 import styles from "../../styles/product-detail.module.css";
 import handleProductDetailAPI from "../api-handlers/product-detail";
+import handleAddToCartAPI from "../api-handlers/add-to-cart";
 import { Layout, Image, Form, InputNumber, Button } from "antd";
 const { Content } = Layout;
 
 export default function ProductPage() {
   const [productDetail, setProductDetail] = useState(null);
   const [imageURLs, setImageURLs] = useState([]);
+  const [quantity, setQuantity] = useState(1);
   const router = useRouter();
-  const productID = router.query.product_id;
+  const productID = router.query.product_detail;
 
   useEffect(() => {
     if (productID) {
@@ -45,6 +47,14 @@ export default function ProductPage() {
       }
     }
   }, [productDetail]);
+
+  const handleQuantitySelection = (value) => {
+    setQuantity(value);
+  };
+
+  const handleAddToCartClick = (id) => {
+    handleAddToCartAPI(id, quantity);
+  };
 
   return (
     <Layout className={styles.layout}>
@@ -107,6 +117,9 @@ export default function ProductPage() {
                       <InputNumber
                         min={1}
                         max={productDetail.product_detail.in_stock_quantity}
+                        defaultValue={quantity}
+                        value={quantity}
+                        onChange={handleQuantitySelection}
                       />
                     </Form.Item>
                   </div>
@@ -117,7 +130,15 @@ export default function ProductPage() {
                   </span>
                 </div>
 
-                <Button type="primary" size={"large"}>
+                <Button
+                  type="primary"
+                  size={"large"}
+                  onClick={() =>
+                    handleAddToCartClick(
+                      productDetail.product_detail.product_id
+                    )
+                  }
+                >
                   Add to cart
                 </Button>
               </>
