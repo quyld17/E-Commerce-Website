@@ -5,7 +5,7 @@ import NavigationBar from "../navigation-bar";
 import styles from "../../styles/product-detail.module.css";
 import handleProductDetailAPI from "../api-handlers/product-detail";
 import handleAddToCartAPI from "../api-handlers/add-to-cart";
-import { Layout, Image, Form, InputNumber, Button } from "antd";
+import { Layout, Image, Form, InputNumber, Button, message } from "antd";
 const { Content } = Layout;
 
 export default function ProductPage() {
@@ -53,13 +53,25 @@ export default function ProductPage() {
   };
 
   const handleAddToCartClick = (id) => {
-    handleAddToCartAPI(id, quantity);
+    handleAddToCartAPI(id, quantity)
+      .then((data) => {
+        if (data.error) {
+          message.error("Add product to cart unsuccessfully! Please try again");
+        } else {
+          message.success("Add product to cart successfully!");
+        }
+      })
+      .catch((error) => {
+        console.log("Error: ", error);
+      });
   };
 
   return (
     <Layout className={styles.layout}>
       <Head>
-        <title>Product Page</title>
+        {productDetail && (
+          <title>{productDetail.product_detail.product_name}</title>
+        )}
       </Head>
       <NavigationBar />
       <Content className={styles.mainPage}>

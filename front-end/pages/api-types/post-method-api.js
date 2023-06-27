@@ -6,7 +6,6 @@ export default function postMethodAPI(
 ) {
   const baseURL = "http://localhost:8080";
   const token = localStorage.getItem("token");
-  // console.log(token);
 
   // Make a POST API to backend
   fetch(baseURL + endpoint, {

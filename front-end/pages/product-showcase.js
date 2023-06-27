@@ -4,7 +4,7 @@ import handleProductShowcaseAPI from "./api-handlers/product-showcase";
 import handleAddToCartAPI from "./api-handlers/add-to-cart";
 
 import styles from "../styles/product-showcase.module.css";
-import { Card, Button } from "antd";
+import { Card, Button, message } from "antd";
 const { Meta } = Card;
 
 export default function ProductShowcase() {
@@ -24,8 +24,17 @@ export default function ProductShowcase() {
 
   const handleAddToCartClick = (event, id) => {
     event.stopPropagation();
-    const quantity = 1;
-    handleAddToCartAPI(id, quantity);
+    handleAddToCartAPI(id, 1)
+      .then((data) => {
+        if (data.error) {
+          message.error("Add product to cart unsuccessfully! Please try again");
+        } else {
+          message.success("Add product to cart successfully!");
+        }
+      })
+      .catch((error) => {
+        message.error(error);
+      });
   };
 
   return (

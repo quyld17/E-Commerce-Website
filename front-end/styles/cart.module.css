@@ -8,6 +8,7 @@
 .content {
   width: 1200px;
   margin-top: 20px;
+  margin-bottom: 20px;
   margin-left: auto;
   margin-right: auto;
   padding: 20px;
@@ -16,46 +17,24 @@
   box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
 }
 
-.titleBar {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.titleBarAllProductsCheckbox {
-  width: 40%;
-}
-
-.productSection {
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-.productDetail {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.productNameAndThumbnail {
+.productThumbnailAndName {
   display: flex;
   align-items: center;
-  width: 40%;
-}
-
-.productCheckbox {
-  margin-right: 10px;
 }
 
 .productThumbnail {
   margin-right: 10px;
   width: 100px;
+  cursor: pointer;
+}
+
+.productName {
+  cursor: pointer;
 }
 
 .checkoutBar {
   width: 300px;
-  margin-top: 10px;
+  margin-top: 20px;
   margin-left: auto;
 }
 
@@ -76,8 +55,6 @@
 }
 
 .checkoutButton {
-  /* width: 74px;
-  margin-left: auto; */
   display: flex;
   justify-content: flex-end;
 }

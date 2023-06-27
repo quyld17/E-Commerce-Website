@@ -3,14 +3,15 @@ package main
 import (
 	"database/sql"
 	"log"
+	"os"
 	"time"
 
-	"github.com/quyld17/E-Commerce-Website/entities"
 	"github.com/quyld17/E-Commerce-Website/handlers"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -22,17 +23,21 @@ func main() {
 var db *sql.DB
 
 func setUpMySQL() {
-    cfg := mysql.Config{
-        User:   "root",
-        Passwd: "quyld17",
-        Net:    "tcp",
-        Addr:   "127.0.0.1:3306",
-        DBName: "e-commerce-website",
-		AllowNativePasswords: true,
+    // Load the environment variables from .env file
+    err := godotenv.Load("credentials.env")
+    if err != nil {
+        log.Fatal("Error loading .env file")
     }
 
+    cfg := mysql.Config{
+        User:                   os.Getenv("DB_USER"),
+        Passwd:                 os.Getenv("DB_PASSWORD"),
+        Net:                    "tcp",
+        Addr:                   os.Getenv("DB_HOST") + ":" + os.Getenv("DB_PORT"),
+        DBName:                 os.Getenv("DB_NAME"),
+        AllowNativePasswords:   true,
+    }
     // Get a database handler.
-    var err error
     db, err = sql.Open("mysql", cfg.FormatDSN())
     if err != nil {
         log.Fatal(err)
@@ -62,11 +67,20 @@ func registerAPIHandlers() {
         handlers.JWTAuthorize(c)
         handlers.AddProduct(c, db)
     })
+    router.POST("/cart-product-quantity-change", func(c *gin.Context) {
+        handlers.JWTAuthorize(c)
+        handlers.ChangeCartProductQuantity(c, db)
+    })
+
     router.GET("/products", func(c *gin.Context) {
-        entities.GetAllProducts(c, db)
+        handlers.GetAllProducts(c, db)
     })
     router.GET("/categories", func(c *gin.Context) {
-        entities.GetAllCategoryNames(c, db)
+        handlers.GetAllCategories(c, db)
+    })
+    router.GET("/cart", func (c *gin.Context) {
+        handlers.JWTAuthorize(c)
+        handlers.GetCartProducts(c, db)
     })
     
     
