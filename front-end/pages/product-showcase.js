@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import handleProductShowcaseAPI from "./api-handlers/product-showcase";
-import handleAddToCartAPI from "./api-handlers/add-to-cart";
+import { handleAddToCartAPI } from "./api-handlers/cart";
 
 import styles from "../styles/product-showcase.module.css";
 import { Card, Button, message } from "antd";

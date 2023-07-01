@@ -25,31 +25,4 @@
 .productThumbnail {
   margin-right: 10px;
   width: 100px;
-  cursor: pointer;
-}
-
-.productName {
-  cursor: pointer;
-}
-
-.table {
-  font-size: 20px;
-}
-
-.checkoutBar {
-  width: 300px;
-  margin-top: 20px;
-  margin-left: auto;
-}
-
-.checkoutBarTotal {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  font-size: 20px;
-}
-
-.checkoutButton {
-  display: flex;
-  justify-content: flex-end;
 }

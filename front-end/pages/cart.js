@@ -2,44 +2,24 @@ import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import NavigationBar from "./navigation-bar";
-import handleCartProductAPI from "./api-handlers/cart";
-import handleCartProductQuantityChangeAPI from "./api-handlers/cart-product-quantity-change";
+import {
+  handleCartProductAPI,
+  handleCartProductQuantityChangeAPI,
+  handleCheckOutAPI,
+} from "./api-handlers/cart";
+import { columns, generateData } from "./cart-layout-data";
 import styles from "../styles/cart.module.css";
 
-import { Button, InputNumber, Table, Space, Modal } from "antd";
-
-const columns = [
-  {
-    title: "Product",
-    dataIndex: "product",
-    width: "500px",
-  },
-  {
-    title: "Unit Price",
-    dataIndex: "unitPrice",
-    align: "center",
-  },
-  {
-    title: "Quantity",
-    dataIndex: "quantity",
-    align: "center",
-  },
-  {
-    title: "Total Price",
-    dataIndex: "totalPrice",
-    align: "center",
-  },
-  {
-    title: "Action",
-    dataIndex: "action",
-    align: "center",
-  },
-];
+import { Button, Table, Modal, message } from "antd";
 
 export default function CartPage() {
   const [cartProducts, setCartProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deletingProduct, setDeletingProduct] = useState(null);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [total, setTotal] = useState(0);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -47,11 +27,15 @@ export default function CartPage() {
     handleCartProductAPI()
       .then((data) => {
         setCartProducts(data);
+
+        // Calculate and update the total
+        const newTotal = calculateTotal();
+        setTotal(newTotal);
       })
       .catch((error) => {
         console.log("Error: ", error);
       });
-  }, []);
+  }, [selectedProducts]);
 
   const handleOk = () => {
     if (deletingProduct) {
@@ -90,6 +74,21 @@ export default function CartPage() {
           handleCartProductAPI()
             .then((data) => {
               setCartProducts(data);
+
+              // Update the quantity in the selectedProducts state
+              const updatedSelectedProducts = selectedProducts.map(
+                (product) => {
+                  if (product.key === id) {
+                    return { ...product, quantity: quantity };
+                  }
+                  return product;
+                }
+              );
+              setSelectedProducts(updatedSelectedProducts);
+
+              // Calculate and update the total
+              const newTotal = calculateTotal();
+              setTotal(newTotal);
             })
             .catch((error) => {
               console.log("Error: ", error);
@@ -105,51 +104,45 @@ export default function CartPage() {
     router.push(`/product/${id}`);
   };
 
-  const data = cartProducts.map((product, index) => ({
-    key: index,
-    product: (
-      <div className={styles.productThumbnailAndName}>
-        <img
-          className={styles.productThumbnail}
-          src={product.image_url}
-          alt={product.product_name}
-          onClick={() => handleProductRedirect(product.product_id)}
-        />
-        <span
-          className={styles.productName}
-          onClick={() => handleProductRedirect(product.product_id)}
-        >
-          {product.product_name}
-        </span>
-      </div>
-    ),
-    unitPrice: Intl.NumberFormat("vi-VI", {
-      style: "currency",
-      currency: "VND",
-    }).format(product.price),
-    quantity: (
-      <InputNumber
-        min={0}
-        max={product.in_stock_quantity}
-        defaultValue={product.quantity}
-        value={product.quantity}
-        onChange={(quantity) =>
-          handleQuantitySelection(product.product_id, quantity)
+  const data = generateData(
+    cartProducts,
+    handleProductRedirect,
+    handleQuantitySelection
+  );
+
+  const calculateTotal = () => {
+    let total = 0;
+    selectedProducts.forEach((product) => {
+      total += product.price * product.quantity;
+    });
+    return total;
+  };
+
+  const handleCheckOut = () => {
+    if (selectedProducts.length === 0) {
+      message.error("You have not selected any items for checkout");
+      return;
+    }
+    const checkOutData = selectedProducts.map((product) => ({
+      product_id: product.key,
+    }));
+    console.log(checkOutData);
+
+    handleCheckOutAPI(checkOutData)
+      .then((data) => {
+        if (data.error) {
+          console.log(data.error);
+        } else {
+          router.push({
+            pathname: "/check-out",
+            query: { checkoutData: JSON.stringify(data) },
+          });
         }
-      />
-    ),
-    totalPrice: Intl.NumberFormat("vi-VI", {
-      style: "currency",
-      currency: "VND",
-    }).format(product.price * product.quantity),
-    action: (
-      <Space size="middle">
-        <a onClick={() => handleQuantitySelection(product.product_id, 0)}>
-          Delete
-        </a>
-      </Space>
-    ),
-  }));
+      })
+      .catch((error) => {
+        console.log("Error during checkout:", error);
+      });
+  };
 
   return (
     <div className={styles.layout}>
@@ -161,14 +154,19 @@ export default function CartPage() {
         <Table
           size="large"
           showHeader={true}
-          rowSelection={true}
-          tableLayout="fixed"
-          pagination={{
-            position: ["topLeft", "bottomLeft"],
+          rowSelection={{
+            selectedRowKeys,
+            onChange: (selectedRowKeys, selectedRows) => {
+              setSelectedRowKeys(selectedRowKeys);
+              setSelectedProducts(selectedRows);
+            },
           }}
+          tableLayout="fixed"
+          pagination={false}
           columns={columns}
           dataSource={data}
-        />
+          className={styles.table}
+        ></Table>
 
         <Modal
           title="Do you want to remove this item?"
@@ -180,30 +178,17 @@ export default function CartPage() {
         </Modal>
 
         <div className={styles.checkoutBar}>
-          <div className={styles.checkoutBarSubtotal}>
-            <p>Subtotal:</p>
-            <p></p>
-          </div>
-          <div className={styles.checkoutBarShippingToTal}>
-            <p>Shipping Total:</p>
+          <div className={styles.checkoutBarTotal}>
+            <p>Total:</p>
             <p>
               {Intl.NumberFormat("vi-VI", {
                 style: "currency",
                 currency: "VND",
-              }).format("30000")} 
-            </p>
-          </div>
-          <div className={styles.checkoutBarTotal}>
-            <p>Total:</p>
-            <p>
-              {/* {Intl.NumberFormat("vi-VI", {
-                style: "currency",
-                currency: "VND",
-              }).format(totalPrice)} */}
+              }).format(total)}
             </p>
           </div>
           <div className={styles.checkoutButton}>
-            <Button type="primary" size={"large"}>
+            <Button type="primary" size={"large"} onClick={handleCheckOut}>
               Check Out
             </Button>
           </div>

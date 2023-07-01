@@ -4,7 +4,7 @@ import Head from "next/head";
 import NavigationBar from "../navigation-bar";
 import styles from "../../styles/product-detail.module.css";
 import handleProductDetailAPI from "../api-handlers/product-detail";
-import handleAddToCartAPI from "../api-handlers/add-to-cart";
+import { handleAddToCartAPI } from "../api-handlers/cart";
 import { Layout, Image, Form, InputNumber, Button, message } from "antd";
 const { Content } = Layout;
 

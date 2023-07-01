@@ -3,13 +3,11 @@ package entities
 import (
 	"database/sql"
 	"fmt"
-	"time"
 )
 
 type User struct {
 	Email      string    `json:"email"`
 	Password   string    `json:"password"`
-	Created_at time.Time `json:"signUpDate"`
 }
 
 func GetUserByEmail(account User, db *sql.DB) error {
@@ -30,7 +28,7 @@ func GetUserByEmail(account User, db *sql.DB) error {
 }
 
 func RegisterNewUser(newUser User, db *sql.DB) error {
-	_, err := db.Exec("INSERT INTO user (email, password, created_at) VALUES (?, ?, ?)", newUser.Email, newUser.Password, newUser.Created_at)
+	_, err := db.Exec("INSERT INTO user (email, password) VALUES (?, ?)", newUser.Email, newUser.Password)
 	if err != nil {
 		return err
 	}

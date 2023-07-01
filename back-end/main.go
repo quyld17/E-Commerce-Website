@@ -71,6 +71,10 @@ func registerAPIHandlers() {
         handlers.JWTAuthorize(c)
         handlers.ChangeCartProductQuantity(c, db)
     })
+    router.POST("/check-out", func(c *gin.Context) {
+        handlers.JWTAuthorize(c)
+        handlers.CheckOutDetail(c, db)
+    })
 
     router.GET("/products", func(c *gin.Context) {
         handlers.GetAllProducts(c, db)

@@ -7,7 +7,7 @@ CREATE TABLE `user` (
   `phone_number` CHAR(11),
   `address` VARCHAR(255),
   `gender` TINYINT,
-  `created_at` datetime NOT NULL
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TABLE `order` (
