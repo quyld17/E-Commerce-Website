@@ -149,7 +149,7 @@ func ChangeCartProductQuantity(userID int, productID int, quantity int, c *gin.C
 }
 
 func ProductsForCheckout(userID, productID int, c *gin.Context, db *sql.DB) (Product, error) {
-	row, err := db.Query("SELECT product.product_id, product.product_name, product.price, product_image.image_url, cart_product.quantity FROM product, product_image, cart_product WHERE product.product_id = ? AND cart_product.user_id = ? AND product_image.product_id = product.product_id AND product_image.is_thumbnail = 1;", productID, userID)
+	row, err := db.Query("SELECT product.product_id, product.product_name, product.price, product_image.image_url, cart_product.quantity FROM product, product_image, cart_product WHERE product.product_id = ? AND cart_product.user_id = ? AND product.product_id = cart_product.product_id AND product_image.product_id = product.product_id AND product_image.is_thumbnail = 1;", productID, userID)
 	if err != nil {
 		log.Fatal(err)
 	}

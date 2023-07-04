@@ -3,27 +3,18 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import styles from "../styles/navigation-bar.module.css";
-import handleCartItemAPI from "./api-handlers/cart";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { BiUserCircle } from "react-icons/bi";
-import { Input, Layout, Dropdown, Badge } from "antd";
+import { Input, Layout, Dropdown, Badge, message } from "antd";
 const { Search } = Input;
 const { Header } = Layout;
 
 export default function NavigationBar() {
   const [token, setToken] = useState("");
   const [userEmail, setUserEmail] = useState("");
-  const [productCount, setProductCount] = useState();
   const router = useRouter();
 
   useEffect(() => {
-    // handleCartItemAPI()
-    //   .then((data) => {
-    //     setProductCount(data.length);
-    //   })
-    //   .catch((error) => {
-    //     console.log("Error: ", error);
-    //   });
     // Retrieve the JWT token from local storage
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
@@ -31,10 +22,17 @@ export default function NavigationBar() {
     if (storedToken) {
       // Decode the JWT token
       const decodedToken = jwt_decode(storedToken);
+      const expTime = decodedToken.exp;
+      const currentTime = Date.now() / 1000;
 
-      // Extract the email address from the decoded token
-      const userEmail = decodedToken.email;
-      setUserEmail(userEmail);
+      if (currentTime > expTime) {
+        message.info("Session expired! Please sign in to continue");
+        handleSignOut();
+      } else {
+        // Token is still valid, extract the email address from the decoded token
+        const userEmail = decodedToken.email;
+        setUserEmail(userEmail);
+      }
     }
   }, []);
 
@@ -74,7 +72,10 @@ export default function NavigationBar() {
       <Search placeholder="input search text" className={styles.searchBar} />
 
       <div>
-        <Badge count={productCount} offset={[-20, 25]}>
+        <Badge
+          // count={productCount}
+          offset={[-20, 25]}
+        >
           <ShoppingCartOutlined
             className={styles.cartLogo}
             onClick={handleCartLogoClick}

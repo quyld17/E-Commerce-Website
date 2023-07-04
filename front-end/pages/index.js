@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import Head from "next/head";
-import { useState } from "react";
+
 import SideBar from "./side-bar";
 import NavigationBar from "./navigation-bar";
-import ProductShowcase from "./product-showcase";
+import ProductsDisplay from "./products-display";
 import styles from "../styles/index.module.css";
+
 import { Layout } from "antd";
 const { Content } = Layout;
 
@@ -25,7 +26,7 @@ export default function Home() {
         <SideBar onSortingKeyChange={handleSortingKeyChange} />
         <Layout className={styles.contentLayout}>
           <Content className={styles.content}>
-            <ProductShowcase sortingKey={sortingKey} />
+            <ProductsDisplay sortingKey={sortingKey} />
           </Content>
         </Layout>
       </Layout>

@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
+
 import NavigationBar from "../navigation-bar";
 import styles from "../../styles/product-detail.module.css";
-import handleProductDetailAPI from "../api-handlers/product-detail";
+import { handleGetProductDetailsAPI } from "../api-handlers/products";
 import { handleAddToCartAPI } from "../api-handlers/cart";
+
 import { Layout, Image, Form, InputNumber, Button, message } from "antd";
 const { Content } = Layout;
 
@@ -17,7 +19,7 @@ export default function ProductPage() {
 
   useEffect(() => {
     if (productID) {
-      handleProductDetailAPI(productID)
+      handleGetProductDetailsAPI(productID)
         .then((data) => {
           setProductDetail(data);
         })

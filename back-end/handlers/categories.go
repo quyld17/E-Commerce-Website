@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/quyld17/E-Commerce-Website/entities"
@@ -14,5 +15,5 @@ func GetAllCategories(c *gin.Context, db *sql.DB) {
 		log.Fatal(err)
 	}
 
-	c.JSON(200, categories)
+	c.JSON(http.StatusOK, categories)
 }

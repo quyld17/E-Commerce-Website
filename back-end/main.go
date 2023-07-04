@@ -37,7 +37,7 @@ func setUpMySQL() {
         DBName:                 os.Getenv("DB_NAME"),
         AllowNativePasswords:   true,
     }
-    // Get a database handler.
+    // Get a database handler
     db, err = sql.Open("mysql", cfg.FormatDSN())
     if err != nil {
         log.Fatal(err)
@@ -52,40 +52,49 @@ func registerAPIHandlers() {
         AllowHeaders:     []string{"Authorization", "Content-Type"},
         ExposeHeaders:    []string{"Content-Length"},
         AllowCredentials: true,
-        MaxAge:           12 * time.Hour,
+        MaxAge:           24 * time.Hour,
     }))
+
+    // Authentication
     router.POST("/sign-up", func(c *gin.Context) {
         handlers.SignUp(c, db)
     })
     router.POST("/sign-in", func(c *gin.Context) {
         handlers.SignIn(c, db)
     })
-    router.POST("/product-detail", func(c *gin.Context) {
-        handlers.GetProductDetails(c, db)
-    })
-    router.POST("/add-to-cart", func(c *gin.Context) {
-        handlers.JWTAuthorize(c)
-        handlers.AddProduct(c, db)
-    })
-    router.POST("/cart-product-quantity-change", func(c *gin.Context) {
-        handlers.JWTAuthorize(c)
-        handlers.ChangeCartProductQuantity(c, db)
-    })
-    router.POST("/check-out", func(c *gin.Context) {
-        handlers.JWTAuthorize(c)
-        handlers.CheckOutDetail(c, db)
-    })
 
+    // Products
     router.GET("/products", func(c *gin.Context) {
         handlers.GetAllProducts(c, db)
     })
+    router.POST("/products/product/detail", func(c *gin.Context) {
+        handlers.GetProductDetails(c, db)
+    })
+
+    // Categories
     router.GET("/categories", func(c *gin.Context) {
         handlers.GetAllCategories(c, db)
     })
-    router.GET("/cart", func (c *gin.Context) {
+
+    // Cart
+    router.GET("/cart/products/", func (c *gin.Context) {
         handlers.JWTAuthorize(c)
-        handlers.GetCartProducts(c, db)
+        handlers.GetAllCartProducts(c, db)
     })
+    router.POST("/cart/products/product/add", func(c *gin.Context) {
+        handlers.JWTAuthorize(c)
+        handlers.AddProductToCart(c, db)
+    })
+    router.POST("/cart/products/product/quantity/adjust", func(c *gin.Context) {
+        handlers.JWTAuthorize(c)
+        handlers.AdjustCartProductQuantity(c, db)
+    })
+    router.POST("/cart/products/selected", func(c *gin.Context) {
+        handlers.JWTAuthorize(c)
+        handlers.GetCartSelectedProducts(c, db)
+    })
+    
+    
     
     
     router.Run("localhost:8080")

@@ -1,23 +1,20 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import handleProductShowcaseAPI from "./api-handlers/product-showcase";
+import { handleGetAllProductsAPI } from "./api-handlers/products";
 import { handleAddToCartAPI } from "./api-handlers/cart";
 
 import styles from "../styles/product-showcase.module.css";
 import { Card, Button, message } from "antd";
 const { Meta } = Card;
 
-export default function ProductShowcase() {
-  // Declare states to store received data
+export default function ProductsDisplay() {
   const [products, setProducts] = useState([]);
   const router = useRouter();
 
-  // Call API handler to retrieve data from database and set it to products
   useEffect(() => {
-    handleProductShowcaseAPI(setProducts);
+    handleGetAllProductsAPI(setProducts);
   }, []);
 
-  // Redirect to product's detail page when user clicks on a product
   const handleClick = (id) => {
     router.push(`/product/${id}`);
   };

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+
 import NavigationBar from "./navigation-bar";
 import {
-  handleCartProductAPI,
-  handleCartProductQuantityChangeAPI,
-  handleCheckOutAPI,
+  handleGetAllCartProducts,
+  handleAdjustCartProductQuantity,
+  handleGetCartSelectedProducts,
 } from "./api-handlers/cart";
-import { columns, generateData } from "./cart-layout-data";
+import { cartColumns, cartData } from "./components/layout";
 import styles from "../styles/cart.module.css";
 
 import { Button, Table, Modal, message } from "antd";
@@ -24,24 +25,71 @@ export default function CartPage() {
 
   useEffect(() => {
     // Call API handler to retrieve cart's data from the database
-    handleCartProductAPI()
+    handleGetAllCartProducts()
       .then((data) => {
         setCartProducts(data);
+      })
+      .catch((error) => {
+        console.log("Error: ", error);
+      });
 
-        // Calculate and update the total
-        const newTotal = calculateTotal();
-        setTotal(newTotal);
+    handleGetCartSelectedProducts(selectedProducts)
+      .then((data) => {
+        if (data.error) {
+          console.log(data.error);
+        } else {
+          setTotal(data.totalPrice);
+        }
       })
       .catch((error) => {
         console.log("Error: ", error);
       });
   }, [selectedProducts]);
 
+  const handleQuantitySelection = (id, quantity) => {
+    if (quantity === 0) {
+      // Open the modal to confirm deletion
+      setIsModalOpen(true);
+      // Set the deletingProduct state to the product being deleted
+      const product = cartProducts.find((product) => product.product_id === id);
+      setDeletingProduct(product);
+    } else {
+      handleAdjustCartProductQuantity(id, quantity)
+        .then(() => {
+          // Update the quantity state after successful API call
+          const updatedCartProducts = cartProducts.map((product) => {
+            if (product.product_id === id) {
+              return { ...product, quantity: quantity };
+            }
+            return product;
+          });
+          setCartProducts(updatedCartProducts);
+
+          // Update the quantity in the selectedProducts state
+          const updatedSelectedProducts = selectedProducts.map((product) => {
+            if (product.key === id) {
+              return { ...product, quantity: quantity };
+            }
+            return product;
+          });
+          setSelectedProducts(updatedSelectedProducts);
+        })
+        .catch((error) => {
+          console.log("Error: ", error);
+        });
+    }
+  };
+
   const handleOk = () => {
     if (deletingProduct) {
-      handleCartProductQuantityChangeAPI(deletingProduct.product_id, 0)
+      const updatedSelectedProducts = selectedProducts.filter(
+        (product) => product.product_id !== deletingProduct.product_id
+      );
+      setSelectedProducts(updatedSelectedProducts);
+
+      handleAdjustCartProductQuantity(deletingProduct.product_id, 0)
         .then(() => {
-          handleCartProductAPI()
+          handleGetAllCartProducts()
             .then((data) => {
               setCartProducts(data);
             })
@@ -60,82 +108,30 @@ export default function CartPage() {
     setIsModalOpen(false);
   };
 
-  const handleQuantitySelection = (id, quantity) => {
-    if (quantity === 0) {
-      // Open the modal to confirm deletion
-      setIsModalOpen(true);
-      // Set the deletingProduct state to the product being deleted
-      const product = cartProducts.find((product) => product.product_id === id);
-      setDeletingProduct(product);
-    } else {
-      handleCartProductQuantityChangeAPI(id, quantity)
-        .then(() => {
-          // Update the quantity in the frontend state after successful API call
-          handleCartProductAPI()
-            .then((data) => {
-              setCartProducts(data);
-
-              // Update the quantity in the selectedProducts state
-              const updatedSelectedProducts = selectedProducts.map(
-                (product) => {
-                  if (product.key === id) {
-                    return { ...product, quantity: quantity };
-                  }
-                  return product;
-                }
-              );
-              setSelectedProducts(updatedSelectedProducts);
-
-              // Calculate and update the total
-              const newTotal = calculateTotal();
-              setTotal(newTotal);
-            })
-            .catch((error) => {
-              console.log("Error: ", error);
-            });
-        })
-        .catch((error) => {
-          console.log("Error: ", error);
-        });
-    }
-  };
-
   const handleProductRedirect = (id) => {
     router.push(`/product/${id}`);
   };
 
-  const data = generateData(
+  const data = cartData(
     cartProducts,
     handleProductRedirect,
     handleQuantitySelection
   );
-
-  const calculateTotal = () => {
-    let total = 0;
-    selectedProducts.forEach((product) => {
-      total += product.price * product.quantity;
-    });
-    return total;
-  };
 
   const handleCheckOut = () => {
     if (selectedProducts.length === 0) {
       message.error("You have not selected any items for checkout");
       return;
     }
-    const checkOutData = selectedProducts.map((product) => ({
-      product_id: product.key,
-    }));
-    console.log(checkOutData);
 
-    handleCheckOutAPI(checkOutData)
+    handleGetCartSelectedProducts(selectedProducts)
       .then((data) => {
         if (data.error) {
           console.log(data.error);
         } else {
           router.push({
             pathname: "/check-out",
-            query: { checkoutData: JSON.stringify(data) },
+            query: { checkoutData: JSON.stringify(data.retrievedProducts) },
           });
         }
       })
@@ -158,12 +154,15 @@ export default function CartPage() {
             selectedRowKeys,
             onChange: (selectedRowKeys, selectedRows) => {
               setSelectedRowKeys(selectedRowKeys);
-              setSelectedProducts(selectedRows);
+              const selectedProductIds = selectedRows.map((row) => ({
+                product_id: row.key,
+              }));
+              setSelectedProducts(selectedProductIds);
             },
           }}
           tableLayout="fixed"
           pagination={false}
-          columns={columns}
+          columns={cartColumns}
           dataSource={data}
           className={styles.table}
         ></Table>

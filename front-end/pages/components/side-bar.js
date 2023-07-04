@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import handleCategoryRetrievalAPI from "../api-handlers/category-retrieval";
+import handleGetAllCategoriesAPI from "../api-handlers/categories";
 import { TbCategory, TbArrowsSort } from "react-icons/tb";
 import {
   BsSortUp,
@@ -12,7 +12,7 @@ export default function SideBarMaterials() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    handleCategoryRetrievalAPI(setCategories);
+    handleGetAllCategoriesAPI(setCategories);
   }, []);
 
   function getItem(label, key, icon, items) {
