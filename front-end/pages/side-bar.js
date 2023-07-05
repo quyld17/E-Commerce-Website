@@ -3,13 +3,8 @@ import SideBarMaterials from "./components/side-bar";
 import { Layout, Menu } from "antd";
 const { Sider } = Layout;
 
-export default function SideBar({ onSortingKeyChange }) {
+export default function SideBar() {
   const { sortingItems, categoryItems } = SideBarMaterials();
-
-  const handleButtonClick = (key) => {
-    // Handle button click event based on the key
-    onSortingKeyChange(key);
-  };
 
   const renderMenuItems = (menuItems) => {
     return menuItems.map((menuItem) => {
@@ -29,10 +24,7 @@ export default function SideBar({ onSortingKeyChange }) {
         );
       } else {
         return (
-          <Menu.Item
-            key={menuItem.key}
-            onClick={() => handleButtonClick(menuItem.key)}
-          >
+          <Menu.Item key={menuItem.key}>
             {menuItem.icon}
             {menuItem.label}
           </Menu.Item>
@@ -57,6 +49,7 @@ export default function SideBar({ onSortingKeyChange }) {
           borderRight: 0,
           boxShadow: "0 2px 30px rgba(0, 0, 0, 0.1)",
         }}
+        // items={sortingItems}
       >
         {renderMenuItems(sortingItems)}
         {renderMenuItems(categoryItems)}

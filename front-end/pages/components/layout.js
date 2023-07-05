@@ -87,9 +87,17 @@ export const cartData = (
 
 export const checkOutColumns = [
   {
-    title: "Products Ordered",
+    title: (
+      <span
+        // style={{ fontFamily: "-apple-system", fontSize: "20px" }}
+        className={styles.productsOrderedTitle}
+      >
+        Products Ordered
+      </span>
+    ),
     dataIndex: "product",
     width: "500px",
+    fontSize: "25px",
   },
   {
     title: "Unit Price",
@@ -108,17 +116,17 @@ export const checkOutColumns = [
   },
 ];
 
-export const checkOutData = (checkoutData) => {
-  const data = checkoutData.map((product) => ({
+export const handleCheckOutData = (checkOutData) => {
+  const data = checkOutData.map((product) => ({
     key: product.product_id,
     product: (
-      <div className={styles.productThumbnailAndName}>
+      <div style={{ display: "flex", alignItems: "center" }}>
         <img
-          className={styles.productThumbnail}
+          style={{ marginRight: "10px", width: "100px" }}
           src={product.image_url}
           alt={product.product_name}
         />
-        <span className={styles.productName}>{product.product_name}</span>
+        <span>{product.product_name}</span>
       </div>
     ),
     price: product.price,

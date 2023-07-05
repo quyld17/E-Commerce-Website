@@ -63,6 +63,17 @@ export default function NavigationBar() {
     },
   ];
 
+  const signedInItems = [
+    {
+      key: "3",
+      label: <span>Profile</span>,
+    },
+    {
+      key: "4",
+      label: <span onClick={handleSignOut}>Sign out</span>,
+    },
+  ];
+
   return (
     <Header className={styles.header}>
       <div className={styles.websiteLogo}>
@@ -84,34 +95,30 @@ export default function NavigationBar() {
       </div>
 
       {token ? (
-        <>
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: "3",
-                  label: <span>Profile</span>,
-                },
-                {
-                  key: "4",
-                  label: <span onClick={handleSignOut}>Sign out</span>,
-                },
-              ],
-            }}
-            trigger={["click"]}
-            placement="bottom"
-          >
-            <p className={styles.userEmail}>{userEmail}</p>
-          </Dropdown>
-        </>
-      ) : (
         <Dropdown
           menu={{
-            items,
+            items: [
+              {
+                key: "3",
+                label: <span>Profile</span>,
+              },
+              {
+                key: "4",
+                label: <span>Purchase History</span>,
+              },
+              {
+                key: "5",
+                label: <span onClick={handleSignOut}>Sign out</span>,
+              },
+            ],
           }}
-          trigger={["click"]}
+          trigger={["click", "hover"]}
           placement="bottom"
         >
+          <p className={styles.userEmail}>{userEmail}</p>
+        </Dropdown>
+      ) : (
+        <Dropdown menu={{ items }} trigger={["click"]} placement="bottom">
           <div className={styles.userLogoWrapper}>
             <BiUserCircle className={styles.userLogo} />
           </div>

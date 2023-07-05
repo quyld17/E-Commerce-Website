@@ -24,7 +24,6 @@ export default function CartPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Call API handler to retrieve cart's data from the database
     handleGetAllCartProducts()
       .then((data) => {
         setCartProducts(data);
@@ -129,10 +128,11 @@ export default function CartPage() {
         if (data.error) {
           console.log(data.error);
         } else {
-          router.push({
-            pathname: "/check-out",
-            query: { checkoutData: JSON.stringify(data.retrievedProducts) },
-          });
+          localStorage.setItem(
+            "products",
+            JSON.stringify(data.retrievedProducts)
+          );
+          router.push("/check-out");
         }
       })
       .catch((error) => {
@@ -146,6 +146,14 @@ export default function CartPage() {
         <title>Cart</title>
       </Head>
       <NavigationBar />
+      <Modal
+        title="Do you want to remove this item?"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>{deletingProduct && deletingProduct.product_name}</p>
+      </Modal>
       <div className={styles.content}>
         <Table
           size="large"
@@ -166,15 +174,6 @@ export default function CartPage() {
           dataSource={data}
           className={styles.table}
         ></Table>
-
-        <Modal
-          title="Do you want to remove this item?"
-          open={isModalOpen}
-          onOk={handleOk}
-          onCancel={handleCancel}
-        >
-          <p>{deletingProduct && deletingProduct.product_name}</p>
-        </Modal>
 
         <div className={styles.checkoutBar}>
           <div className={styles.checkoutBarTotal}>

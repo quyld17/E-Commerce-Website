@@ -5,7 +5,7 @@
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-.content {
+.productsField {
   max-width: 1200px;
   margin-top: 20px;
   margin-bottom: 20px;
@@ -17,6 +17,10 @@
   box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
 }
 
+.productsTitle {
+  font-size: 30px;
+}
+
 .productThumbnailAndName {
   display: flex;
   align-items: center;
@@ -25,4 +29,32 @@
 .productThumbnail {
   margin-right: 10px;
   width: 100px;
+}
+
+.deliveryAddressField {
+  max-width: 1200px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+  border-radius: 14px;
+  background-color: #fff;
+  box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
+}
+
+.deliveryAddressTitle {
+  font-size: 25px;
+}
+
+.paymentField {
+  max-width: 1200px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+  border-radius: 14px;
+  background-color: #fff;
+  box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
 }

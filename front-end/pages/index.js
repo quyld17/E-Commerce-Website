@@ -10,12 +10,6 @@ import { Layout } from "antd";
 const { Content } = Layout;
 
 export default function Home() {
-  const [sortingKey, setSortingKey] = useState(0);
-
-  const handleSortingKeyChange = (key) => {
-    setSortingKey(key);
-  };
-
   return (
     <Layout className={styles.mainLayout}>
       <Head>
@@ -23,10 +17,10 @@ export default function Home() {
       </Head>
       <NavigationBar />
       <Layout className={styles.body}>
-        <SideBar onSortingKeyChange={handleSortingKeyChange} />
+        <SideBar />
         <Layout className={styles.contentLayout}>
           <Content className={styles.content}>
-            <ProductsDisplay sortingKey={sortingKey} />
+            <ProductsDisplay />
           </Content>
         </Layout>
       </Layout>

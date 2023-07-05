@@ -5,9 +5,20 @@ CREATE TABLE `user` (
   `full_name` CHAR(30),
   `date_of_birth` DATETIME,
   `phone_number` CHAR(11),
-  `address` VARCHAR(255),
   `gender` TINYINT,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE `address` (
+  `address_id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `user_id` INT NOT NULL,
+  `city` VARCHAR(255) NOT NULL,
+  `district` VARCHAR(255) NOT NULL,
+  `ward` VARCHAR(255) NOT NULL,
+  `street` VARCHAR(255) NOT NULL,
+  `house_number` VARCHAR(255) NOT NULL,
+  `is_default` TINYINT NOT NULL,
+  FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 );
 
 CREATE TABLE `order` (

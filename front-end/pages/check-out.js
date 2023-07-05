@@ -1,25 +1,32 @@
 import Head from "next/head";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
 
 import NavigationBar from "./navigation-bar";
 import styles from "../styles/check-out.module.css";
-import { checkOutColumns, checkOutData } from "./components/layout";
+import { checkOutColumns, handleCheckOutData } from "./components/layout";
+import { handleGetUserDetails } from "./api-handlers/check-out";
 
 import { Table } from "antd";
 
 export default function CheckOut() {
-  const [checkoutData, setCheckoutData] = useState([]);
-  const data = checkOutData(checkoutData);
-  const router = useRouter();
+  const [checkOutData, setCheckOutData] = useState([]);
+  const [userInfo, setUserInfo] = useState();
+  const [address, setAddress] = useState("");
+
+  const data = handleCheckOutData(checkOutData);
 
   useEffect(() => {
-    const queryData = router.query.checkoutData;
+    const storedProducts = JSON.parse(localStorage.getItem("products"));
+    setCheckOutData(storedProducts);
 
-    if (queryData) {
-      const parsedData = JSON.parse(queryData);
-      setCheckoutData(parsedData);
-    }
+    handleGetUserDetails()
+      .then((data) => {
+        setUserInfo(data.user);
+        setAddress(data.address_display);
+      })
+      .catch((error) => {
+        console.log("Error: ", error);
+      });
   }, []);
 
   return (
@@ -28,8 +35,8 @@ export default function CheckOut() {
         <title>Check Out</title>
       </Head>
       <NavigationBar />
-      <div className={styles.content}>Delivery Address</div>
-      <div className={styles.content}>
+
+      <div className={styles.productsField}>
         <Table
           size="large"
           showHeader={true}
@@ -39,7 +46,13 @@ export default function CheckOut() {
           dataSource={data}
         ></Table>
       </div>
-      <div className={styles.content}>Payment Method</div>
+      <div className={styles.deliveryAddressField}>
+        <p className={styles.deliveryAddressTitle}>Delivery Address</p>
+        <div>{userInfo && userInfo.full_name}</div>
+        <div>{userInfo && userInfo.phone_number}</div>
+        <div>{address}</div>
+      </div>
+      <div className={styles.paymentField}>Payment Method</div>
     </div>
   );
 }

@@ -19,7 +19,7 @@ func SignIn(c *gin.Context, db *sql.DB) {
     }
 
 	//Call function checkValidUser to check if the account is valid
-    if err := entities.GetUserByEmail(account, db); err != nil {
+    if err := entities.CheckValidUser(account, db); err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid email or password! Please try again"})
         return
     }

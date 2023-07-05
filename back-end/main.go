@@ -63,6 +63,13 @@ func registerAPIHandlers() {
         handlers.SignIn(c, db)
     })
 
+    // Users
+    router.GET("/users/user/details", func(c *gin.Context) {
+        handlers.JWTAuthorize(c)
+        handlers.GetUserDetails(c, db)
+    })
+
+
     // Products
     router.GET("/products", func(c *gin.Context) {
         handlers.GetAllProducts(c, db)
