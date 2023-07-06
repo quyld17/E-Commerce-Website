@@ -5,13 +5,6 @@
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-.productsOrderedTitle {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-size: 25px;
-}
-
 .content {
   max-width: 1200px;
   margin-top: 20px;
@@ -35,6 +28,10 @@
   cursor: pointer;
 }
 
+.deleteButton {
+  color: lightskyblue;
+}
+
 .productName {
   cursor: pointer;
 }
@@ -56,7 +53,13 @@
   font-size: 20px;
 }
 
-.checkoutButton {
+.checkoutButtonField {
   display: flex;
   justify-content: flex-end;
+}
+
+.checkOutButton {
+  font-size: 25px;
+  width: 200px;
+  height: 50px;
 }

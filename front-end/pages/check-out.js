@@ -6,12 +6,17 @@ import styles from "../styles/check-out.module.css";
 import { checkOutColumns, handleCheckOutData } from "./components/layout";
 import { handleGetUserDetails } from "./api-handlers/check-out";
 
-import { Table } from "antd";
+import { Table, Radio, Space, Button } from "antd";
 
 export default function CheckOut() {
   const [checkOutData, setCheckOutData] = useState([]);
   const [userInfo, setUserInfo] = useState();
   const [address, setAddress] = useState("");
+  const [paymentMethod, setPaymentSelect] = useState(1);
+  const [total, setTotal] = useState(0);
+  const handlePaymentMethodSelect = (e) => {
+    setPaymentSelect(e.target.value);
+  };
 
   const data = handleCheckOutData(checkOutData);
 
@@ -38,6 +43,7 @@ export default function CheckOut() {
 
       <div className={styles.productsField}>
         <Table
+          style={{ fontSize: "16px" }}
           size="large"
           showHeader={true}
           tableLayout="fixed"
@@ -46,13 +52,58 @@ export default function CheckOut() {
           dataSource={data}
         ></Table>
       </div>
+
       <div className={styles.deliveryAddressField}>
         <p className={styles.deliveryAddressTitle}>Delivery Address</p>
-        <div>{userInfo && userInfo.full_name}</div>
-        <div>{userInfo && userInfo.phone_number}</div>
-        <div>{address}</div>
+        <p>{userInfo && userInfo.full_name}</p>
+        <p>{userInfo && userInfo.phone_number}</p>
+        <p>{address}</p>
       </div>
-      <div className={styles.paymentField}>Payment Method</div>
+
+      <div className={styles.paymentField}>
+        <p className={styles.paymentMethodTitle}>Payment Method</p>
+        <Radio.Group value={paymentMethod} onChange={handlePaymentMethodSelect}>
+          <Space direction="vertical">
+            <Radio className={styles.paymentMethodSelectField} value={1}>
+              Cash on Delivery
+            </Radio>
+            <Radio className={styles.paymentMethodSelectField} value={2}>
+              Bank Transfer
+            </Radio>
+          </Space>
+        </Radio.Group>
+      </div>
+
+      <div className={styles.totalField}>
+        <div className={styles.textField}>
+          <div className={styles.subtotal}>
+            <p>Subtotal:</p>
+            <p>asdasd</p>
+          </div>
+          <div className={styles.shippingTotal}>
+            <p>Shipping Total:</p>
+          </div>
+          <div className={styles.total}>
+            <p>Total:</p>
+            <p>
+              {Intl.NumberFormat("vi-VI", {
+                style: "currency",
+                currency: "VND",
+              }).format(total)}
+            </p>
+          </div>
+        </div>
+
+        <div className={styles.placeOrderButtonField}>
+          <Button
+            type="primary"
+            // onClick={handleCheckOut}
+            className={styles.placeOrderButton}
+          >
+            Place Order
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

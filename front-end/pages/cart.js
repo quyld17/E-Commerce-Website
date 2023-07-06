@@ -185,8 +185,12 @@ export default function CartPage() {
               }).format(total)}
             </p>
           </div>
-          <div className={styles.checkoutButton}>
-            <Button type="primary" size={"large"} onClick={handleCheckOut}>
+          <div className={styles.checkoutButtonField}>
+            <Button
+              className={styles.checkOutButton}
+              type="primary"
+              onClick={handleCheckOut}
+            >
               Check Out
             </Button>
           </div>

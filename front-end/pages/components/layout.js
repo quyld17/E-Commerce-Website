@@ -75,7 +75,10 @@ export const cartData = (
     }).format(product.price * product.quantity),
     action: (
       <Space size="middle">
-        <a onClick={() => handleQuantitySelection(product.product_id, 0)}>
+        <a
+          className={styles.deleteButton}
+          onClick={() => handleQuantitySelection(product.product_id, 0)}
+        >
           Delete
         </a>
       </Space>
@@ -87,14 +90,7 @@ export const cartData = (
 
 export const checkOutColumns = [
   {
-    title: (
-      <span
-        // style={{ fontFamily: "-apple-system", fontSize: "20px" }}
-        className={styles.productsOrderedTitle}
-      >
-        Products Ordered
-      </span>
-    ),
+    title: <span style={{ fontSize: "25px" }}>Products Ordered</span>,
     dataIndex: "product",
     width: "500px",
     fontSize: "25px",
