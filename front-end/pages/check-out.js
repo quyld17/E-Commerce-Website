@@ -1,19 +1,24 @@
 import Head from "next/head";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 import NavigationBar from "./navigation-bar";
 import styles from "../styles/check-out.module.css";
 import { checkOutColumns, handleCheckOutData } from "./components/layout";
 import { handleGetUserDetails } from "./api-handlers/check-out";
+import { handleGetCartSelectedProducts } from "./api-handlers/cart";
 
-import { Table, Radio, Space, Button } from "antd";
+import { Table, Radio, Space, Button, message } from "antd";
 
 export default function CheckOut() {
   const [checkOutData, setCheckOutData] = useState([]);
   const [userInfo, setUserInfo] = useState();
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentSelect] = useState(1);
-  const [total, setTotal] = useState(0);
+  const [subTotal, setSubTotal] = useState(0);
+
+  const router = useRouter();
+
   const handlePaymentMethodSelect = (e) => {
     setPaymentSelect(e.target.value);
   };
@@ -21,8 +26,25 @@ export default function CheckOut() {
   const data = handleCheckOutData(checkOutData);
 
   useEffect(() => {
-    const storedProducts = JSON.parse(localStorage.getItem("products"));
-    setCheckOutData(storedProducts);
+    const storedToken = localStorage.getItem("token");
+
+    if (!storedToken) {
+      router.push("/sign-in");
+      return;
+    }
+    const storedIDs = JSON.parse(localStorage.getItem("products"));
+    handleGetCartSelectedProducts(storedIDs)
+      .then((data) => {
+        if (data.error) {
+          console.log(data.error);
+        } else {
+          setCheckOutData(data.retrievedProducts);
+          setSubTotal(data.totalPrice);
+        }
+      })
+      .catch((error) => {
+        console.log("Error getting check-out products' details:", error);
+      });
 
     handleGetUserDetails()
       .then((data) => {
@@ -30,9 +52,19 @@ export default function CheckOut() {
         setAddress(data.address_display);
       })
       .catch((error) => {
-        console.log("Error: ", error);
+        console.log("Error getting delivery address: ", error);
       });
   }, []);
+
+  const handlePlaceOrder = () => {
+    if (paymentMethod !== 1) {
+      message.warning(
+        "Only Cash on Delivery is accepted at the moment. Please try again"
+      );
+    } else {
+      message.info("Order is being processed!");
+    }
+  };
 
   return (
     <div className={styles.layout}>
@@ -43,7 +75,6 @@ export default function CheckOut() {
 
       <div className={styles.productsField}>
         <Table
-          style={{ fontSize: "16px" }}
           size="large"
           showHeader={true}
           tableLayout="fixed"
@@ -78,7 +109,12 @@ export default function CheckOut() {
         <div className={styles.textField}>
           <div className={styles.subtotal}>
             <p>Subtotal:</p>
-            <p>asdasd</p>
+            <p>
+              {Intl.NumberFormat("vi-VI", {
+                style: "currency",
+                currency: "VND",
+              }).format(subTotal)}
+            </p>
           </div>
           <div className={styles.shippingTotal}>
             <p>Shipping Total:</p>
@@ -86,10 +122,10 @@ export default function CheckOut() {
           <div className={styles.total}>
             <p>Total:</p>
             <p>
-              {Intl.NumberFormat("vi-VI", {
+              {/* {Intl.NumberFormat("vi-VI", {
                 style: "currency",
                 currency: "VND",
-              }).format(total)}
+              }).format(total)} */}
             </p>
           </div>
         </div>
@@ -97,7 +133,7 @@ export default function CheckOut() {
         <div className={styles.placeOrderButtonField}>
           <Button
             type="primary"
-            // onClick={handleCheckOut}
+            onClick={handlePlaceOrder}
             className={styles.placeOrderButton}
           >
             Place Order

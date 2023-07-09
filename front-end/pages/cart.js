@@ -9,9 +9,23 @@ import {
   handleGetCartSelectedProducts,
 } from "./api-handlers/cart";
 import { cartColumns, cartData } from "./components/layout";
+import { handleCancel, handleOk } from "./components/confirm-window";
 import styles from "../styles/cart.module.css";
 
 import { Button, Table, Modal, message } from "antd";
+
+const handleProductRedirect = (id, router) => {
+  router.push(`/product/${id}`);
+};
+
+const handleCheckOut = (selectedProducts, router) => {
+  if (selectedProducts.length === 0) {
+    message.error("You have not selected any items for checkout");
+    return;
+  }
+  localStorage.setItem("products", JSON.stringify(selectedProducts));
+  router.push("/check-out");
+};
 
 export default function CartPage() {
   const [cartProducts, setCartProducts] = useState([]);
@@ -24,6 +38,13 @@ export default function CartPage() {
   const router = useRouter();
 
   useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+
+    if (!storedToken) {
+      router.push("/sign-in");
+      return;
+    }
+
     handleGetAllCartProducts()
       .then((data) => {
         setCartProducts(data);
@@ -55,7 +76,6 @@ export default function CartPage() {
     } else {
       handleAdjustCartProductQuantity(id, quantity)
         .then(() => {
-          // Update the quantity state after successful API call
           const updatedCartProducts = cartProducts.map((product) => {
             if (product.product_id === id) {
               return { ...product, quantity: quantity };
@@ -64,7 +84,6 @@ export default function CartPage() {
           });
           setCartProducts(updatedCartProducts);
 
-          // Update the quantity in the selectedProducts state
           const updatedSelectedProducts = selectedProducts.map((product) => {
             if (product.key === id) {
               return { ...product, quantity: quantity };
@@ -79,66 +98,11 @@ export default function CartPage() {
     }
   };
 
-  const handleOk = () => {
-    if (deletingProduct) {
-      const updatedSelectedProducts = selectedProducts.filter(
-        (product) => product.product_id !== deletingProduct.product_id
-      );
-      setSelectedProducts(updatedSelectedProducts);
-
-      handleAdjustCartProductQuantity(deletingProduct.product_id, 0)
-        .then(() => {
-          handleGetAllCartProducts()
-            .then((data) => {
-              setCartProducts(data);
-            })
-            .catch((error) => {
-              console.log("Error: ", error);
-            });
-        })
-        .catch((error) => {
-          console.log("Error: ", error);
-        });
-    }
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleProductRedirect = (id) => {
-    router.push(`/product/${id}`);
-  };
-
   const data = cartData(
     cartProducts,
     handleProductRedirect,
     handleQuantitySelection
   );
-
-  const handleCheckOut = () => {
-    if (selectedProducts.length === 0) {
-      message.error("You have not selected any items for checkout");
-      return;
-    }
-
-    handleGetCartSelectedProducts(selectedProducts)
-      .then((data) => {
-        if (data.error) {
-          console.log(data.error);
-        } else {
-          localStorage.setItem(
-            "products",
-            JSON.stringify(data.retrievedProducts)
-          );
-          router.push("/check-out");
-        }
-      })
-      .catch((error) => {
-        console.log("Error during checkout:", error);
-      });
-  };
 
   return (
     <div className={styles.layout}>
@@ -146,14 +110,23 @@ export default function CartPage() {
         <title>Cart</title>
       </Head>
       <NavigationBar />
+
       <Modal
         title="Do you want to remove this item?"
         open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
+        onOk={() =>
+          handleOk(
+            deletingProduct,
+            selectedProducts,
+            setSelectedProducts,
+            setIsModalOpen
+          )
+        }
+        onCancel={() => handleCancel(setIsModalOpen)}
       >
         <p>{deletingProduct && deletingProduct.product_name}</p>
       </Modal>
+
       <div className={styles.content}>
         <Table
           size="large"
@@ -162,10 +135,10 @@ export default function CartPage() {
             selectedRowKeys,
             onChange: (selectedRowKeys, selectedRows) => {
               setSelectedRowKeys(selectedRowKeys);
-              const selectedProductIds = selectedRows.map((row) => ({
+              const selectedProductIDs = selectedRows.map((row) => ({
                 product_id: row.key,
               }));
-              setSelectedProducts(selectedProductIds);
+              setSelectedProducts(selectedProductIDs);
             },
           }}
           tableLayout="fixed"
@@ -189,7 +162,7 @@ export default function CartPage() {
             <Button
               className={styles.checkOutButton}
               type="primary"
-              onClick={handleCheckOut}
+              onClick={() => handleCheckOut(selectedProducts, router)}
             >
               Check Out
             </Button>

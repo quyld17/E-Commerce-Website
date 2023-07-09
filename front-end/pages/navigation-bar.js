@@ -50,6 +50,7 @@ export default function NavigationBar() {
     setToken("");
     setUserEmail("");
     router.push("/");
+    message.success("Sign out successfully!");
   };
 
   const items = [
@@ -60,17 +61,6 @@ export default function NavigationBar() {
     {
       key: "2",
       label: <Link href="/sign-up">Sign up</Link>,
-    },
-  ];
-
-  const signedInItems = [
-    {
-      key: "3",
-      label: <span>Profile</span>,
-    },
-    {
-      key: "4",
-      label: <span onClick={handleSignOut}>Sign out</span>,
     },
   ];
 
@@ -118,7 +108,11 @@ export default function NavigationBar() {
           <p className={styles.userEmail}>{userEmail}</p>
         </Dropdown>
       ) : (
-        <Dropdown menu={{ items }} trigger={["click"]} placement="bottom">
+        <Dropdown
+          menu={{ items }}
+          trigger={["click", "hover"]}
+          placement="bottom"
+        >
           <div className={styles.userLogoWrapper}>
             <BiUserCircle className={styles.userLogo} />
           </div>

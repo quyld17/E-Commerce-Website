@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"net/http"
+	"net/mail"
 
 	"github.com/gin-gonic/gin"
 	"github.com/quyld17/E-Commerce-Website/entities"
@@ -11,23 +12,29 @@ import (
 
 func SignIn(c *gin.Context, db *sql.DB) {
     var account entities.User
-
-    //Extract data from received JSON file to account
     if err := c.ShouldBindJSON(&account); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
 
-	//Call function checkValidUser to check if the account is valid
+    _, err := mail.ParseAddress(account.Email)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email address! Email must include '@' and a domain"})
+        return
+    }
+    if account.Password == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Password must not be empty! Please try again"})
+        return
+    }
+
     if err := entities.CheckValidUser(account, db); err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid email or password! Please try again"})
         return
     }
 
-	//Generate a JWT
 	token, err := services.GenerateAuthorizedToken(account.Email)
     if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Sign in unsuccessfully. Please try again"})
         return
     }
 

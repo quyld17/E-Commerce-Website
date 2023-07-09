@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -13,7 +12,8 @@ import (
 func GetAllProducts(c *gin.Context, db *sql.DB) {
 	productDetails, err := entities.GetAllProducts(c, db)
 	if err != nil {
-		log.Fatal(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to retrieve products at the moment. Please try again"})
+		return
 	}
 	
 	c.JSON(http.StatusOK, productDetails)
@@ -21,8 +21,6 @@ func GetAllProducts(c *gin.Context, db *sql.DB) {
 
 func GetProductDetails(c *gin.Context, db *sql.DB) {
 	var product entities.Product
-
-	//Extract data from received JSON file to product_id
     if err := c.ShouldBindJSON(&product); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
@@ -30,16 +28,14 @@ func GetProductDetails(c *gin.Context, db *sql.DB) {
 
 	productID, err := strconv.Atoi(product.ProductIDString)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ProductID"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Product ID"})
 		return
 	}
 
 	var productDetail entities.Product
 	productImages := []entities.ProductImage{}
-
-	//Call function GetSpecificProductDetail to retrieve product's detail
     if productDetail, productImages, err = entities.GetSpecificProductDetail(productID, c, db); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve product details"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve product's details"})
 		return
 	}
 

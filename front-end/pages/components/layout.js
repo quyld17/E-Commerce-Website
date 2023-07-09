@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import styles from "../../styles/cart.module.css";
 import { InputNumber, Space } from "antd";
 
@@ -34,6 +35,7 @@ export const cartData = (
   handleProductRedirect,
   handleQuantitySelection
 ) => {
+  const router = useRouter();
   const data = cartProducts.map((product) => ({
     key: product.product_id,
     product: (
@@ -42,11 +44,11 @@ export const cartData = (
           className={styles.productThumbnail}
           src={product.image_url}
           alt={product.product_name}
-          onClick={() => handleProductRedirect(product.product_id)}
+          onClick={() => handleProductRedirect(product.product_id, router)}
         />
         <span
           className={styles.productName}
-          onClick={() => handleProductRedirect(product.product_id)}
+          onClick={() => handleProductRedirect(product.product_id, router)}
         >
           {product.product_name}
         </span>

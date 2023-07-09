@@ -24,7 +24,7 @@ export function handleGetProductDetailsAPI(product_id_string) {
       product_id_string,
     };
 
-    const endpoint = "/products/product/detail";
+    const endpoint = "/products/product/details";
 
     postMethodAPI(
       info,

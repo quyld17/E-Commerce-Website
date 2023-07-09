@@ -74,7 +74,7 @@ func registerAPIHandlers() {
     router.GET("/products", func(c *gin.Context) {
         handlers.GetAllProducts(c, db)
     })
-    router.POST("/products/product/detail", func(c *gin.Context) {
+    router.POST("/products/product/details", func(c *gin.Context) {
         handlers.GetProductDetails(c, db)
     })
 
@@ -100,9 +100,6 @@ func registerAPIHandlers() {
         handlers.JWTAuthorize(c)
         handlers.GetCartSelectedProducts(c, db)
     })
-    
-    
-    
     
     router.Run("localhost:8080")
 }

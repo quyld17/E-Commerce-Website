@@ -6,14 +6,23 @@ export default function postMethodAPI(
 ) {
   const baseURL = "http://localhost:8080";
   const token = localStorage.getItem("token");
+  let headers = {};
+
+  if (!token) {
+    headers = {
+      "Content-Type": "application/json",
+    };
+  } else {
+    headers = {
+      "Content-Type": "application/json",
+      Authorization: `${token}`,
+    };
+  }
 
   // Make a POST API to backend
   fetch(baseURL + endpoint, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `${token}`,
-    },
+    headers: headers,
     body: JSON.stringify(credentials),
   })
     .then((response) => response.json())

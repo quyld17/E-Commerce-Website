@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+
+	"github.com/gin-gonic/gin"
 )
 
 type User struct {
@@ -63,6 +65,7 @@ func GetUserInfosAndAddress(userID int, db *sql.DB) (User, Address, string, erro
 		log.Fatal(err)
 	}
 	defer row.Close()
+	
 	var address Address
 	if row.Next() {
 		err := row.Scan(&address.City, &address.District, &address.Ward, &address.Street, &address.HouseNumber)
@@ -73,4 +76,15 @@ func GetUserInfosAndAddress(userID int, db *sql.DB) (User, Address, string, erro
 	addressDisplay := address.HouseNumber + ", " + address.Street + ", " + address.Ward + ", " + address.District + ", " + address.City 
 
 	return user, address, addressDisplay, nil
+}
+
+func GetUserID(c *gin.Context, db *sql.DB) (int, error) {
+	email := c.GetString("email")
+	row := db.QueryRow("SELECT user_id FROM user WHERE email = ?", email)
+	var userID int
+	if err := row.Scan(&userID); err != nil {
+		log.Fatal(err)
+		return 0, nil
+	}
+	return userID, nil
 }

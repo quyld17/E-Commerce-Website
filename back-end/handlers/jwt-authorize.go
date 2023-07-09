@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"log"
 	"net/http"
 	"os"
 
@@ -13,9 +12,9 @@ import (
 func JWTAuthorize(c *gin.Context) {
 	err := godotenv.Load("credentials.env")
     if err != nil {
-        log.Fatal("Error loading .env file")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
     }
-	// Get the JWT token from the request headers
 	tokenString := c.GetHeader("Authorization")
 
 	// Validate the JWT token
@@ -40,6 +39,5 @@ func JWTAuthorize(c *gin.Context) {
 		return
 	}
 
-	// Call the next handler
 	c.Next()
 }

@@ -8,10 +8,13 @@ import { Card, Button, message } from "antd";
 const { Meta } = Card;
 
 export default function ProductsDisplay() {
+  const [token, setToken] = useState("");
   const [products, setProducts] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    setToken(storedToken);
     handleGetAllProductsAPI(setProducts);
   }, []);
 
@@ -21,6 +24,12 @@ export default function ProductsDisplay() {
 
   const handleAddToCartClick = (event, id) => {
     event.stopPropagation();
+
+    if (token === null) {
+      message.info("Please sign in to continue");
+      return;
+    }
+
     handleAddToCartAPI(id, 1)
       .then((data) => {
         if (data.error) {

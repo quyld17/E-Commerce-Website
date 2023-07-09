@@ -20,7 +20,7 @@ func GenerateAuthorizedToken(email string) (string, error) {
 	// Set the claims (payload) for the token
 	claims := token.Claims.(jwt.MapClaims)
 	claims["email"] = email
-	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 	// Token expiration time (1 day)
 
 	// Set the secret key for signing the token

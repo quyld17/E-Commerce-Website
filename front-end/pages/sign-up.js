@@ -35,10 +35,10 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  //Call signUpValidate component to validate credentials
+  // Call signUpValidate component to validate credentials
   const handleSignUp = (e) => {
     e.preventDefault();
-    //If there is no errors, call the API handler
+    // If there are no errors, call the API handler
     if (!signUpValidate(email, password, confirmPassword)) {
       handleSignUpAPI(email, password);
     }

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +11,8 @@ import (
 func GetAllCategories(c *gin.Context, db *sql.DB) {
 	categories, err := entities.GetAllCategoryNames(c, db)
 	if err != nil {
-		log.Fatal(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to retrieve categories at the moment. Please try again"})
+		return
 	}
 
 	c.JSON(http.StatusOK, categories)
