@@ -9,19 +9,19 @@ import (
 )
 
 type User struct {
-	Email    	string	`json:"email"`
-	Password  	string 	`json:"password"`
-	FullName	string	`json:"full_name"`
-	PhoneNumber string	`json:"phone_number"`
+	Email       string `json:"email"`
+	Password    string `json:"password"`
+	FullName    string `json:"full_name"`
+	PhoneNumber string `json:"phone_number"`
 }
 
 type Address struct {
-	City 		string	`json:"city"`
-	District	string	`json:"district"`
-	Ward		string 	`json:"ward"`
-	Street		string	`json:"street"`
-	HouseNumber	string	`json:"house_number"`
-	IsDefault 	int 	`json:"is_default"`
+	City        string `json:"city"`
+	District    string `json:"district"`
+	Ward        string `json:"ward"`
+	Street      string `json:"street"`
+	HouseNumber string `json:"house_number"`
+	IsDefault   int    `json:"is_default"`
 }
 
 func CheckValidUser(account User, db *sql.DB) error {
@@ -65,7 +65,7 @@ func GetUserInfosAndAddress(userID int, db *sql.DB) (User, Address, string, erro
 		log.Fatal(err)
 	}
 	defer row.Close()
-	
+
 	var address Address
 	if row.Next() {
 		err := row.Scan(&address.City, &address.District, &address.Ward, &address.Street, &address.HouseNumber)
@@ -73,7 +73,7 @@ func GetUserInfosAndAddress(userID int, db *sql.DB) (User, Address, string, erro
 			log.Fatal(err)
 		}
 	}
-	addressDisplay := address.HouseNumber + ", " + address.Street + ", " + address.Ward + ", " + address.District + ", " + address.City 
+	addressDisplay := address.HouseNumber + ", " + address.Street + ", " + address.Ward + ", " + address.District + ", " + address.City
 
 	return user, address, addressDisplay, nil
 }

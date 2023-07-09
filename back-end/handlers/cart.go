@@ -12,13 +12,13 @@ func GetAllCartProducts(c *gin.Context, db *sql.DB) {
 	userID, err := entities.GetUserID(c, db)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
+		return
 	}
 
 	// cartProducts := []entities.Product{}
 	cartProducts, err := entities.CartProducts(userID, c, db)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error" : "Failed to retrieve cart's data. Please try again"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve cart's data. Please try again"})
 	}
 
 	c.JSON(http.StatusOK, cartProducts)
@@ -28,16 +28,16 @@ func AddProductToCart(c *gin.Context, db *sql.DB) {
 	userID, err := entities.GetUserID(c, db)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
+		return
 	}
 
 	var product entities.Product
-    if err := c.ShouldBindJSON(&product); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
+	if err := c.ShouldBindJSON(&product); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-    if err := entities.AddProductToCart(userID, product.ProductID, product.Quantity, c, db); err != nil {
+	if err := entities.AddProductToCart(userID, product.ProductID, product.Quantity, c, db); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add product to cart. Please try again"})
 		return
 	}
@@ -49,18 +49,18 @@ func AdjustCartProductQuantity(c *gin.Context, db *sql.DB) {
 	userID, err := entities.GetUserID(c, db)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
+		return
 	}
 
 	var product entities.Product
 	if err := c.ShouldBindJSON(&product); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	if err := entities.ChangeCartProductQuantity(userID, product.ProductID, product.Quantity, c, db); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to adjust product's quantity. Please try again"})
-        return
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Adjust product's quantity successfully!"})
@@ -70,7 +70,7 @@ func GetCartSelectedProducts(c *gin.Context, db *sql.DB) {
 	userID, err := entities.GetUserID(c, db)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
+		return
 	}
 
 	products := []entities.Product{}
@@ -86,7 +86,7 @@ func GetCartSelectedProducts(c *gin.Context, db *sql.DB) {
 		product, err := entities.ProductsForCheckout(userID, productID, c, db)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve selected products. Please try again"})
-        	return
+			return
 		}
 		retrievedProducts = append(retrievedProducts, product)
 		totalPrice = totalPrice + (product.Price * product.Quantity)

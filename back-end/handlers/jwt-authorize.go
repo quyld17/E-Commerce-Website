@@ -11,10 +11,10 @@ import (
 
 func JWTAuthorize(c *gin.Context) {
 	err := godotenv.Load("credentials.env")
-    if err != nil {
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-        return
-    }
+		return
+	}
 	tokenString := c.GetHeader("Authorization")
 
 	// Validate the JWT token

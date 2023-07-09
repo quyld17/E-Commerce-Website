@@ -11,9 +11,9 @@ import (
 
 func GenerateAuthorizedToken(email string) (string, error) {
 	err := godotenv.Load("credentials.env")
-    if err != nil {
-        log.Fatal("Error loading .env file")
-    }
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	// Create a new token object
 	token := jwt.New(jwt.SigningMethodHS256)
 

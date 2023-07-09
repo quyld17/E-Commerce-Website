@@ -22,11 +22,11 @@ func AddProductToCart(userID int, productID int, quantity int, c *gin.Context, d
 			log.Fatal(err)
 		}
 	} else {
-			// Product already exists in the cart, update the quantity
-			_, err = db.Exec("UPDATE cart_product SET quantity = quantity + ? WHERE user_id = ? AND product_id = ?", quantity, userID, productID)
-			if err != nil {
-				log.Fatal(err)
-			}
+		// Product already exists in the cart, update the quantity
+		_, err = db.Exec("UPDATE cart_product SET quantity = quantity + ? WHERE user_id = ? AND product_id = ?", quantity, userID, productID)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	return nil
@@ -70,7 +70,7 @@ func ChangeCartProductQuantity(userID int, productID int, quantity int, c *gin.C
 			return err
 		}
 	}
-	return nil	
+	return nil
 }
 
 func ProductsForCheckout(userID, productID int, c *gin.Context, db *sql.DB) (Product, error) {
