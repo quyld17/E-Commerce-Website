@@ -1,11 +1,11 @@
-package entities
+package users
 
 import (
 	"database/sql"
 	"fmt"
 	"log"
 
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 )
 
 type User struct {
@@ -39,7 +39,7 @@ func CheckValidUser(account User, db *sql.DB) error {
 	return fmt.Errorf("%v", err)
 }
 
-func RegisterNewUser(newUser User, db *sql.DB) error {
+func CreateNewUser(newUser User, db *sql.DB) error {
 	_, err := db.Exec("INSERT INTO user (email, password) VALUES (?, ?)", newUser.Email, newUser.Password)
 	if err != nil {
 		return err
@@ -47,7 +47,7 @@ func RegisterNewUser(newUser User, db *sql.DB) error {
 	return nil
 }
 
-func GetUserInfosAndAddress(userID int, db *sql.DB) (User, Address, string, error) {
+func GetUserInfosAndAddress(userID int, db *sql.DB) (User, Address, error) {
 	row, err := db.Query("SELECT full_name, phone_number FROM user where user_id = ?;", userID)
 	if err != nil {
 		log.Fatal(err)
@@ -73,13 +73,12 @@ func GetUserInfosAndAddress(userID int, db *sql.DB) (User, Address, string, erro
 			log.Fatal(err)
 		}
 	}
-	addressDisplay := address.HouseNumber + ", " + address.Street + ", " + address.Ward + ", " + address.District + ", " + address.City
 
-	return user, address, addressDisplay, nil
+	return user, address, nil
 }
 
-func GetUserID(c *gin.Context, db *sql.DB) (int, error) {
-	email := c.GetString("email")
+func GetUserID(c echo.Context, db *sql.DB) (int, error) {
+	email := c.Get("email").(string)
 	row := db.QueryRow("SELECT user_id FROM user WHERE email = ?", email)
 	var userID int
 	if err := row.Scan(&userID); err != nil {

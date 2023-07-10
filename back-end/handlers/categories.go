@@ -4,16 +4,15 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-	"github.com/quyld17/E-Commerce-Website/entities"
+	"github.com/labstack/echo/v4"
+	categories "github.com/quyld17/E-Commerce-Website/entities/category"
 )
 
-func GetAllCategories(c *gin.Context, db *sql.DB) {
-	categories, err := entities.GetAllCategoryNames(c, db)
+func GetAllCategories(c echo.Context, db *sql.DB) error {
+	categories, err := categories.GetAll(c, db)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to retrieve categories at the moment. Please try again"})
-		return
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to retrieve categories at the moment. Please try again")
 	}
 
-	c.JSON(http.StatusOK, categories)
+	return c.JSON(http.StatusOK, categories)
 }

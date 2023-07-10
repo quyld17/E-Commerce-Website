@@ -5,31 +5,27 @@ import (
 	"net/http"
 	"net/mail"
 
-	"github.com/gin-gonic/gin"
-	"github.com/quyld17/E-Commerce-Website/entities"
+	"github.com/labstack/echo/v4"
+	users "github.com/quyld17/E-Commerce-Website/entities/user"
 )
 
-func SignUp(c *gin.Context, db *sql.DB) {
-	var newUser entities.User
-	if err := c.ShouldBindJSON(&newUser); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+func SignUp(c echo.Context, db *sql.DB) error {
+	var newUser users.User
+	if err := c.Bind(&newUser); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
 	_, err := mail.ParseAddress(newUser.Email)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email address! Email must include '@' and a domain"})
-		return
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid email address! Email must include '@' and a domain")
 	}
 	if newUser.Password == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Password must not be empty! Please try again"})
-		return
+		return echo.NewHTTPError(http.StatusBadRequest, "Password must not be empty! Please try again")
 	}
 
-	if err := entities.RegisterNewUser(newUser, db); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Account already existed! Please try again"})
-		return
+	if err := users.CreateNewUser(newUser, db); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Account already existed! Please try again")
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Account created successfully!"})
+	return c.JSON(http.StatusOK, "Account created successfully!")
 }

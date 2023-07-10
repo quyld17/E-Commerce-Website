@@ -1,10 +1,10 @@
-package entities
+package categories
 
 import (
 	"database/sql"
 	"log"
 
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 )
 
 type Category struct {
@@ -12,7 +12,7 @@ type Category struct {
 	CategoryName string `json:"category_name"`
 }
 
-func GetAllCategoryNames(c *gin.Context, db *sql.DB) ([]Category, error) {
+func GetAll(c echo.Context, db *sql.DB) ([]Category, error) {
 	rows, err := db.Query("SELECT category_id, category_name FROM category")
 	if err != nil {
 		log.Fatal(err)

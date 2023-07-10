@@ -5,44 +5,38 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
-	"github.com/quyld17/E-Commerce-Website/entities"
+	"github.com/labstack/echo/v4"
+	products "github.com/quyld17/E-Commerce-Website/entities/product"
 )
 
-func GetAllProducts(c *gin.Context, db *sql.DB) {
-	productDetails, err := entities.GetAllProducts(c, db)
+func GetAllProducts(c echo.Context, db *sql.DB) error {
+	productDetails, err := products.GetAll(c, db)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to retrieve products at the moment. Please try again"})
-		return
+		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to retrieve products at the moment. Please try again")
 	}
 
-	c.JSON(http.StatusOK, productDetails)
+	return c.JSON(http.StatusOK, productDetails)
 }
 
-func GetProductDetails(c *gin.Context, db *sql.DB) {
-	var product entities.Product
-	if err := c.ShouldBindJSON(&product); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+func GetProductDetails(c echo.Context, db *sql.DB) error {
+	var product products.Product
+	if err := c.Bind(&product); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+
 	}
 
 	productID, err := strconv.Atoi(product.ProductIDString)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Product ID"})
-		return
+		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	var productDetail entities.Product
-	productImages := []entities.ProductImage{}
-	if productDetail, productImages, err = entities.GetSpecificProductDetail(productID, c, db); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve product's details"})
-		return
+	productDetail, productImages, err := products.GetSingleProductDetails(productID, c, db)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to retrieve product's details")
 	}
 
-	productDetails := gin.H{
+	return c.JSON(http.StatusOK, echo.Map{
 		"product_detail": productDetail,
 		"product_images": productImages,
-	}
-
-	c.JSON(http.StatusOK, productDetails)
+	})
 }

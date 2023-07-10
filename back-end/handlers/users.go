@@ -4,27 +4,23 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-	"github.com/quyld17/E-Commerce-Website/entities"
+	"github.com/labstack/echo/v4"
+	users "github.com/quyld17/E-Commerce-Website/entities/user"
 )
 
-func GetUserDetails(c *gin.Context, db *sql.DB) {
-	userID, err := entities.GetUserID(c, db)
+func GetUserDetails(c echo.Context, db *sql.DB) error {
+	userID, err := users.GetUserID(c, db)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	user, address, addressDisplay, err := entities.GetUserInfosAndAddress(userID, db)
+	user, address, err := users.GetUserInfosAndAddress(userID, db)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	response := gin.H{
-		"user":            user,
-		"address":         address,
-		"address_display": addressDisplay,
+		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	c.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusOK, echo.Map{
+		"user":    user,
+		"address": address,
+	})
 }

@@ -4,7 +4,7 @@ import { message } from "antd";
 
 export function handleGetAllCartProducts() {
   return new Promise((resolve, reject) => {
-    const endpoint = "/cart/products/";
+    const endpoint = "/cart/products";
 
     // Call getMethodAPI to handle API request
     getMethodAPI(

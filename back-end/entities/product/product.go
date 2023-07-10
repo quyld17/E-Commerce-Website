@@ -1,10 +1,10 @@
-package entities
+package products
 
 import (
 	"database/sql"
 	"log"
 
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 )
 
 type Product struct {
@@ -24,11 +24,10 @@ type ProductImage struct {
 	IsThumbnail int    `json:"is_thumbnail"`
 }
 
-func GetAllProducts(c *gin.Context, db *sql.DB) ([]Product, error) {
+func GetAll(c echo.Context, db *sql.DB) ([]Product, error) {
 	rows, err := db.Query("SELECT product.product_id, product.product_name, product.price, product.category_id, product_image.image_url FROM product, product_image WHERE product_image.is_thumbnail = 1 AND product.product_id = product_image.product_id;")
 	if err != nil {
 		log.Fatal(err)
-		return nil, err
 	}
 	defer rows.Close()
 
@@ -38,20 +37,18 @@ func GetAllProducts(c *gin.Context, db *sql.DB) ([]Product, error) {
 		err := rows.Scan(&product.ProductID, &product.ProductName, &product.Price, &product.CategoryID, &product.ImageURL)
 		if err != nil {
 			log.Fatal(err)
-			return nil, err
 		}
 		productDetails = append(productDetails, product)
 	}
 	err = rows.Err()
 	if err != nil {
 		log.Fatal(err)
-		return nil, err
 	}
 
 	return productDetails, nil
 }
 
-func GetSpecificProductDetail(productID int, c *gin.Context, db *sql.DB) (Product, []ProductImage, error) {
+func GetSingleProductDetails(productID int, c echo.Context, db *sql.DB) (*Product, []ProductImage, error) {
 	rows, err := db.Query("SELECT product.product_id, product.product_name, product.price, product.in_stock_quantity, product_image.image_url, product_image.is_thumbnail FROM product JOIN product_image ON product.product_id = product_image.product_id WHERE product.product_id = ?;", productID)
 	if err != nil {
 		log.Fatal(err)
@@ -79,5 +76,5 @@ func GetSpecificProductDetail(productID int, c *gin.Context, db *sql.DB) (Produc
 		log.Fatal(err)
 	}
 
-	return productDetail, productImages, nil
+	return &productDetail, productImages, nil
 }

@@ -5,38 +5,33 @@ import (
 	"net/http"
 	"net/mail"
 
-	"github.com/gin-gonic/gin"
-	"github.com/quyld17/E-Commerce-Website/entities"
-	"github.com/quyld17/E-Commerce-Website/services"
+	"github.com/labstack/echo/v4"
+	users "github.com/quyld17/E-Commerce-Website/entities/user"
+	"github.com/quyld17/E-Commerce-Website/services/jwt"
 )
 
-func SignIn(c *gin.Context, db *sql.DB) {
-	var account entities.User
-	if err := c.ShouldBindJSON(&account); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+func SignIn(c echo.Context, db *sql.DB) error {
+	var account users.User
+	if err := c.Bind(&account); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
 	_, err := mail.ParseAddress(account.Email)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid email address! Email must include '@' and a domain"})
-		return
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid email address! Email must include '@' and a domain")
 	}
 	if account.Password == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Password must not be empty! Please try again"})
-		return
+		return echo.NewHTTPError(http.StatusBadRequest, "Password must not be empty! Please try again")
 	}
 
-	if err := entities.CheckValidUser(account, db); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid email or password! Please try again"})
-		return
+	if err := users.CheckValidUser(account, db); err != nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "Invalid email or password! Please try again")
 	}
 
-	token, err := services.GenerateAuthorizedToken(account.Email)
+	token, err := jwt.Generate(account.Email)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Sign in unsuccessfully. Please try again"})
-		return
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": token})
+	return c.JSON(http.StatusOK, echo.Map{"token": token})
 }
