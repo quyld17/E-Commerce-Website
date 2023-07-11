@@ -66,7 +66,7 @@ export default function CartPage() {
       });
   }, [selectedProducts]);
 
-  const handleQuantitySelection = (id, quantity) => {
+  const handleAdjustQuantity = (id, quantity) => {
     if (quantity === 0) {
       // Open the modal to confirm deletion
       setIsModalOpen(true);
@@ -101,7 +101,7 @@ export default function CartPage() {
   const data = cartData(
     cartProducts,
     handleProductRedirect,
-    handleQuantitySelection
+    handleAdjustQuantity
   );
 
   return (

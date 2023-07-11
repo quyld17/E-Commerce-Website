@@ -18,7 +18,7 @@ func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
 	})
 
 	// Users
-	router.GET("/users/user/details", jwt.Authorize(func(c echo.Context) error {
+	router.GET("/users/me/details", jwt.Authorize(func(c echo.Context) error {
 		return handlers.GetUserDetails(c, db)
 	}))
 
@@ -36,18 +36,15 @@ func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
 	})
 
 	// Cart
-	// router.GET("/cart/products/", func(c echo.Context) error {
-	// 	handlers.JWTAuthorize(c)
-	// 	handlers.GetAllCartProducts(c, db)
-	// })
-	// router.POST("/cart/products/product/add", func(c echo.Context) error {
-	// 	handlers.JWTAuthorize(c)
-	// 	handlers.AddProductToCart(c, db)
-	// })
-	// router.POST("/cart/products/product/quantity/adjust", func(c echo.Context) error {
-	// 	handlers.JWTAuthorize(c)
-	// 	handlers.AdjustCartProductQuantity(c, db)
-	// })
+	router.GET("/cart", jwt.Authorize(func(c echo.Context) error {
+		return handlers.GetAllCartProducts(c, db)
+	}))
+	router.POST("/cart/product/addition", jwt.Authorize(func(c echo.Context) error {
+		return handlers.AddProductToCart(c, db)
+	}))
+	router.POST("/cart/product/quantity", jwt.Authorize(func(c echo.Context) error {
+		return handlers.AdjustCartProductQuantity(c, db)
+	}))
 	// router.POST("/cart/products/selected", func(c echo.Context) error {
 	// 	handlers.JWTAuthorize(c)
 	// 	handlers.GetCartSelectedProducts(c, db)

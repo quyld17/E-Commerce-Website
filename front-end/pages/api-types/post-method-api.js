@@ -19,7 +19,6 @@ export default function postMethodAPI(
     };
   }
 
-  // Make a POST API to backend
   fetch(baseURL + endpoint, {
     method: "POST",
     headers: headers,
@@ -27,9 +26,9 @@ export default function postMethodAPI(
   })
     .then((response) => response.json())
     .then((data) => {
-      // Check if the response data has an 'error' property
-      if (data.error) {
-        errorCallback(data.error);
+      // Check if the response data has an 'message' property (represent for error)
+      if (data.message) {
+        errorCallback(data.message);
       } else {
         successCallback(data);
       }
