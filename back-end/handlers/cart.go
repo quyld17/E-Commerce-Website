@@ -14,15 +14,17 @@ func GetAllCartProducts(c echo.Context, db *sql.DB) error {
 	userID, err := users.GetUserID(c, db)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
-
 	}
 
-	cartProducts, err := cart.GetAllProducts(userID, c, db)
+	cartProducts, totalPrice, err := cart.GetAllProducts(userID, c, db)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to retrieve cart's data. Please try again")
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
-
-	return c.JSON(http.StatusOK, cartProducts)
+	// "Failed to retrieve cart's data. Please try again"
+	return c.JSON(http.StatusOK, echo.Map{
+		"cart_products": cartProducts,
+		"total_price":   totalPrice,
+	})
 }
 
 func AddProductToCart(c echo.Context, db *sql.DB) error {
@@ -61,34 +63,23 @@ func AdjustCartProductQuantity(c echo.Context, db *sql.DB) error {
 	return c.JSON(http.StatusOK, "Adjust product's quantity successfully!")
 }
 
-// func GetCartSelectedProducts(c *gin.Context, db *sql.DB) {
-// 	userID, err := entities.GetUserID(c, db)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
+func SelectCartProducts(c echo.Context, db *sql.DB) error {
+	userID, err := users.GetUserID(c, db)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
 
-// 	products := []entities.Product{}
-// 	if err := c.ShouldBindJSON(&products); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
+	products := []products.Product{}
+	if err := c.Bind(&products); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
 
-// 	retrievedProducts := []entities.Product{}
-// 	totalPrice := 0
-// 	for _, product := range products {
-// 		productID := product.ProductID
-// 		product, err := entities.ProductsForCheckout(userID, productID, c, db)
-// 		if err != nil {
-// 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve selected products. Please try again"})
-// 			return
-// 		}
-// 		retrievedProducts = append(retrievedProducts, product)
-// 		totalPrice = totalPrice + (product.Price * product.Quantity)
-// 	}
-// 	response := gin.H{
-// 		"retrievedProducts": retrievedProducts,
-// 		"totalPrice":        totalPrice,
-// 	}
-// 	c.JSON(http.StatusOK, response)
-// }
+	for _, product := range products {
+		productID := product.ProductID
+		if err := cart.SelectCartProducts(userID, productID, c, db); err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err)
+		}
+	}
+
+	return c.JSON(http.StatusOK, "Select product successfully!")
+}

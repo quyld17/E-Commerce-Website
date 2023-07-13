@@ -16,6 +16,7 @@ type Product struct {
 	InStockQuantity int    `json:"in_stock_quantity"`
 	ImageURL        string `json:"image_url"`
 	Quantity        int    `json:"quantity"`
+	Selected        int    `json:"selected"`
 }
 
 type ProductImage struct {
@@ -25,7 +26,18 @@ type ProductImage struct {
 }
 
 func GetAll(c echo.Context, db *sql.DB) ([]Product, error) {
-	rows, err := db.Query("SELECT product.product_id, product.product_name, product.price, product.category_id, product_image.image_url FROM product, product_image WHERE product_image.is_thumbnail = 1 AND product.product_id = product_image.product_id;")
+	rows, err := db.Query(`SELECT 
+								product.product_id, 
+								product.product_name, 
+								product.price, 
+								product.category_id, 
+								product_image.image_url 
+							FROM 
+								product, 
+								product_image 
+							WHERE 
+								product_image.is_thumbnail = 1 AND 
+								product.product_id = product_image.product_id;`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,7 +61,22 @@ func GetAll(c echo.Context, db *sql.DB) ([]Product, error) {
 }
 
 func GetSingleProductDetails(productID int, c echo.Context, db *sql.DB) (*Product, []ProductImage, error) {
-	rows, err := db.Query("SELECT product.product_id, product.product_name, product.price, product.in_stock_quantity, product_image.image_url, product_image.is_thumbnail FROM product JOIN product_image ON product.product_id = product_image.product_id WHERE product.product_id = ?;", productID)
+	rows, err := db.Query(`SELECT 
+								product.product_id, 
+								product.product_name, 
+								product.price, 
+								product.in_stock_quantity, 
+								product_image.image_url, 
+								product_image.is_thumbnail 
+							FROM 
+								product 
+							JOIN 
+								product_image 
+							ON 
+								product.product_id = product_image.product_id 
+							WHERE 
+								product.product_id = ?;`,
+		productID)
 	if err != nil {
 		log.Fatal(err)
 	}

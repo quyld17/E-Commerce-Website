@@ -45,8 +45,7 @@ func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
 	router.POST("/cart/product/quantity", jwt.Authorize(func(c echo.Context) error {
 		return handlers.AdjustCartProductQuantity(c, db)
 	}))
-	// router.POST("/cart/products/selected", func(c echo.Context) error {
-	// 	handlers.JWTAuthorize(c)
-	// 	handlers.GetCartSelectedProducts(c, db)
-	// })
+	router.POST("/cart/selection", jwt.Authorize(func(c echo.Context) error {
+		return handlers.SelectCartProducts(c, db)
+	}))
 }

@@ -71,9 +71,9 @@ export function handleAdjustCartProductQuantity(product_id, quantity) {
   });
 }
 
-export function handleGetCartSelectedProducts(selectedProducts) {
+export function handleSelectCartProducts(selectedProducts) {
   return new Promise((resolve, reject) => {
-    const endpoint = "/cart/products/selected";
+    const endpoint = "/cart/selection";
 
     postMethodAPI(
       selectedProducts,
