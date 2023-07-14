@@ -13,7 +13,7 @@ import { Table, Radio, Space, Button, message } from "antd";
 export default function CheckOut() {
   const [checkOutData, setCheckOutData] = useState([]);
   const [userInfo, setUserInfo] = useState();
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState();
   const [paymentMethod, setPaymentSelect] = useState(1);
   const [subTotal, setSubTotal] = useState(0);
 
@@ -32,14 +32,13 @@ export default function CheckOut() {
       router.push("/sign-in");
       return;
     }
-    const storedIDs = JSON.parse(localStorage.getItem("products"));
-    handleGetCartSelectedProducts(storedIDs)
+    handleGetCartSelectedProducts()
       .then((data) => {
         if (data.error) {
           console.log(data.error);
         } else {
-          setCheckOutData(data.retrievedProducts);
-          setSubTotal(data.totalPrice);
+          setCheckOutData(data.products);
+          setSubTotal(data.total_price);
         }
       })
       .catch((error) => {
@@ -49,12 +48,17 @@ export default function CheckOut() {
     handleGetUserDetails()
       .then((data) => {
         setUserInfo(data.user);
-        setAddress(data.address_display);
+        setAddress(data.address);
+        // handleDisplayAddress();
       })
       .catch((error) => {
         console.log("Error getting delivery address: ", error);
       });
   }, []);
+
+  // const handleDisplayAddress = () => {
+
+  // };
 
   const handlePlaceOrder = () => {
     if (paymentMethod !== 1) {
@@ -88,7 +92,18 @@ export default function CheckOut() {
         <p className={styles.deliveryAddressTitle}>Delivery Address</p>
         <p>{userInfo && userInfo.full_name}</p>
         <p>{userInfo && userInfo.phone_number}</p>
-        <p>{address}</p>
+        <p>
+          {address &&
+            address.house_number +
+              ", " +
+              address.street +
+              ", " +
+              address.ward +
+              ", " +
+              address.district +
+              ", " +
+              address.city}
+        </p>
       </div>
 
       <div className={styles.paymentField}>

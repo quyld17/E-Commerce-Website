@@ -18,16 +18,11 @@ export function handleGetAllProductsAPI(setProducts) {
   );
 }
 
-export function handleGetProductDetailsAPI(product_id_string) {
+export function handleGetProductDetailsAPI(product_id) {
   return new Promise((resolve, reject) => {
-    const info = {
-      product_id_string,
-    };
+    const endpoint = `/products/${product_id}`;
 
-    const endpoint = "/products/product/details";
-
-    postMethodAPI(
-      info,
+    getMethodAPI(
       endpoint,
       // Success callback
       (data) => {

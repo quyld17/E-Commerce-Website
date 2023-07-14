@@ -112,7 +112,7 @@ export default function ProductPage() {
                   {productDetail.product_detail.product_name}
                 </p>
 
-                <p className={styles.productPrice}>
+                <div className={styles.productPrice}>
                   <p className={styles.priceTitle}>Price:</p>
 
                   <p className={styles.priceNumber}>
@@ -122,20 +122,18 @@ export default function ProductPage() {
                       currency: "VND",
                     }).format(productDetail.product_detail.price)}
                   </p>
-                </p>
+                </div>
 
                 <div className={styles.quantitySelection}>
                   <p className={styles.quantityTitle}>Quantity: </p>
                   <div className={styles.quantityInput}>
-                    <Form.Item name="input-number" noStyle>
-                      <InputNumber
-                        min={1}
-                        max={productDetail.product_detail.in_stock_quantity}
-                        defaultValue={quantity}
-                        value={quantity}
-                        onChange={handleQuantitySelection}
-                      />
-                    </Form.Item>
+                    <InputNumber
+                      min={1}
+                      max={productDetail.product_detail.in_stock_quantity}
+                      defaultValue={quantity}
+                      value={quantity}
+                      onChange={handleQuantitySelection}
+                    />
                   </div>
                   <span className={styles.quantityAvailable}>
                     {" "}

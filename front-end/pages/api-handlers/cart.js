@@ -1,5 +1,7 @@
 import getMethodAPI from "../api-types/get-method-api";
 import postMethodAPI from "../api-types/post-method-api";
+import putMethodAPI from "../api-types/put-method-api";
+import deleteMethodAPI from "../api-types/delete-method-api";
 import { message } from "antd";
 
 export function handleGetAllCartProducts() {
@@ -8,11 +10,9 @@ export function handleGetAllCartProducts() {
 
     getMethodAPI(
       endpoint,
-      // Success callback
       (data) => {
         resolve(data);
       },
-      // Error callback
       (error) => {
         reject(error);
         message.error(error);
@@ -30,14 +30,12 @@ export function handleAddToCartAPI(product_id, quantity) {
 
     const endpoint = "/cart/product/addition";
 
-    postMethodAPI(
+    putMethodAPI(
       info,
       endpoint,
-      // Success callback
       (data) => {
         resolve(data);
       },
-      // Error callback
       (error) => {
         reject(error);
         message.error(error);
@@ -58,11 +56,26 @@ export function handleAdjustCartProductQuantity(product_id, quantity) {
     postMethodAPI(
       info,
       endpoint,
-      // Success callback
       (data) => {
         resolve(data);
       },
-      // Error callback
+      (error) => {
+        reject(error);
+        message.error(error);
+      }
+    );
+  });
+}
+
+export function handleDeleteCartProduct(product_id) {
+  return new Promise((resolve, reject) => {
+    const endpoint = `/cart/${product_id}/deletion`;
+
+    deleteMethodAPI(
+      endpoint,
+      (data) => {
+        resolve(data);
+      },
       (error) => {
         reject(error);
         message.error(error);
@@ -78,11 +91,44 @@ export function handleSelectCartProducts(selectedProducts) {
     postMethodAPI(
       selectedProducts,
       endpoint,
-      // Success callback
       (data) => {
         resolve(data);
       },
-      // Error callback
+      (error) => {
+        reject(error);
+        message.error(error);
+      }
+    );
+  });
+}
+
+export function handleDeselectCartProducts(deselectedProducts) {
+  return new Promise((resolve, reject) => {
+    const endpoint = "/cart/deselection";
+
+    postMethodAPI(
+      deselectedProducts,
+      endpoint,
+      (data) => {
+        resolve(data);
+      },
+      (error) => {
+        reject(error);
+        message.error(error);
+      }
+    );
+  });
+}
+
+export function handleGetCartSelectedProducts() {
+  return new Promise((resolve, reject) => {
+    const endpoint = "/cart/selected-products";
+
+    getMethodAPI(
+      endpoint,
+      (data) => {
+        resolve(data);
+      },
       (error) => {
         reject(error);
         message.error(error);

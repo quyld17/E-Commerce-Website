@@ -1,22 +1,15 @@
-import { handleAdjustCartProductQuantity } from "../api-handlers/cart";
+import {
+  handleDeleteCartProduct,
+  handleGetAllCartProducts,
+} from "../api-handlers/cart";
 
-export const handleOk = (
-  deletingProduct,
-  selectedProducts,
-  setSelectedProducts,
-  setIsModalOpen
-) => {
+export const handleOk = (deletingProduct, setIsModalOpen, setCartProducts) => {
   if (deletingProduct) {
-    const updatedSelectedProducts = selectedProducts.filter(
-      (product) => product.product_id !== deletingProduct.product_id
-    );
-    setSelectedProducts(updatedSelectedProducts);
-
-    handleAdjustCartProductQuantity(deletingProduct.product_id, 0)
+    handleDeleteCartProduct(deletingProduct.product_id)
       .then(() => {
         handleGetAllCartProducts()
           .then((data) => {
-            setCartProducts(data);
+            setCartProducts(data.cart_products);
           })
           .catch((error) => {
             console.log("Error: ", error);

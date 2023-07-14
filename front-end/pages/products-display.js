@@ -31,12 +31,8 @@ export default function ProductsDisplay() {
     }
 
     handleAddToCartAPI(id, 1)
-      .then((data) => {
-        if (data.error) {
-          message.error("Add product to cart unsuccessfully! Please try again");
-        } else {
-          message.success("Add product to cart successfully!");
-        }
+      .then(() => {
+        message.success("Add product to cart successfully!");
       })
       .catch((error) => {
         message.error(error);

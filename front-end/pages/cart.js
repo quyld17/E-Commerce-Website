@@ -7,6 +7,7 @@ import {
   handleGetAllCartProducts,
   handleAdjustCartProductQuantity,
   handleSelectCartProducts,
+  handleDeselectCartProducts,
 } from "./api-handlers/cart";
 import { cartColumns, cartData } from "./components/layout";
 import { handleCancel, handleOk } from "./components/confirm-window";
@@ -18,29 +19,27 @@ const handleProductRedirect = (id, router) => {
   router.push(`/product/${id}`);
 };
 
-// const handleCheckOut = (selectedProducts, router) => {
-//   if (selectedProducts.length === 0) {
-//     message.error("You have not selected any items for checkout");
-//     return;
-//   }
-//   localStorage.setItem("products", JSON.stringify(selectedProducts));
-//   router.push("/check-out");
-// };
+const handleCheckOut = (router, selectedRowKeys) => {
+  if (selectedRowKeys.length === 0) {
+    message.error("You have not selected any items for checkout");
+  } else {
+    router.push("/check-out");
+  }
+};
 
 export default function CartPage() {
   const [cartProducts, setCartProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deletingProduct, setDeletingProduct] = useState(null);
-  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedRowKeysPrev, setSelectedRowKeysPrev] = useState([]);
   const [total, setTotal] = useState(0);
 
   const router = useRouter();
 
   const handleAdjustQuantity = (id, quantity) => {
     if (quantity === 0) {
-      // Open the modal to confirm deletion
       setIsModalOpen(true);
-      // Set the deletingProduct state to the product being deleted
       const product = cartProducts.find((product) => product.product_id === id);
       setDeletingProduct(product);
     } else {
@@ -72,11 +71,21 @@ export default function CartPage() {
       .then((data) => {
         setCartProducts(data.cart_products);
         setTotal(data.total_price);
+        setSelectedRowKeys(
+          data.cart_products
+            .filter((product) => product.selected === 1)
+            .map((product) => product.product_id)
+        );
+        setSelectedRowKeysPrev(
+          data.cart_products
+            .filter((product) => product.selected === 1)
+            .map((product) => product.product_id)
+        );
       })
       .catch((error) => {
         console.log("Error: ", error);
       });
-  }, [selectedProducts]);
+  }, []);
 
   const data = cartData(
     cartProducts,
@@ -85,10 +94,34 @@ export default function CartPage() {
   );
 
   const handleSelectProducts = (selectedRowKeys) => {
-    const products = selectedRowKeys.map((key) => ({
+    const newlySelectedProducts = selectedRowKeys.filter(
+      (key) => !selectedRowKeysPrev.includes(key)
+    );
+
+    const newlyDeselectedProducts = selectedRowKeysPrev.filter(
+      (key) => !selectedRowKeys.includes(key)
+    );
+
+    setSelectedRowKeys(selectedRowKeys);
+    setSelectedRowKeysPrev(selectedRowKeys);
+
+    const selectProducts = newlySelectedProducts.map((key) => ({
       product_id: key,
     }));
-    handleSelectCartProducts(products)
+    handleSelectCartProducts(selectProducts)
+      .then((data) => {
+        if (data.message) {
+          message.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.log("Error: ", error);
+      });
+
+    const deselectedProducts = newlyDeselectedProducts.map((key) => ({
+      product_id: key,
+    }));
+    handleDeselectCartProducts(deselectedProducts)
       .then((data) => {
         if (data.message) {
           message.error(data.message);
@@ -100,6 +133,7 @@ export default function CartPage() {
   };
 
   const rowSelection = {
+    selectedRowKeys: selectedRowKeys,
     onChange: handleSelectProducts,
   };
 
@@ -113,14 +147,7 @@ export default function CartPage() {
       <Modal
         title="Do you want to remove this item?"
         open={isModalOpen}
-        onOk={() =>
-          handleOk(
-            deletingProduct,
-            selectedProducts,
-            setSelectedProducts,
-            setIsModalOpen
-          )
-        }
+        onOk={() => handleOk(deletingProduct, setIsModalOpen, setCartProducts)}
         onCancel={() => handleCancel(setIsModalOpen)}
       >
         <p>{deletingProduct && deletingProduct.product_name}</p>
@@ -152,7 +179,7 @@ export default function CartPage() {
             <Button
               className={styles.checkOutButton}
               type="primary"
-              onClick={() => handleCheckOut(selectedProducts, router)}
+              onClick={() => handleCheckOut(router, selectedRowKeys)}
             >
               Check Out
             </Button>
