@@ -57,12 +57,19 @@ func GetAllProducts(userID int, c echo.Context, db *sql.DB) ([]products.Product,
 
 func AddProduct(userID int, productID int, quantity int, c echo.Context, db *sql.DB) error {
 	// Check if the product already exists in the cart
-	row := db.QueryRow("SELECT product_id FROM cart_product WHERE user_id = ? AND product_id = ?;", userID, productID)
+	row := db.QueryRow(`SELECT product_id
+						FROM cart_product 
+						WHERE 
+							user_id = ? AND 
+							product_id = ?;`,
+		userID, productID)
 	var existingProductID int
 	if err := row.Scan(&existingProductID); err != nil {
 		if err == sql.ErrNoRows {
 			// Product doesn't exist in the cart, insert a new row
-			_, err = db.Exec("INSERT INTO cart_product (user_id, product_id, quantity) VALUES (?, ?, ?);", userID, productID, quantity)
+			_, err = db.Exec(`	INSERT INTO cart_product (user_id, product_id, quantity) 
+								VALUES (?, ?, ?);`,
+				userID, productID, quantity)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -71,7 +78,12 @@ func AddProduct(userID int, productID int, quantity int, c echo.Context, db *sql
 		}
 	} else {
 		// Product already exists in the cart, update the quantity
-		_, err = db.Exec("UPDATE cart_product SET quantity = quantity + ? WHERE user_id = ? AND product_id = ?;", quantity, userID, productID)
+		_, err = db.Exec(`	UPDATE cart_product 
+							SET quantity = quantity + ? 
+							WHERE 
+								user_id = ? AND 
+								product_id = ?;`,
+			quantity, userID, productID)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -82,13 +94,22 @@ func AddProduct(userID int, productID int, quantity int, c echo.Context, db *sql
 
 func AdjustProductQuantity(userID int, productID int, quantity int, c echo.Context, db *sql.DB) error {
 	if quantity == 0 {
-		_, err := db.Exec("DELETE FROM cart_product WHERE user_id = ? AND product_id = ?;", userID, productID)
+		_, err := db.Exec(`	DELETE FROM cart_product 
+							WHERE 
+								user_id = ? AND 
+								product_id = ?;`,
+			userID, productID)
 		if err != nil {
 			log.Fatal(err)
 			return err
 		}
 	} else {
-		_, err := db.Exec("UPDATE cart_product SET quantity = ? WHERE user_id = ? AND product_id = ?;", quantity, userID, productID)
+		_, err := db.Exec(`	UPDATE cart_product 
+							SET quantity = ? 
+							WHERE 
+								user_id = ? AND 
+								product_id = ?;`,
+			quantity, userID, productID)
 		if err != nil {
 			log.Fatal(err)
 			return err
@@ -98,7 +119,12 @@ func AdjustProductQuantity(userID int, productID int, quantity int, c echo.Conte
 }
 
 func SelectCartProducts(userID, productID int, c echo.Context, db *sql.DB) error {
-	_, err := db.Exec("UPDATE cart_product SET selected = 1 WHERE user_id = ? AND product_id = ?;", userID, productID)
+	_, err := db.Exec(`	UPDATE cart_product 
+						SET selected = 1 
+						WHERE 
+							user_id = ? AND 
+							product_id = ?;`,
+		userID, productID)
 	if err != nil {
 		return err
 	}
@@ -107,7 +133,12 @@ func SelectCartProducts(userID, productID int, c echo.Context, db *sql.DB) error
 }
 
 func DeselectCartProducts(userID, productID int, c echo.Context, db *sql.DB) error {
-	_, err := db.Exec("UPDATE cart_product SET selected = 0 WHERE user_id = ? AND product_id = ?;", userID, productID)
+	_, err := db.Exec(`	UPDATE cart_product 
+						SET selected = 0 
+						WHERE 
+							user_id = ? AND 
+							product_id = ?;`,
+		userID, productID)
 	if err != nil {
 		return err
 	}
@@ -159,7 +190,11 @@ func GetSelectedProducts(userID int, c echo.Context, db *sql.DB) ([]products.Pro
 }
 
 func DeleteProduct(userID, productID int, c echo.Context, db *sql.DB) error {
-	_, err := db.Exec("DELETE FROM cart_product WHERE user_id = ? AND product_id = ?;", userID, productID)
+	_, err := db.Exec(`	DELETE FROM cart_product 
+						WHERE 
+							user_id = ? AND 
+							product_id = ?;`,
+		userID, productID)
 	if err != nil {
 		return err
 	}

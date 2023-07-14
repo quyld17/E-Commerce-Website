@@ -24,7 +24,12 @@ type Address struct {
 }
 
 func Authenticate(account User, db *sql.DB) error {
-	rows, err := db.Query("SELECT email, password FROM user WHERE email = ? AND password = ?", account.Email, account.Password)
+	rows, err := db.Query(`	SELECT email, password 
+							FROM user 
+							WHERE 
+								email = ? AND 
+								password = ?`,
+		account.Email, account.Password)
 	if err != nil {
 		return fmt.Errorf("%v", err)
 	}
@@ -39,7 +44,9 @@ func Authenticate(account User, db *sql.DB) error {
 }
 
 func CreateNew(newUser User, db *sql.DB) error {
-	_, err := db.Exec("INSERT INTO user (email, password) VALUES (?, ?)", newUser.Email, newUser.Password)
+	_, err := db.Exec(`	INSERT INTO user (email, password) 
+						VALUES (?, ?)`,
+		newUser.Email, newUser.Password)
 	if err != nil {
 		return err
 	}
@@ -47,7 +54,10 @@ func CreateNew(newUser User, db *sql.DB) error {
 }
 
 func GetDetails(userID int, db *sql.DB) (*User, *Address, error) {
-	row, err := db.Query("SELECT full_name, phone_number FROM user where user_id = ?;", userID)
+	row, err := db.Query(`	SELECT full_name, phone_number 
+							FROM user 
+							WHERE user_id = ?;`,
+		userID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -59,7 +69,17 @@ func GetDetails(userID int, db *sql.DB) (*User, *Address, error) {
 		}
 	}
 
-	row, err = db.Query("SELECT city, district, ward, street, house_number FROM address WHERE user_id = ? and is_default = 1;", userID)
+	row, err = db.Query(`	SELECT 
+								city, 
+								district, 
+								ward, 	
+								street, 
+								house_number 
+							FROM address 
+							WHERE 
+								user_id = ? AND 
+								is_default = 1;`,
+		userID)
 	if err != nil {
 		return nil, nil, err
 	}
