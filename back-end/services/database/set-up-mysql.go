@@ -12,7 +12,7 @@ import (
 func SetUpMySQL() *sql.DB {
 	err := godotenv.Load("credentials.env")
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatal("Failed to retrieve credentials. Please try again")
 	}
 
 	cfg := mysql.Config{
@@ -23,7 +23,7 @@ func SetUpMySQL() *sql.DB {
 		DBName:               os.Getenv("DB_NAME"),
 		AllowNativePasswords: true,
 	}
-	// Get a database handler
+
 	db, err := sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
 		log.Fatal(err)

@@ -98,21 +98,71 @@ func AdjustProductQuantity(userID int, productID int, quantity int, c echo.Conte
 }
 
 func SelectCartProducts(userID, productID int, c echo.Context, db *sql.DB) error {
-	// rows, err := db.Query("SELECT user_id, product_id, selected FROM cart_product WHERE user_id = ? AND product_id = ?;", userID, productID)
-	// if err != nil {
-	// 	return err
-	// }
-	// defer rows.Close()
-
-	// //Check if 'rows' stores anything or not
-	// //If true, email and password are matched
-	// if !rows.Next() {
-	// 	return err
-	// }
-
 	_, err := db.Exec("UPDATE cart_product SET selected = 1 WHERE user_id = ? AND product_id = ?;", userID, productID)
 	if err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func DeselectCartProducts(userID, productID int, c echo.Context, db *sql.DB) error {
+	_, err := db.Exec("UPDATE cart_product SET selected = 0 WHERE user_id = ? AND product_id = ?;", userID, productID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func GetSelectedProducts(userID int, c echo.Context, db *sql.DB) ([]products.Product, int, error) {
+	rows, err := db.Query(`SELECT 
+								cart_product.product_id, 
+								cart_product.quantity, 
+								product.product_name, 
+								product.price, 
+								product_image.image_url 
+							FROM 
+								cart_product, 
+								product, 
+								product_image 
+							WHERE 
+								cart_product.user_id = ? AND 
+								cart_product.product_id = product.product_id AND 
+								cart_product.selected = 1 AND
+								cart_product.product_id = product_image.product_id AND 
+								product_image.is_thumbnail = 1;`,
+		userID)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	cartProducts := []products.Product{}
+	for rows.Next() {
+		var product products.Product
+		err := rows.Scan(&product.ProductID, &product.Quantity, &product.ProductName, &product.Price, &product.ImageURL)
+		if err != nil {
+			return nil, 0, err
+		}
+		cartProducts = append(cartProducts, product)
+	}
+	err = rows.Err()
+	if err != nil {
+		return nil, 0, err
+	}
+
+	totalPrice := 0
+	for _, product := range cartProducts {
+		totalPrice += product.Quantity * product.Price
+	}
+	return cartProducts, totalPrice, nil
+}
+
+func DeleteProduct(userID, productID int, c echo.Context, db *sql.DB) error {
+	_, err := db.Exec("DELETE FROM cart_product WHERE user_id = ? AND product_id = ?;", userID, productID)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

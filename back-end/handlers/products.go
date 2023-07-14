@@ -18,19 +18,13 @@ func GetAllProducts(c echo.Context, db *sql.DB) error {
 	return c.JSON(http.StatusOK, productDetails)
 }
 
-func GetProductDetails(c echo.Context, db *sql.DB) error {
-	var product products.Product
-	if err := c.Bind(&product); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
-
-	}
-
-	productID, err := strconv.Atoi(product.ProductIDString)
+func GetProductDetails(productID string, c echo.Context, db *sql.DB) error {
+	id, err := strconv.Atoi(productID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	productDetail, productImages, err := products.GetSingleProductDetails(productID, c, db)
+	productDetail, productImages, err := products.GetSingleProductDetails(id, c, db)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to retrieve product's details")
 	}
