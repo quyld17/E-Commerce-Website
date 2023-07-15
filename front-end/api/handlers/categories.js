@@ -1,4 +1,4 @@
-import getMethodAPI from "../api-types/get-method-api";
+import getMethodAPI from "../methods/get-method-api";
 import { message } from "antd";
 
 export default function handleGetAllCategoriesAPI(setCategories) {

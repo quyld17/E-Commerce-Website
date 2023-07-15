@@ -1,5 +1,5 @@
-import getMethodAPI from "../api-types/get-method-api";
-import postMethodAPI from "../api-types/post-method-api";
+import getMethodAPI from "../methods/get-method-api";
+import postMethodAPI from "../methods/post-method-api";
 import { message } from "antd";
 
 export function handleGetAllProductsAPI(setProducts) {

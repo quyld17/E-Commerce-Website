@@ -2,16 +2,21 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
+
 import styles from "../styles/navigation-bar.module.css";
+import { handleGetAllCartProducts } from "../api/handlers/cart";
+
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { BiUserCircle } from "react-icons/bi";
 import { Input, Layout, Dropdown, Badge, message } from "antd";
+
 const { Search } = Input;
 const { Header } = Layout;
 
 export default function NavigationBar() {
   const [token, setToken] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [cartProductsCount, setCartProductsCount] = useState();
   const router = useRouter();
 
   useEffect(() => {
@@ -29,11 +34,20 @@ export default function NavigationBar() {
         message.info("Session expired! Please sign in to continue");
         handleSignOut();
       } else {
-        // Token is still valid, extract the email address from the decoded token
+        // If token is still valid, extract the email address from the decoded token
         const userEmail = decodedToken.email;
         setUserEmail(userEmail);
       }
     }
+
+    handleGetAllCartProducts()
+      .then((data) => {
+        const cartProductsLength = data.cart_products.length;
+        setCartProductsCount(cartProductsLength);
+      })
+      .catch((error) => {
+        console.log("Error: ", error);
+      });
   }, []);
 
   const handleCartLogoClick = () => {
@@ -74,7 +88,9 @@ export default function NavigationBar() {
 
       <div>
         <Badge
-          // count={productCount}
+          showZero
+          size="small"
+          count={cartProductsCount}
           offset={[-20, 25]}
         >
           <ShoppingCartOutlined
@@ -90,11 +106,13 @@ export default function NavigationBar() {
             items: [
               {
                 key: "3",
-                label: <span>Profile</span>,
+                label: <Link href="/user/profile">Profile</Link>,
               },
               {
                 key: "4",
-                label: <span>Purchase History</span>,
+                label: (
+                  <Link href="/user/purchase-history">Purchase History</Link>
+                ),
               },
               {
                 key: "5",

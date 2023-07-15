@@ -1,5 +1,5 @@
 import { message } from "antd";
-import postMethodAPI from "../api-types/post-method-api";
+import postMethodAPI from "../methods/post-method-api";
 
 export default function handleSignInAPI(email, password) {
   // Declare an object to store email and password

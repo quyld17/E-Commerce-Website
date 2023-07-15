@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Head from "next/head";
 
-import SideBar from "./side-bar";
-import NavigationBar from "./navigation-bar";
+import SideBar from "../components/homepage/side-bar";
+import NavigationBar from "../components/navigation-bar";
 import ProductsDisplay from "./products-display";
 import styles from "../styles/index.module.css";
 

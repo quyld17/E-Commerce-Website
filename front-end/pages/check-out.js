@@ -2,11 +2,14 @@ import Head from "next/head";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
-import NavigationBar from "./navigation-bar";
+import NavigationBar from "../components/navigation-bar";
 import styles from "../styles/check-out.module.css";
-import { checkOutColumns, handleCheckOutData } from "./components/layout";
-import { handleGetUserDetails } from "./api-handlers/check-out";
-import { handleGetCartSelectedProducts } from "./api-handlers/cart";
+import {
+  checkOutColumns,
+  handleCheckOutData,
+} from "../components/check-out/products-table";
+import { handleGetUserDetails } from "../api/handlers/user";
+import { handleGetCartSelectedProducts } from "../api/handlers/cart";
 
 import { Table, Radio, Space, Button, message } from "antd";
 
@@ -34,12 +37,12 @@ export default function CheckOut() {
     }
     handleGetCartSelectedProducts()
       .then((data) => {
-        if (data.error) {
-          console.log(data.error);
-        } else {
-          setCheckOutData(data.products);
-          setSubTotal(data.total_price);
+        if (data.products.length === 0) {
+          message.error("You have not selected any products for checkout");
+          router.push("/");
         }
+        setCheckOutData(data.products);
+        setSubTotal(data.total_price);
       })
       .catch((error) => {
         console.log("Error getting check-out products' details:", error);
@@ -55,10 +58,6 @@ export default function CheckOut() {
         console.log("Error getting delivery address: ", error);
       });
   }, []);
-
-  // const handleDisplayAddress = () => {
-
-  // };
 
   const handlePlaceOrder = () => {
     if (paymentMethod !== 1) {

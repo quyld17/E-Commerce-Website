@@ -1,5 +1,5 @@
 import React from "react";
-import SideBarMaterials from "./components/side-bar";
+import SideBarMaterials from "./side-bar-materials";
 import { Layout, Menu } from "antd";
 const { Sider } = Layout;
 

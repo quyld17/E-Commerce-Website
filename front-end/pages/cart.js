@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-import NavigationBar from "./navigation-bar";
+import NavigationBar from "../components/navigation-bar";
 import {
   handleGetAllCartProducts,
   handleAdjustCartProductQuantity,
   handleSelectCartProducts,
   handleDeselectCartProducts,
-} from "./api-handlers/cart";
-import { cartColumns, cartData } from "./components/layout";
-import { handleCancel, handleOk } from "./components/confirm-window";
+} from "../api/handlers/cart";
+import { cartColumns, cartData } from "../components/cart/products-table";
+import { handleCancel, handleOk } from "../components/cart/delete-confirm";
 import styles from "../styles/cart.module.css";
 
 import { Button, Table, Modal, message } from "antd";
@@ -19,12 +19,8 @@ const handleProductRedirect = (id, router) => {
   router.push(`/product/${id}`);
 };
 
-const handleCheckOut = (router, selectedRowKeys) => {
-  if (selectedRowKeys.length === 0) {
-    message.error("You have not selected any items for checkout");
-  } else {
-    router.push("/check-out");
-  }
+const handleCheckOut = (router) => {
+  router.push("/check-out");
 };
 
 export default function CartPage() {
@@ -45,13 +41,24 @@ export default function CartPage() {
     } else {
       handleAdjustCartProductQuantity(id, quantity)
         .then(() => {
-          const updatedCartProducts = cartProducts.map((product) => {
-            if (product.product_id === id) {
-              return { ...product, quantity: quantity };
-            }
-            return product;
-          });
-          setCartProducts(updatedCartProducts);
+          handleGetAllCartProducts()
+            .then((data) => {
+              setCartProducts(data.cart_products);
+              setTotal(data.total_price);
+              setSelectedRowKeys(
+                data.cart_products
+                  .filter((product) => product.selected === 1)
+                  .map((product) => product.product_id)
+              );
+              setSelectedRowKeysPrev(
+                data.cart_products
+                  .filter((product) => product.selected === 1)
+                  .map((product) => product.product_id)
+              );
+            })
+            .catch((error) => {
+              console.log("Error: ", error);
+            });
         })
         .catch((error) => {
           console.log("Error: ", error);
@@ -122,10 +129,25 @@ export default function CartPage() {
       product_id: key,
     }));
     handleDeselectCartProducts(deselectedProducts)
-      .then((data) => {
-        if (data.message) {
-          message.error(data.message);
-        }
+      .then(() => {
+        handleGetAllCartProducts()
+          .then((data) => {
+            setCartProducts(data.cart_products);
+            setTotal(data.total_price);
+            setSelectedRowKeys(
+              data.cart_products
+                .filter((product) => product.selected === 1)
+                .map((product) => product.product_id)
+            );
+            setSelectedRowKeysPrev(
+              data.cart_products
+                .filter((product) => product.selected === 1)
+                .map((product) => product.product_id)
+            );
+          })
+          .catch((error) => {
+            console.log("Error: ", error);
+          });
       })
       .catch((error) => {
         console.log("Error: ", error);
@@ -147,7 +169,9 @@ export default function CartPage() {
       <Modal
         title="Do you want to remove this item?"
         open={isModalOpen}
-        onOk={() => handleOk(deletingProduct, setIsModalOpen, setCartProducts)}
+        onOk={() =>
+          handleOk(deletingProduct, setIsModalOpen, setCartProducts, setTotal)
+        }
         onCancel={() => handleCancel(setIsModalOpen)}
       >
         <p>{deletingProduct && deletingProduct.product_name}</p>
@@ -179,7 +203,7 @@ export default function CartPage() {
             <Button
               className={styles.checkOutButton}
               type="primary"
-              onClick={() => handleCheckOut(router, selectedRowKeys)}
+              onClick={() => handleCheckOut(router)}
             >
               Check Out
             </Button>

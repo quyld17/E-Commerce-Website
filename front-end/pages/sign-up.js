@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import validator from "validator";
-import handleSignUpAPI from "./api-handlers/sign-up";
+import handleSignUpAPI from "../api-handlers/handlers/sign-up";
 import styles from "../styles/sign-up.module.css";
 import { Layout, Form, Input, Button, message } from "antd";
 const { Content, Header } = Layout;

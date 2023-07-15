@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { handleGetAllProductsAPI } from "./api-handlers/products";
-import { handleAddToCartAPI } from "./api-handlers/cart";
+import { handleGetAllProductsAPI } from "../api/handlers/products";
+import { handleAddToCartAPI } from "../api/handlers/cart";
 
-import styles from "../styles/product-showcase.module.css";
+import styles from "../styles/products-display.module.css";
 import { Card, Button, message } from "antd";
 const { Meta } = Card;
 

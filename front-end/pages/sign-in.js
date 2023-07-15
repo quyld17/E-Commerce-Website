@@ -3,7 +3,7 @@ import Link from "next/link";
 import Head from "next/head";
 import validator from "validator";
 import styles from "../styles/sign-in.module.css";
-import handleSignInAPI from "./api-handlers/sign-in";
+import handleSignInAPI from "../api-handlers/handlers/sign-in";
 import { Layout, theme, Form, Input, Button, message } from "antd";
 const { Content, Header } = Layout;
 

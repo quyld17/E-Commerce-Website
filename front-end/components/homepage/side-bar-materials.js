@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import handleGetAllCategoriesAPI from "../api-handlers/categories";
+import handleGetAllCategoriesAPI from "../../api/handlers/categories";
 import { TbCategory, TbArrowsSort } from "react-icons/tb";
 import {
   BsSortUp,
