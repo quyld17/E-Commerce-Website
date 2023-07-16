@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -74,36 +75,14 @@ func SelectCartProducts(c echo.Context, db *sql.DB) error {
 	if err := c.Bind(&products); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
-
+	fmt.Println(products)
 	for _, product := range products {
-		productID := product.ProductID
-		if err := cart.SelectCartProducts(userID, productID, c, db); err != nil {
+		if err := cart.SelectProducts(userID, product.ProductID, c, db); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err)
 		}
 	}
 
 	return c.JSON(http.StatusOK, "Select product successfully!")
-}
-
-func DeselectCartProducts(c echo.Context, db *sql.DB) error {
-	userID, err := users.GetID(c, db)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
-	}
-
-	products := []products.Product{}
-	if err := c.Bind(&products); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
-	}
-
-	for _, product := range products {
-		productID := product.ProductID
-		if err := cart.DeselectCartProducts(userID, productID, c, db); err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, err)
-		}
-	}
-
-	return c.JSON(http.StatusOK, "Deselect product successfully!")
 }
 
 func GetCartSelectedProducts(c echo.Context, db *sql.DB) error {
