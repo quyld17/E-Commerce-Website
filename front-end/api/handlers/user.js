@@ -3,7 +3,7 @@ import message from "antd";
 
 export function handleGetUserDetails() {
   return new Promise((resolve, reject) => {
-    const endpoint = "/users/me/details";
+    const endpoint = "/users/me";
 
     getMethodAPI(
       endpoint,

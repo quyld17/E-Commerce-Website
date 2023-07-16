@@ -8,6 +8,7 @@ import {
   checkOutColumns,
   handleCheckOutData,
 } from "../components/check-out/products-table";
+import { handleCreateOrder } from "../api/handlers/order";
 import { handleGetUserDetails } from "../api/handlers/user";
 import { handleGetCartSelectedProducts } from "../api/handlers/cart";
 
@@ -17,13 +18,13 @@ export default function CheckOut() {
   const [checkOutData, setCheckOutData] = useState([]);
   const [userInfo, setUserInfo] = useState();
   const [address, setAddress] = useState();
-  const [paymentMethod, setPaymentSelect] = useState(1);
+  const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
   const [subTotal, setSubTotal] = useState(0);
 
   const router = useRouter();
 
   const handlePaymentMethodSelect = (e) => {
-    setPaymentSelect(e.target.value);
+    setPaymentMethod(e.target.value);
   };
 
   const data = handleCheckOutData(checkOutData);
@@ -52,21 +53,24 @@ export default function CheckOut() {
       .then((data) => {
         setUserInfo(data.user);
         setAddress(data.address);
-        // handleDisplayAddress();
       })
       .catch((error) => {
         console.log("Error getting delivery address: ", error);
       });
   }, []);
 
-  const handlePlaceOrder = () => {
-    if (paymentMethod !== 1) {
-      message.warning(
-        "Only Cash on Delivery is accepted at the moment. Please try again"
-      );
-    } else {
-      message.info("Order is being processed!");
-    }
+  const handlePlaceOrder = (paymentMethod) => {
+    handleCreateOrder(paymentMethod)
+      .then((data) => {
+        if (data.message) {
+          message.error(data.message);
+        } else {
+          router.push("/order-complete");
+        }
+      })
+      .catch((error) => {
+        console.log("Place order unsuccessfully: ", error);
+      });
   };
 
   return (
@@ -109,10 +113,16 @@ export default function CheckOut() {
         <p className={styles.paymentMethodTitle}>Payment Method</p>
         <Radio.Group value={paymentMethod} onChange={handlePaymentMethodSelect}>
           <Space direction="vertical">
-            <Radio className={styles.paymentMethodSelectField} value={1}>
+            <Radio
+              className={styles.paymentMethodSelectField}
+              value="Cash on Delivery"
+            >
               Cash on Delivery
             </Radio>
-            <Radio className={styles.paymentMethodSelectField} value={2}>
+            <Radio
+              className={styles.paymentMethodSelectField}
+              value="Bank Transfer"
+            >
               Bank Transfer
             </Radio>
           </Space>
@@ -131,15 +141,21 @@ export default function CheckOut() {
             </p>
           </div>
           <div className={styles.shippingTotal}>
-            <p>Shipping Total:</p>
+            <p>Shipping Total: </p>
+            <p>
+              {Intl.NumberFormat("vi-VI", {
+                style: "currency",
+                currency: "VND",
+              }).format(0)}
+            </p>
           </div>
           <div className={styles.total}>
             <p>Total:</p>
             <p>
-              {/* {Intl.NumberFormat("vi-VI", {
+              {Intl.NumberFormat("vi-VI", {
                 style: "currency",
                 currency: "VND",
-              }).format(total)} */}
+              }).format(subTotal + 0)}
             </p>
           </div>
         </div>
@@ -147,7 +163,7 @@ export default function CheckOut() {
         <div className={styles.placeOrderButtonField}>
           <Button
             type="primary"
-            onClick={handlePlaceOrder}
+            onClick={() => handlePlaceOrder(paymentMethod)}
             className={styles.placeOrderButton}
           >
             Place Order

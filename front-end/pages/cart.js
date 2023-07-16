@@ -4,11 +4,10 @@ import { useRouter } from "next/router";
 
 import NavigationBar from "../components/navigation-bar";
 import {
-  handleGetAllCartProducts,
   handleAdjustCartProductQuantity,
   handleSelectCartProducts,
-  handleDeselectCartProducts,
 } from "../api/handlers/cart";
+import { handleGetCartProducts } from "../components/cart/get-products";
 import { cartColumns, cartData } from "../components/cart/products-table";
 import { handleCancel, handleOk } from "../components/cart/delete-confirm";
 import styles from "../styles/cart.module.css";
@@ -19,8 +18,15 @@ const handleProductRedirect = (id, router) => {
   router.push(`/product/${id}`);
 };
 
-const handleCheckOut = (router) => {
-  router.push("/check-out");
+const handleCheckOut = (router, selectedRowKeys) => {
+  if (selectedRowKeys.length === 0) {
+    message.error(
+      "You have not selected anything for check out. Please try again"
+    );
+    return;
+  } else {
+    router.push("/check-out");
+  }
 };
 
 export default function CartPage() {
@@ -28,43 +34,8 @@ export default function CartPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deletingProduct, setDeletingProduct] = useState(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [selectedRowKeysPrev, setSelectedRowKeysPrev] = useState([]);
   const [total, setTotal] = useState(0);
-
   const router = useRouter();
-
-  const handleAdjustQuantity = (id, quantity) => {
-    if (quantity === 0) {
-      setIsModalOpen(true);
-      const product = cartProducts.find((product) => product.product_id === id);
-      setDeletingProduct(product);
-    } else {
-      handleAdjustCartProductQuantity(id, quantity)
-        .then(() => {
-          handleGetAllCartProducts()
-            .then((data) => {
-              setCartProducts(data.cart_products);
-              setTotal(data.total_price);
-              setSelectedRowKeys(
-                data.cart_products
-                  .filter((product) => product.selected === 1)
-                  .map((product) => product.product_id)
-              );
-              setSelectedRowKeysPrev(
-                data.cart_products
-                  .filter((product) => product.selected === 1)
-                  .map((product) => product.product_id)
-              );
-            })
-            .catch((error) => {
-              console.log("Error: ", error);
-            });
-        })
-        .catch((error) => {
-          console.log("Error: ", error);
-        });
-    }
-  };
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -74,25 +45,24 @@ export default function CartPage() {
       return;
     }
 
-    handleGetAllCartProducts()
-      .then((data) => {
-        setCartProducts(data.cart_products);
-        setTotal(data.total_price);
-        setSelectedRowKeys(
-          data.cart_products
-            .filter((product) => product.selected === 1)
-            .map((product) => product.product_id)
-        );
-        setSelectedRowKeysPrev(
-          data.cart_products
-            .filter((product) => product.selected === 1)
-            .map((product) => product.product_id)
-        );
-      })
-      .catch((error) => {
-        console.log("Error: ", error);
-      });
+    handleGetCartProducts(setCartProducts, setTotal, setSelectedRowKeys);
   }, []);
+
+  const handleAdjustQuantity = (id, quantity) => {
+    if (quantity === 0) {
+      setIsModalOpen(true);
+      const product = cartProducts.find((product) => product.product_id === id);
+      setDeletingProduct(product);
+    } else {
+      handleAdjustCartProductQuantity(id, quantity)
+        .then(() => {
+          handleGetCartProducts(setCartProducts, setTotal, setSelectedRowKeys);
+        })
+        .catch((error) => {
+          console.log("Error: ", error);
+        });
+    }
+  };
 
   const data = cartData(
     cartProducts,
@@ -101,53 +71,14 @@ export default function CartPage() {
   );
 
   const handleSelectProducts = (selectedRowKeys) => {
-    const newlySelectedProducts = selectedRowKeys.filter(
-      (key) => !selectedRowKeysPrev.includes(key)
-    );
-
-    const newlyDeselectedProducts = selectedRowKeysPrev.filter(
-      (key) => !selectedRowKeys.includes(key)
-    );
-
     setSelectedRowKeys(selectedRowKeys);
-    setSelectedRowKeysPrev(selectedRowKeys);
-
-    const selectProducts = newlySelectedProducts.map((key) => ({
+    const selectedProducts = selectedRowKeys.map((key) => ({
       product_id: key,
     }));
-    handleSelectCartProducts(selectProducts)
-      .then((data) => {
-        if (data.message) {
-          message.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.log("Error: ", error);
-      });
 
-    const deselectedProducts = newlyDeselectedProducts.map((key) => ({
-      product_id: key,
-    }));
-    handleDeselectCartProducts(deselectedProducts)
+    handleSelectCartProducts(selectedProducts)
       .then(() => {
-        handleGetAllCartProducts()
-          .then((data) => {
-            setCartProducts(data.cart_products);
-            setTotal(data.total_price);
-            setSelectedRowKeys(
-              data.cart_products
-                .filter((product) => product.selected === 1)
-                .map((product) => product.product_id)
-            );
-            setSelectedRowKeysPrev(
-              data.cart_products
-                .filter((product) => product.selected === 1)
-                .map((product) => product.product_id)
-            );
-          })
-          .catch((error) => {
-            console.log("Error: ", error);
-          });
+        handleGetCartProducts(setCartProducts, setTotal, setSelectedRowKeys);
       })
       .catch((error) => {
         console.log("Error: ", error);
@@ -170,7 +101,13 @@ export default function CartPage() {
         title="Do you want to remove this item?"
         open={isModalOpen}
         onOk={() =>
-          handleOk(deletingProduct, setIsModalOpen, setCartProducts, setTotal)
+          handleOk(
+            deletingProduct,
+            setIsModalOpen,
+            setCartProducts,
+            setTotal,
+            setSelectedRowKeys
+          )
         }
         onCancel={() => handleCancel(setIsModalOpen)}
       >
@@ -203,7 +140,7 @@ export default function CartPage() {
             <Button
               className={styles.checkOutButton}
               type="primary"
-              onClick={() => handleCheckOut(router)}
+              onClick={() => handleCheckOut(router, selectedRowKeys)}
             >
               Check Out
             </Button>

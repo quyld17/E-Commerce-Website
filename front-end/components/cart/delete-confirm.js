@@ -1,25 +1,18 @@
-import {
-  handleDeleteCartProduct,
-  handleGetAllCartProducts,
-} from "../../api/handlers/cart";
+import { handleDeleteCartProduct } from "../../api/handlers/cart";
+
+import { handleGetCartProducts } from "./get-products";
 
 export const handleOk = (
   deletingProduct,
   setIsModalOpen,
   setCartProducts,
-  setTotal
+  setTotal,
+  setSelectedRowKeys
 ) => {
   if (deletingProduct) {
     handleDeleteCartProduct(deletingProduct.product_id)
       .then(() => {
-        handleGetAllCartProducts()
-          .then((data) => {
-            setCartProducts(data.cart_products);
-            setTotal(data.total_price);
-          })
-          .catch((error) => {
-            console.log("Error: ", error);
-          });
+        handleGetCartProducts(setCartProducts, setTotal, setSelectedRowKeys);
       })
       .catch((error) => {
         console.log("Error: ", error);

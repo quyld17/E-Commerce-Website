@@ -2,13 +2,12 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import validator from "validator";
-import handleSignUpAPI from "../api-handlers/handlers/sign-up";
+import handleSignUpAPI from "../api/handlers/sign-up";
 import styles from "../styles/sign-up.module.css";
 import { Layout, Form, Input, Button, message } from "antd";
 const { Content, Header } = Layout;
 
 const signUpValidate = (email, password, confirmPassword) => {
-  //Credentials validation
   const formValidate = () => {
     if (!email) {
       return "Email must not be empty! Please try again";
@@ -35,10 +34,8 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Call signUpValidate component to validate credentials
   const handleSignUp = (e) => {
     e.preventDefault();
-    // If there are no errors, call the API handler
     if (!signUpValidate(email, password, confirmPassword)) {
       handleSignUpAPI(email, password);
     }

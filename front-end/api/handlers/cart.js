@@ -84,30 +84,16 @@ export function handleDeleteCartProduct(product_id) {
   });
 }
 
-export function handleSelectCartProducts(selectedProducts) {
+export function handleSelectCartProducts(selectedProduct) {
   return new Promise((resolve, reject) => {
+    const info = {
+      product_id: selectedProduct,
+    };
+
     const endpoint = "/cart/selection";
 
     putMethodAPI(
-      selectedProducts,
-      endpoint,
-      (data) => {
-        resolve(data);
-      },
-      (error) => {
-        reject(error);
-        message.error(error);
-      }
-    );
-  });
-}
-
-export function handleDeselectCartProducts(deselectedProducts) {
-  return new Promise((resolve, reject) => {
-    const endpoint = "/cart/deselection";
-
-    putMethodAPI(
-      deselectedProducts,
+      info,
       endpoint,
       (data) => {
         resolve(data);
