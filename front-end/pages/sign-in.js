@@ -26,7 +26,6 @@ const signInValidate = (email, password) => {
 };
 
 export default function SignInPage() {
-  // Declare states to store user's input
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -37,7 +36,14 @@ export default function SignInPage() {
   const handleSignIn = (e) => {
     e.preventDefault();
     if (!signInValidate(email, password)) {
-      handleSignInAPI(email, password);
+      handleSignInAPI(email, password)
+        .then((data) => {
+          localStorage.setItem("token", data.token);
+          router.push("/");
+        })
+        .catch((error) => {
+          console.log("Error getting delivery address: ", error);
+        });
     }
   };
 

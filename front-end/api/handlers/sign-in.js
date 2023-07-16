@@ -2,27 +2,23 @@ import { message } from "antd";
 import postMethodAPI from "../methods/post-method-api";
 
 export default function handleSignInAPI(email, password) {
-  // Declare an object to store email and password
-  const credentials = {
-    email,
-    password,
-  };
+  return new Promise((resolve, reject) => {
+    const credentials = {
+      email,
+      password,
+    };
 
-  // Declare endpoint for signing in
-  const endpoint = "/sign-in";
-
-  // Call postMethodAPI to handle API request
-  postMethodAPI(
-    credentials,
-    endpoint,
-    // Success callback
-    (data) => {
-      localStorage.setItem("token", data.token);
-      window.location.href = "/";
-    },
-    // Error callback
-    (error) => {
-      message.error(error);
-    }
-  );
+    const endpoint = "/sign-in";
+    postMethodAPI(
+      credentials,
+      endpoint,
+      (data) => {
+        resolve(data);
+      },
+      (error) => {
+        reject(error);
+        message.error(error);
+      }
+    );
+  });
 }

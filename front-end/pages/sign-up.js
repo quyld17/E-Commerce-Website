@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import validator from "validator";
+
 import handleSignUpAPI from "../api/handlers/sign-up";
 import styles from "../styles/sign-up.module.css";
+
 import { Layout, Form, Input, Button, message } from "antd";
 const { Content, Header } = Layout;
 
@@ -33,11 +36,18 @@ export default function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const router = useRouter();
 
   const handleSignUp = (e) => {
     e.preventDefault();
     if (!signUpValidate(email, password, confirmPassword)) {
-      handleSignUpAPI(email, password);
+      handleSignUpAPI(email, password)
+        .then(() => {
+          router.push("/sign-up-complete");
+        })
+        .catch((error) => {
+          console.log("Error getting delivery address: ", error);
+        });
     }
   };
 
