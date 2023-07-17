@@ -22,12 +22,13 @@ func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
 		return handlers.GetUserDetails(c, db)
 	}))
 
+	// Products
 	router.GET("/products", func(c echo.Context) error {
 		return handlers.GetAllProducts(c, db)
 	})
 	router.GET("/products/:productID", func(c echo.Context) error {
 		productID := c.Param("productID")
-		return handlers.GetProductDetails(productID, c, db)
+		return handlers.GetProduct(productID, c, db)
 	})
 
 	// Categories
@@ -48,7 +49,7 @@ func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
 	router.PUT("/cart/selection", jwt.Authorize(func(c echo.Context) error {
 		return handlers.SelectCartProducts(c, db)
 	}))
-	router.DELETE("/cart/:productID", jwt.Authorize(func(c echo.Context) error {
+	router.DELETE("/cart/product/:productID", jwt.Authorize(func(c echo.Context) error {
 		productID := c.Param("productID")
 		return handlers.DeleteCartProduct(productID, c, db)
 	}))
@@ -56,7 +57,11 @@ func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
 		return handlers.GetCartSelectedProducts(c, db)
 	}))
 
-	router.POST("/order", jwt.Authorize(func(c echo.Context) error {
+	// Orders
+	router.POST("/orders", jwt.Authorize(func(c echo.Context) error {
 		return handlers.CreateOrder(c, db)
+	}))
+	router.GET("/orders/me", jwt.Authorize(func(c echo.Context) error {
+		return handlers.GetOrders(c, db)
 	}))
 }

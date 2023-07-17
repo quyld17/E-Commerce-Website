@@ -18,7 +18,7 @@ func GetAllProducts(c echo.Context, db *sql.DB) error {
 	return c.JSON(http.StatusOK, productDetails)
 }
 
-func GetProductDetails(productID string, c echo.Context, db *sql.DB) error {
+func GetProduct(productID string, c echo.Context, db *sql.DB) error {
 	id, err := strconv.Atoi(productID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)

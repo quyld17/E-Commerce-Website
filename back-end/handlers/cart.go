@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -75,7 +74,6 @@ func SelectCartProducts(c echo.Context, db *sql.DB) error {
 	if err := c.Bind(&products); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
-	fmt.Println(products)
 	for _, product := range products {
 		if err := cart.SelectProducts(userID, product.ProductID, c, db); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err)

@@ -2,7 +2,6 @@ package products
 
 import (
 	"database/sql"
-	"log"
 
 	"github.com/labstack/echo/v4"
 )
@@ -26,20 +25,21 @@ type ProductImage struct {
 }
 
 func GetAll(c echo.Context, db *sql.DB) ([]Product, error) {
-	rows, err := db.Query(`SELECT 
-								product.product_id, 
-								product.product_name, 
-								product.price, 
-								product.category_id, 
-								product_image.image_url 
-							FROM 
-								product, 
-								product_image 
-							WHERE 
-								product_image.is_thumbnail = 1 AND 
-								product.product_id = product_image.product_id;`)
+	rows, err := db.Query(`
+		SELECT 
+			product.product_id, 
+			product.product_name, 
+			product.price, 
+			product.category_id, 
+			product_image.image_url 
+		FROM 
+			product, 
+			product_image 
+		WHERE 
+			product_image.is_thumbnail = 1 AND 
+			product.product_id = product_image.product_id;`)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -48,37 +48,34 @@ func GetAll(c echo.Context, db *sql.DB) ([]Product, error) {
 		var product Product
 		err := rows.Scan(&product.ProductID, &product.ProductName, &product.Price, &product.CategoryID, &product.ImageURL)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 		productDetails = append(productDetails, product)
 	}
 	err = rows.Err()
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	return productDetails, nil
 }
 
 func GetSingleProductDetails(productID int, c echo.Context, db *sql.DB) (*Product, []ProductImage, error) {
-	rows, err := db.Query(`SELECT 
-								product.product_id, 
-								product.product_name, 
-								product.price, 
-								product.in_stock_quantity, 
-								product_image.image_url, 
-								product_image.is_thumbnail 
-							FROM 
-								product 
-							JOIN 
-								product_image 
-							ON 
-								product.product_id = product_image.product_id 
-							WHERE 
-								product.product_id = ?;`,
-		productID)
+	rows, err := db.Query(`
+		SELECT 
+			product.product_id, 
+			product.product_name, 
+			product.price, 
+			product.in_stock_quantity, 
+			product_image.image_url, 
+			product_image.is_thumbnail 
+		FROM product 
+		JOIN product_image 
+		ON product.product_id = product_image.product_id 
+		WHERE product.product_id = ?;
+		`, productID)
 	if err != nil {
-		log.Fatal(err)
+		return nil, nil, err
 	}
 	defer rows.Close()
 
@@ -91,7 +88,7 @@ func GetSingleProductDetails(productID int, c echo.Context, db *sql.DB) (*Produc
 
 		err := rows.Scan(&product.ProductID, &product.ProductName, &product.Price, &product.InStockQuantity, &productImage.ImageURL, &productImage.IsThumbnail)
 		if err != nil {
-			log.Fatal(err)
+			return nil, nil, err
 		}
 
 		productDetail = product
@@ -100,7 +97,7 @@ func GetSingleProductDetails(productID int, c echo.Context, db *sql.DB) (*Produc
 
 	err = rows.Err()
 	if err != nil {
-		log.Fatal(err)
+		return nil, nil, err
 	}
 
 	return &productDetail, productImages, nil
