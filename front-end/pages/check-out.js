@@ -31,11 +31,11 @@ export default function CheckOut() {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-
     if (!storedToken) {
-      router.push("/sign-in");
+      router.push("/");
       return;
     }
+
     handleGetCartSelectedProducts()
       .then((data) => {
         if (data.products.length === 0) {

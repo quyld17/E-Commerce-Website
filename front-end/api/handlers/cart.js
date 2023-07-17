@@ -69,7 +69,7 @@ export function handleAdjustCartProductQuantity(product_id, quantity) {
 
 export function handleDeleteCartProduct(product_id) {
   return new Promise((resolve, reject) => {
-    const endpoint = `/cart/${product_id}`;
+    const endpoint = `/cart/product/${product_id}`;
 
     deleteMethodAPI(
       endpoint,
@@ -86,14 +86,14 @@ export function handleDeleteCartProduct(product_id) {
 
 export function handleSelectCartProducts(selectedProduct) {
   return new Promise((resolve, reject) => {
-    const info = {
-      product_id: selectedProduct,
-    };
+    // const info = {
+    //   product_id: selectedProduct,
+    // };
 
     const endpoint = "/cart/selection";
 
     putMethodAPI(
-      info,
+      selectedProduct,
       endpoint,
       (data) => {
         resolve(data);

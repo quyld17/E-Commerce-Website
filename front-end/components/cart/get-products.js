@@ -3,13 +3,19 @@ import { handleGetAllCartProducts } from "@/api/handlers/cart";
 export const handleGetCartProducts = (
   setCartProducts,
   setTotal,
-  setSelectedRowKeys
+  setSelectedRowKeys,
+  setSelectedRowKeysPrev
 ) => {
   handleGetAllCartProducts()
     .then((data) => {
       setCartProducts(data.cart_products);
       setTotal(data.total_price);
       setSelectedRowKeys(
+        data.cart_products
+          .filter((product) => product.selected === 1)
+          .map((product) => product.product_id)
+      );
+      setSelectedRowKeysPrev(
         data.cart_products
           .filter((product) => product.selected === 1)
           .map((product) => product.product_id)

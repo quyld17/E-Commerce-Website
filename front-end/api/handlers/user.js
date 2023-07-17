@@ -7,11 +7,9 @@ export function handleGetUserDetails() {
 
     getMethodAPI(
       endpoint,
-      // Success callback
       (data) => {
         resolve(data);
       },
-      // Error callback
       (error) => {
         reject(error);
         message.error(error);

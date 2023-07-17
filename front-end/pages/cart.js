@@ -34,6 +34,8 @@ export default function CartPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deletingProduct, setDeletingProduct] = useState(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedRowKeysPrev, setSelectedRowKeysPrev] = useState([]);
+
   const [total, setTotal] = useState(0);
   const router = useRouter();
 
@@ -45,7 +47,12 @@ export default function CartPage() {
       return;
     }
 
-    handleGetCartProducts(setCartProducts, setTotal, setSelectedRowKeys);
+    handleGetCartProducts(
+      setCartProducts,
+      setTotal,
+      setSelectedRowKeys,
+      setSelectedRowKeysPrev
+    );
   }, []);
 
   const handleAdjustQuantity = (id, quantity) => {
@@ -56,7 +63,12 @@ export default function CartPage() {
     } else {
       handleAdjustCartProductQuantity(id, quantity)
         .then(() => {
-          handleGetCartProducts(setCartProducts, setTotal, setSelectedRowKeys);
+          handleGetCartProducts(
+            setCartProducts,
+            setTotal,
+            setSelectedRowKeys,
+            setSelectedRowKeysPrev
+          );
         })
         .catch((error) => {
           console.log("Error: ", error);
@@ -71,18 +83,51 @@ export default function CartPage() {
   );
 
   const handleSelectProducts = (selectedRowKeys) => {
+    const newlySelectedProducts = selectedRowKeys.filter(
+      (key) => !selectedRowKeysPrev.includes(key)
+    );
+    const newlyDeselectedProducts = selectedRowKeysPrev.filter(
+      (key) => !selectedRowKeys.includes(key)
+    );
+
     setSelectedRowKeys(selectedRowKeys);
-    const selectedProducts = selectedRowKeys.map((key) => ({
+    setSelectedRowKeysPrev(selectedRowKeys);
+
+    const selectedProducts = newlySelectedProducts.map((key) => ({
+      product_id: key,
+    }));
+    const deselectedProducts = newlyDeselectedProducts.map((key) => ({
       product_id: key,
     }));
 
-    handleSelectCartProducts(selectedProducts)
-      .then(() => {
-        handleGetCartProducts(setCartProducts, setTotal, setSelectedRowKeys);
-      })
-      .catch((error) => {
-        console.log("Error: ", error);
-      });
+    if (selectedProducts.length !== 0) {
+      handleSelectCartProducts(selectedProducts)
+        .then(() => {
+          handleGetCartProducts(
+            setCartProducts,
+            setTotal,
+            setSelectedRowKeys,
+            setSelectedRowKeysPrev
+          );
+        })
+        .catch((error) => {
+          console.log("Error: ", error);
+        });
+    } else {
+      handleSelectCartProducts(deselectedProducts)
+        .then(() => {
+          handleGetCartProducts(
+            setCartProducts,
+            setTotal,
+            setSelectedRowKeys,
+            setSelectedRowKeysPrev
+          );
+        })
+        .catch((error) => {
+          console.log("Error: ", error);
+        });
+    }
+    console.log(selectedProducts, deselectedProducts);
   };
 
   const rowSelection = {
@@ -106,7 +151,8 @@ export default function CartPage() {
             setIsModalOpen,
             setCartProducts,
             setTotal,
-            setSelectedRowKeys
+            setSelectedRowKeys,
+            setSelectedRowKeysPrev
           )
         }
         onCancel={() => handleCancel(setIsModalOpen)}

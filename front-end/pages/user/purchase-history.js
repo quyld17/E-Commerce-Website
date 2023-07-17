@@ -1,16 +1,39 @@
 import Head from "next/head";
+import { useState, useEffect } from "react";
 
 import NavigationBar from "../../components/navigation-bar";
 import styles from "../../styles/purchase-history.module.css";
 import {
   columns,
   handleOrderData,
+  handleOrderDetails,
 } from "../../components/user/purchase-history/orders-table";
+import { handleGetOrders } from "@/api/handlers/order";
 
 import { Table } from "antd";
 
 export default function PurchaseHistory() {
-  const data = handleOrderData([]);
+  const [orders, setOrders] = useState([]);
+  const [orderProducts, setOrderProducts] = useState([]);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (!storedToken) {
+      router.push("/");
+      return;
+    }
+
+    handleGetOrders()
+      .then((data) => {
+        setOrders(data.orders);
+        setOrderProducts(data.order_products);
+      })
+      .catch((error) => {
+        console.log("Error getting delivery address: ", error);
+      });
+  }, []);
+
+  const orderData = handleOrderData(orders);
 
   return (
     <div>
@@ -26,8 +49,13 @@ export default function PurchaseHistory() {
             showHeader={true}
             tableLayout="fixed"
             pagination={false}
+            expandable={{
+              expandedRowRender: (record) =>
+                handleOrderDetails(record, orderProducts),
+              defaultExpandedRowKeys: [0],
+            }}
             columns={columns}
-            dataSource={data}
+            dataSource={orderData}
           ></Table>
         </div>
       </div>

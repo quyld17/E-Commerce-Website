@@ -1,4 +1,6 @@
 import postMethodAPI from "../methods/post-method-api";
+import getMethodAPI from "../methods/get-method-api";
+import { message } from "antd";
 
 export function handleCreateOrder(paymentMethod) {
   return new Promise((resolve, reject) => {
@@ -6,10 +8,26 @@ export function handleCreateOrder(paymentMethod) {
       payment_method: paymentMethod,
     };
 
-    const endpoint = "/order";
+    const endpoint = "/orders";
 
     postMethodAPI(
       info,
+      endpoint,
+      (data) => {
+        resolve(data);
+      },
+      (error) => {
+        reject(error);
+      }
+    );
+  });
+}
+
+export function handleGetOrders() {
+  return new Promise((resolve, reject) => {
+    const endpoint = "/orders/me";
+
+    getMethodAPI(
       endpoint,
       (data) => {
         resolve(data);

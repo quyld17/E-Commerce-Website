@@ -7,12 +7,18 @@ export const handleOk = (
   setIsModalOpen,
   setCartProducts,
   setTotal,
-  setSelectedRowKeys
+  setSelectedRowKeys,
+  setSelectedRowKeysPrev
 ) => {
   if (deletingProduct) {
     handleDeleteCartProduct(deletingProduct.product_id)
       .then(() => {
-        handleGetCartProducts(setCartProducts, setTotal, setSelectedRowKeys);
+        handleGetCartProducts(
+          setCartProducts,
+          setTotal,
+          setSelectedRowKeys,
+          setSelectedRowKeysPrev
+        );
       })
       .catch((error) => {
         console.log("Error: ", error);
