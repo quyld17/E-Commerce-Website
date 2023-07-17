@@ -4,7 +4,7 @@ import { InputNumber, Space } from "antd";
 
 export const cartColumns = [
   {
-    title: "Products",
+    title: <span style={{ fontSize: "25px" }}>Products</span>,
     dataIndex: "product",
     width: "400px",
   },

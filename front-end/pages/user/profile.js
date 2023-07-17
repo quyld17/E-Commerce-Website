@@ -5,12 +5,13 @@ import { useRouter } from "next/router";
 import NavigationBar from "../../components/navigation-bar";
 import styles from "../../styles/user-profile.module.css";
 
-import { Form, Input, Select, DatePicker, Button } from "antd";
+import { Form, Input, Select, DatePicker, Button, message } from "antd";
 import UserSideBar from "@/components/user/side-bar";
 import { handleGetUserDetails } from "@/api/handlers/user";
 
 export default function PurchaseHistory() {
   const [user, setUser] = useState();
+  const [address, setAddress] = useState();
   const router = useRouter();
 
   useEffect(() => {
@@ -23,6 +24,7 @@ export default function PurchaseHistory() {
     handleGetUserDetails()
       .then((data) => {
         setUser(data.user);
+        setAddress(data.address);
       })
       .catch((error) => {
         console.log("Error: ", error);
@@ -67,11 +69,31 @@ export default function PurchaseHistory() {
               <Form.Item label="DatePicker">
                 <DatePicker />
               </Form.Item>
+              {address && (
+                <Form.Item label="Address">
+                  <Input
+                    defaultValue={
+                      address.house_number +
+                      ", " +
+                      address.street +
+                      ", " +
+                      address.ward +
+                      ", " +
+                      address.district +
+                      ", " +
+                      address.city
+                    }
+                  />
+                </Form.Item>
+              )}
+
               <Form.Item label="">
                 <Button
                   className={styles.saveChangesButton}
                   type="primary"
-                  onClick={() => handleCheckOut(router, selectedRowKeys)}
+                  onClick={() =>
+                    message.success("Update profile successfully!")
+                  }
                 >
                   Save
                 </Button>

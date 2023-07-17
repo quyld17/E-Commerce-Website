@@ -53,7 +53,7 @@ export const handleOrders = (orders) => {
 export const handleOrderProducts = (record, orders) => {
   const orderDetailsColumns = [
     {
-      title: "Product",
+      title: <span style={{ fontSize: "20px" }}>Products</span>,
       dataIndex: "product",
       fontSize: "25px",
       width: "300px",
