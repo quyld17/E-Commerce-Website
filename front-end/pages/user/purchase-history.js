@@ -1,20 +1,22 @@
 import Head from "next/head";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
 import NavigationBar from "../../components/navigation-bar";
 import styles from "../../styles/purchase-history.module.css";
 import {
   columns,
-  handleOrderData,
-  handleOrderDetails,
+  handleOrders,
+  handleOrderProducts,
 } from "../../components/user/purchase-history/orders-table";
+import UserSideBar from "@/components/user/side-bar";
 import { handleGetOrders } from "@/api/handlers/order";
 
 import { Table } from "antd";
 
 export default function PurchaseHistory() {
   const [orders, setOrders] = useState([]);
-  const [orderProducts, setOrderProducts] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -25,15 +27,14 @@ export default function PurchaseHistory() {
 
     handleGetOrders()
       .then((data) => {
-        setOrders(data.orders);
-        setOrderProducts(data.order_products);
+        setOrders(data);
       })
       .catch((error) => {
         console.log("Error getting delivery address: ", error);
       });
   }, []);
 
-  const orderData = handleOrderData(orders);
+  const orderData = handleOrders(orders);
 
   return (
     <div>
@@ -42,7 +43,7 @@ export default function PurchaseHistory() {
       </Head>
       <NavigationBar />
       <div className={styles.content}>
-        <div className={styles.sider}>asdasd</div>
+        <UserSideBar />
         <div className={styles.orders}>
           <Table
             size="large"
@@ -51,7 +52,7 @@ export default function PurchaseHistory() {
             pagination={false}
             expandable={{
               expandedRowRender: (record) =>
-                handleOrderDetails(record, orderProducts),
+                handleOrderProducts(record, orders),
               defaultExpandedRowKeys: [0],
             }}
             columns={columns}

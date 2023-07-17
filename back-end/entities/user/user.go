@@ -8,10 +8,13 @@ import (
 )
 
 type User struct {
+	UserId      int    `json:"user_id"`
 	Email       string `json:"email"`
 	Password    string `json:"password"`
 	FullName    string `json:"full_name"`
+	DateOfBirth string `json:"date_of_birth"`
 	PhoneNumber string `json:"phone_number"`
+	Gender      int    `json:"gender"`
 }
 
 type Address struct {
@@ -59,7 +62,11 @@ func CreateNew(newUser User, db *sql.DB) error {
 
 func GetDetails(userID int, db *sql.DB) (*User, *Address, error) {
 	row, err := db.Query(`	
-		SELECT full_name, phone_number 
+		SELECT 
+			email,
+			full_name, 
+			phone_number,
+			gender
 		FROM user 
 		WHERE user_id = ?;
 		`, userID)
@@ -68,7 +75,7 @@ func GetDetails(userID int, db *sql.DB) (*User, *Address, error) {
 	}
 	var user User
 	if row.Next() {
-		err := row.Scan(&user.FullName, &user.PhoneNumber)
+		err := row.Scan(&user.Email, &user.FullName, &user.PhoneNumber, &user.Gender)
 		if err != nil {
 			return nil, nil, err
 		}

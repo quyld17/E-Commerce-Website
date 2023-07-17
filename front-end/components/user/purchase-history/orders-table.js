@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Table, Badge } from "antd";
 
 export const columns = [
@@ -29,7 +30,7 @@ export const columns = [
   },
 ];
 
-export const handleOrderData = (orders) => {
+export const handleOrders = (orders) => {
   const data = orders.map((order) => ({
     key: order.order_id,
     orderID: <p>#{order.order_id}</p>,
@@ -49,7 +50,7 @@ export const handleOrderData = (orders) => {
   return data;
 };
 
-export const handleOrderDetails = (record, orderProducts) => {
+export const handleOrderProducts = (record, orders) => {
   const orderDetailsColumns = [
     {
       title: "Product",
@@ -74,20 +75,22 @@ export const handleOrderDetails = (record, orderProducts) => {
     },
   ];
 
-  const filteredOrderProducts = orderProducts.filter(
-    (product) => product.order_id === record.key
-  );
+  const matchedOrder = orders.find((order) => order.order_id === record.key);
 
-  const data = filteredOrderProducts.map((product) => ({
-    key: product.order_id,
+  const data = matchedOrder.products.map((product) => ({
+    key: product.product_id,
     product: (
       <div style={{ display: "flex", alignItems: "center" }}>
-        <img
-          style={{ marginRight: "10px", width: "100px" }}
-          src={product.image_url}
-          alt={product.product_name}
-        />
-        <span>{product.product_name}</span>
+        <Link href={`/product/${product.product_id}`}>
+          <img
+            style={{ marginRight: "10px", width: "100px" }}
+            src={product.image_url}
+            alt={product.product_name}
+          />
+        </Link>
+        <Link href={`/product/${product.product_id}`}>
+          <span>{product.product_name}</span>
+        </Link>
       </div>
     ),
     quantity: product.quantity,

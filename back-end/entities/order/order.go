@@ -10,12 +10,13 @@ import (
 )
 
 type Order struct {
-	OrderID       int    `json:"order_id"`
-	UserID        int    `json:"user_id"`
-	TotalPrice    int    `json:"total_price"`
-	PaymentMethod string `json:"payment_method"`
-	Status        string `json:"status"`
-	CreatedAt     string `json:"created_at"`
+	OrderID       int            `json:"order_id"`
+	UserID        int            `json:"user_id"`
+	TotalPrice    int            `json:"total_price"`
+	PaymentMethod string         `json:"payment_method"`
+	Status        string         `json:"status"`
+	CreatedAt     string         `json:"created_at"`
+	Products      []OrderProduct `json:"products"`
 }
 
 type OrderProduct struct {
@@ -84,7 +85,7 @@ func Create(user *users.User, address *users.Address, orderedProducts []products
 	return nil
 }
 
-func GetAll(userID int, c echo.Context, db *sql.DB) ([]Order, []OrderProduct, error) {
+func GetAll(userID int, c echo.Context, db *sql.DB) ([]Order, error) {
 	rows, err := db.Query(`
 		SELECT 
 			order_id,
@@ -96,7 +97,7 @@ func GetAll(userID int, c echo.Context, db *sql.DB) ([]Order, []OrderProduct, er
 		`WHERE user_id = ?;
 		`, userID)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -105,34 +106,37 @@ func GetAll(userID int, c echo.Context, db *sql.DB) ([]Order, []OrderProduct, er
 		var order Order
 		err := rows.Scan(&order.OrderID, &order.TotalPrice, &order.Status, &order.CreatedAt, &order.PaymentMethod)
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
+
+		productRows, err := db.Query(`
+			SELECT * 
+			FROM order_products 
+			WHERE order_id = ?;
+			`, order.OrderID)
+		if err != nil {
+			return nil, err
+		}
+		defer productRows.Close()
+		for productRows.Next() {
+			var product OrderProduct
+			err := productRows.Scan(&product.OrderID, &product.ProductID, &product.ProductName, &product.Quantity, &product.Price, &product.ImageURL)
+			if err != nil {
+				return nil, err
+			}
+			order.Products = append(order.Products, product)
+		}
+		err = productRows.Err()
+		if err != nil {
+			return nil, err
+		}
+
 		orders = append(orders, order)
 	}
 	err = rows.Err()
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	productRows, err := db.Query(`SELECT * FROM order_products;`)
-	if err != nil {
-		return nil, nil, err
-	}
-	defer productRows.Close()
-
-	orderProducts := []OrderProduct{}
-	for productRows.Next() {
-		var product OrderProduct
-		err := productRows.Scan(&product.OrderID, &product.ProductID, &product.ProductName, &product.Quantity, &product.Price, &product.ImageURL)
-		if err != nil {
-			return nil, nil, err
-		}
-		orderProducts = append(orderProducts, product)
-	}
-	err = productRows.Err()
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return orders, orderProducts, nil
+	return orders, nil
 }

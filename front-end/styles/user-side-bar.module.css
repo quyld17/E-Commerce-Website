@@ -1,0 +1,24 @@
+.sideBar {
+  width: 200px;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.email {
+  margin-bottom: 20px;
+}
+
+.profile {
+  margin-bottom: 10px;
+}
+
+.purchase {
+  align-items: flex-end;
+}
+
+.profile:hover,
+.purchase:hover {
+  color: lightskyblue;
+}

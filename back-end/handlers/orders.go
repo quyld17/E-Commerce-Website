@@ -43,13 +43,10 @@ func GetOrders(c echo.Context, db *sql.DB) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	allOrders, orderProducts, err := orders.GetAll(userID, c, db)
+	allOrders, err := orders.GetAll(userID, c, db)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to retrieve orders at the moment. Please try again")
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{
-		"orders":         allOrders,
-		"order_products": orderProducts,
-	})
+	return c.JSON(http.StatusOK, allOrders)
 }

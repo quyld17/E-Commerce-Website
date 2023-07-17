@@ -6,15 +6,8 @@
   justify-content: space-between;
 }
 
-.sider {
-  width: 200px;
-  border-radius: 14px;
-  background-color: #fff;
-  box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
-}
-
 .orders {
-  width: 950px;
+  width: 1000px;
   padding: 20px;
   border-radius: 14px;
   background-color: #fff;

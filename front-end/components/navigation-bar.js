@@ -20,12 +20,10 @@ export default function NavigationBar() {
   const router = useRouter();
 
   useEffect(() => {
-    // Retrieve the JWT token from local storage
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
 
     if (storedToken) {
-      // Decode the JWT token
       const decodedToken = jwt_decode(storedToken);
       const expTime = decodedToken.exp;
       const currentTime = Date.now() / 1000;
@@ -34,7 +32,6 @@ export default function NavigationBar() {
         message.info("Session expired! Please sign in to continue");
         handleSignOut();
       } else {
-        // If token is still valid, extract the email address from the decoded token
         const userEmail = decodedToken.email;
         setUserEmail(userEmail);
       }
