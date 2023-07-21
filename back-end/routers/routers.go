@@ -21,6 +21,9 @@ func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
 	router.GET("/users/me", jwt.Authorize(func(c echo.Context) error {
 		return handlers.GetUserDetails(c, db)
 	}))
+	router.PUT("/users/me/password", jwt.Authorize(func(c echo.Context) error {
+		return handlers.ChangePassword(c, db)
+	}))
 
 	// Products
 	router.GET("/products", func(c echo.Context) error {

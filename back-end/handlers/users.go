@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	users "github.com/quyld17/E-Commerce-Website/entities/user"
+	"github.com/quyld17/E-Commerce-Website/middlewares"
 )
 
 func GetUserDetails(c echo.Context, db *sql.DB) error {
@@ -23,4 +24,26 @@ func GetUserDetails(c echo.Context, db *sql.DB) error {
 		"user":    user,
 		"address": address,
 	})
+}
+
+func ChangePassword(c echo.Context, db *sql.DB) error {
+	userID, err := users.GetID(c, db)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	}
+
+	var user users.User
+	if err := c.Bind(&user); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+
+	if err := middlewares.ValidatePasswordChange(user); err != "" {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+
+	if err := users.ChangePassword(userID, user.Password, user.NewPassword, c, db); err != "" {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusOK, "Changed password successfully!")
 }

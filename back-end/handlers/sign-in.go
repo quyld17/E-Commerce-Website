@@ -16,7 +16,7 @@ func SignIn(c echo.Context, db *sql.DB) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	if err := middlewares.ValidateEmailAndPassword(account, c); err != "" {
+	if err := middlewares.ValidateEmailAndPassword(account); err != "" {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 

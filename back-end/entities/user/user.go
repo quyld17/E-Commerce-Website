@@ -11,6 +11,7 @@ type User struct {
 	UserId      int    `json:"user_id"`
 	Email       string `json:"email"`
 	Password    string `json:"password"`
+	NewPassword string `json:"new_password"`
 	FullName    string `json:"full_name"`
 	DateOfBirth string `json:"date_of_birth"`
 	PhoneNumber string `json:"phone_number"`
@@ -121,4 +122,32 @@ func GetID(c echo.Context, db *sql.DB) (int, error) {
 		return 0, err
 	}
 	return userID, nil
+}
+
+func ChangePassword(userID int, password, newPassword string, c echo.Context, db *sql.DB) string {
+	row, err := db.Query(`
+		SELECT password
+		FROM user
+		WHERE
+			user_id = ? AND
+			password = ?
+		`, userID, password)
+	if err != nil {
+		return "Error while changing password! Please try again"
+	}
+	defer row.Close()
+	if row.Next() {
+		_, err := db.Exec(`	
+			UPDATE user 
+			SET password = ? 
+			WHERE user_id = ?
+			`, newPassword, userID)
+		if err != nil {
+			return "Error while changing password! Please try again"
+		}
+	} else {
+		return "Wrong password! Plase try again"
+	}
+
+	return ""
 }

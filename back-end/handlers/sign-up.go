@@ -15,7 +15,7 @@ func SignUp(c echo.Context, db *sql.DB) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	if err := middlewares.ValidateEmailAndPassword(newUser, c); err != "" {
+	if err := middlewares.ValidateEmailAndPassword(newUser); err != "" {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
