@@ -1,4 +1,4 @@
-import { handleGetAllCartProducts } from "@/api/handlers/cart";
+import { handleGetAllCartProductsAPI } from "@/api/handlers/cart";
 
 export const handleGetCartProducts = (
   setCartProducts,
@@ -6,7 +6,7 @@ export const handleGetCartProducts = (
   setSelectedRowKeys,
   setSelectedRowKeysPrev
 ) => {
-  handleGetAllCartProducts()
+  handleGetAllCartProductsAPI()
     .then((data) => {
       setCartProducts(data.cart_products);
       setTotal(data.total_price);

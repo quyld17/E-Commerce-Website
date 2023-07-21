@@ -7,7 +7,7 @@ import styles from "../../styles/user-profile.module.css";
 
 import { Form, Input, Select, DatePicker, Button, message } from "antd";
 import UserSideBar from "@/components/user/side-bar";
-import { handleGetUserDetails } from "@/api/handlers/user";
+import { handleGetUserDetailsAPI } from "@/api/handlers/user";
 
 export default function PurchaseHistory() {
   const [user, setUser] = useState();
@@ -21,7 +21,7 @@ export default function PurchaseHistory() {
       return;
     }
 
-    handleGetUserDetails()
+    handleGetUserDetailsAPI()
       .then((data) => {
         setUser(data.user);
         setAddress(data.address);
@@ -66,7 +66,7 @@ export default function PurchaseHistory() {
                   <Select.Option value="female">Female</Select.Option>
                 </Select>
               </Form.Item>
-              <Form.Item label="DatePicker">
+              <Form.Item label="Date of birth">
                 <DatePicker />
               </Form.Item>
               {address && (
@@ -92,7 +92,7 @@ export default function PurchaseHistory() {
                   className={styles.saveChangesButton}
                   type="primary"
                   onClick={() =>
-                    message.success("Update profile successfully!")
+                    message.success("Updated profile successfully!")
                   }
                 >
                   Save

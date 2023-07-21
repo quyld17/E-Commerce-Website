@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 
 import styles from "../styles/navigation-bar.module.css";
-import { handleGetAllCartProducts } from "../api/handlers/cart";
+import { handleGetAllCartProductsAPI } from "../api/handlers/cart";
 
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { BiUserCircle } from "react-icons/bi";
@@ -16,7 +16,7 @@ const { Header } = Layout;
 export default function NavigationBar() {
   const [token, setToken] = useState("");
   const [userEmail, setUserEmail] = useState("");
-  const [cartProductsCount, setCartProductsCount] = useState();
+  const [cartProductsCount, setCartProductsCount] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -35,16 +35,15 @@ export default function NavigationBar() {
         const userEmail = decodedToken.email;
         setUserEmail(userEmail);
       }
+      handleGetAllCartProductsAPI()
+        .then((data) => {
+          const cartProductsLength = data.cart_products.length;
+          setCartProductsCount(cartProductsLength);
+        })
+        .catch((error) => {
+          console.log("Error: ", error);
+        });
     }
-
-    handleGetAllCartProducts()
-      .then((data) => {
-        const cartProductsLength = data.cart_products.length;
-        setCartProductsCount(cartProductsLength);
-      })
-      .catch((error) => {
-        console.log("Error: ", error);
-      });
   }, []);
 
   const handleCartLogoClick = () => {

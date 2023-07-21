@@ -8,9 +8,9 @@ import {
   checkOutColumns,
   handleCheckOutData,
 } from "../components/check-out/products-table";
-import { handleCreateOrder } from "../api/handlers/order";
-import { handleGetUserDetails } from "../api/handlers/user";
-import { handleGetCartSelectedProducts } from "../api/handlers/cart";
+import { handleCreateOrderAPI } from "../api/handlers/order";
+import { handleGetUserDetailsAPI } from "../api/handlers/user";
+import { handleGetCartSelectedProductsAPI } from "../api/handlers/cart";
 
 import { Table, Radio, Space, Button, message } from "antd";
 
@@ -36,7 +36,7 @@ export default function CheckOut() {
       return;
     }
 
-    handleGetCartSelectedProducts()
+    handleGetCartSelectedProductsAPI()
       .then((data) => {
         if (data.products.length === 0) {
           message.error("You have not selected any products for checkout");
@@ -49,7 +49,7 @@ export default function CheckOut() {
         console.log("Error getting check-out products' details:", error);
       });
 
-    handleGetUserDetails()
+      handleGetUserDetailsAPI()
       .then((data) => {
         setUserInfo(data.user);
         setAddress(data.address);
@@ -60,7 +60,7 @@ export default function CheckOut() {
   }, []);
 
   const handlePlaceOrder = (paymentMethod) => {
-    handleCreateOrder(paymentMethod)
+    handleCreateOrderAPI(paymentMethod)
       .then((data) => {
         if (data.message) {
           message.error(data.message);

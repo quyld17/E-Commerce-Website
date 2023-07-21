@@ -21,7 +21,7 @@ const signUpValidate = (email, password, confirmPassword) => {
     } else if (!validator.isEmail(email)) {
       return "Invalid email address! Email must include '@' and a domain";
     } else if (password !== confirmPassword) {
-      return "Passwords do not match! Please try again";
+      return "Passwords not matched! Please try again";
     }
     return null;
   };
@@ -46,7 +46,7 @@ export default function SignUpPage() {
           router.push("/sign-up-complete");
         })
         .catch((error) => {
-          console.log("Error getting delivery address: ", error);
+          message.error(error);
         });
     }
   };

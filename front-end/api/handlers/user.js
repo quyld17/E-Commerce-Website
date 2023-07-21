@@ -1,7 +1,9 @@
 import getMethodAPI from "../methods/get-method-api";
+import putMethodAPI from "../methods/put-method-api";
+
 import message from "antd";
 
-export function handleGetUserDetails() {
+export function handleGetUserDetailsAPI() {
   return new Promise((resolve, reject) => {
     const endpoint = "/users/me";
 
@@ -13,6 +15,27 @@ export function handleGetUserDetails() {
       (error) => {
         reject(error);
         message.error(error);
+      }
+    );
+  });
+}
+
+export function handleChangePasswordAPI(user) {
+  return new Promise((resolve, reject) => {
+    const info = {
+      password: user.password,
+      new_password: user.new_password,
+    };
+    const endpoint = "/users/me/password";
+
+    putMethodAPI(
+      info,
+      endpoint,
+      (data) => {
+        resolve(data);
+      },
+      (error) => {
+        reject(error);
       }
     );
   });

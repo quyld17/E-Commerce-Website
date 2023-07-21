@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 
 import NavigationBar from "../components/navigation-bar";
 import {
-  handleAdjustCartProductQuantity,
-  handleSelectCartProducts,
+  handleAdjustCartProductQuantityAPI,
+  handleSelectCartProductsAPI,
 } from "../api/handlers/cart";
 import { handleGetCartProducts } from "../components/cart/get-products";
 import { cartColumns, cartData } from "../components/cart/products-table";
@@ -61,7 +61,7 @@ export default function CartPage() {
       const product = cartProducts.find((product) => product.product_id === id);
       setDeletingProduct(product);
     } else {
-      handleAdjustCartProductQuantity(id, quantity)
+      handleAdjustCartProductQuantityAPI(id, quantity)
         .then(() => {
           handleGetCartProducts(
             setCartProducts,
@@ -101,7 +101,7 @@ export default function CartPage() {
     }));
 
     if (selectedProducts.length !== 0) {
-      handleSelectCartProducts(selectedProducts)
+      handleSelectCartProductsAPI(selectedProducts)
         .then(() => {
           handleGetCartProducts(
             setCartProducts,
@@ -114,7 +114,7 @@ export default function CartPage() {
           console.log("Error: ", error);
         });
     } else {
-      handleSelectCartProducts(deselectedProducts)
+      handleSelectCartProductsAPI(deselectedProducts)
         .then(() => {
           handleGetCartProducts(
             setCartProducts,
@@ -127,7 +127,6 @@ export default function CartPage() {
           console.log("Error: ", error);
         });
     }
-    console.log(selectedProducts, deselectedProducts);
   };
 
   const rowSelection = {

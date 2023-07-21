@@ -1,13 +1,17 @@
 import { useState } from "react";
 import Link from "next/link";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import validator from "validator";
+
 import styles from "../styles/sign-in.module.css";
 import handleSignInAPI from "../api/handlers/sign-in";
+
 import { Layout, theme, Form, Input, Button, message } from "antd";
+
 const { Content, Header } = Layout;
 
-const signInValidate = (email, password) => {
+const credentialsValidate = (email, password) => {
   const formValidate = () => {
     if (!email) {
       return "Email must not be empty! Please try again";
@@ -28,6 +32,7 @@ const signInValidate = (email, password) => {
 export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const {
     token: { colorBgContainer },
@@ -35,7 +40,7 @@ export default function SignInPage() {
 
   const handleSignIn = (e) => {
     e.preventDefault();
-    if (!signInValidate(email, password)) {
+    if (!credentialsValidate(email, password)) {
       handleSignInAPI(email, password)
         .then((data) => {
           localStorage.setItem("token", data.token);

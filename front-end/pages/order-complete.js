@@ -8,7 +8,7 @@ import NavigationBar from "../components/navigation-bar";
 
 import { Layout } from "antd";
 
-const { Content, Header } = Layout;
+const { Content } = Layout;
 
 export default function SignUpPage() {
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function SignUpPage() {
           <p>
             or{" "}
             <Link href="/" className={styles.redirect}>
-              cotinue shopping
+              continue shopping
             </Link>
             .
           </p>

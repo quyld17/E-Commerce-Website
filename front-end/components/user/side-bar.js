@@ -18,10 +18,13 @@ export default function UserSideBar() {
     <div className={styles.sideBar}>
       <div className={styles.email}>{email}</div>
       <div className={styles.profile}>
-        <Link href="/user/profile">My Account</Link>
+        <Link href="/user/profile">Profile</Link>
       </div>
       <div className={styles.purchase}>
-        <Link href="/user/purchase-history">My Purchase</Link>
+        <Link href="/user/purchase-history">Purchase History</Link>
+      </div>
+      <div className={styles.changePassword}>
+        <Link href="/user/change-password">Change Password</Link>
       </div>
     </div>
   );

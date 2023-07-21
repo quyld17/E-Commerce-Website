@@ -1,4 +1,4 @@
-import { handleDeleteCartProduct } from "../../api/handlers/cart";
+import { handleDeleteCartProductAPI } from "../../api/handlers/cart";
 
 import { handleGetCartProducts } from "./get-products";
 
@@ -11,7 +11,7 @@ export const handleOk = (
   setSelectedRowKeysPrev
 ) => {
   if (deletingProduct) {
-    handleDeleteCartProduct(deletingProduct.product_id)
+    handleDeleteCartProductAPI(deletingProduct.product_id)
       .then(() => {
         handleGetCartProducts(
           setCartProducts,

@@ -15,10 +15,11 @@
 }
 
 .purchase {
-  align-items: flex-end;
+  margin-bottom: 10px;
 }
 
 .profile:hover,
-.purchase:hover {
+.purchase:hover,
+.changePassword:hover {
   color: lightskyblue;
 }

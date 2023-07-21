@@ -4,7 +4,7 @@ import putMethodAPI from "../methods/put-method-api";
 import deleteMethodAPI from "../methods/delete-method-api";
 import { message } from "antd";
 
-export function handleGetAllCartProducts() {
+export function handleGetAllCartProductsAPI() {
   return new Promise((resolve, reject) => {
     const endpoint = "/cart";
 
@@ -15,7 +15,6 @@ export function handleGetAllCartProducts() {
       },
       (error) => {
         reject(error);
-        message.error(error);
       }
     );
   });
@@ -44,7 +43,7 @@ export function handleAddToCartAPI(product_id, quantity) {
   });
 }
 
-export function handleAdjustCartProductQuantity(product_id, quantity) {
+export function handleAdjustCartProductQuantityAPI(product_id, quantity) {
   return new Promise((resolve, reject) => {
     const info = {
       product_id,
@@ -67,7 +66,7 @@ export function handleAdjustCartProductQuantity(product_id, quantity) {
   });
 }
 
-export function handleDeleteCartProduct(product_id) {
+export function handleDeleteCartProductAPI(product_id) {
   return new Promise((resolve, reject) => {
     const endpoint = `/cart/product/${product_id}`;
 
@@ -84,12 +83,8 @@ export function handleDeleteCartProduct(product_id) {
   });
 }
 
-export function handleSelectCartProducts(selectedProduct) {
+export function handleSelectCartProductsAPI(selectedProduct) {
   return new Promise((resolve, reject) => {
-    // const info = {
-    //   product_id: selectedProduct,
-    // };
-
     const endpoint = "/cart/selection";
 
     putMethodAPI(
@@ -106,7 +101,7 @@ export function handleSelectCartProducts(selectedProduct) {
   });
 }
 
-export function handleGetCartSelectedProducts() {
+export function handleGetCartSelectedProductsAPI() {
   return new Promise((resolve, reject) => {
     const endpoint = "/cart/selected-products";
 

@@ -10,7 +10,7 @@ import {
   handleOrderProducts,
 } from "../../components/user/purchase-history/orders-table";
 import UserSideBar from "@/components/user/side-bar";
-import { handleGetOrders } from "@/api/handlers/order";
+import { handleGetOrdersAPI } from "@/api/handlers/order";
 
 import { Table } from "antd";
 
@@ -25,7 +25,7 @@ export default function PurchaseHistory() {
       return;
     }
 
-    handleGetOrders()
+    handleGetOrdersAPI()
       .then((data) => {
         setOrders(data);
       })
