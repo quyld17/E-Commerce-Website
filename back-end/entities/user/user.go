@@ -2,20 +2,21 @@ package users
 
 import (
 	"database/sql"
-	"fmt"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
 
 type User struct {
-	UserId      int    `json:"user_id"`
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	NewPassword string `json:"new_password"`
-	FullName    string `json:"full_name"`
-	DateOfBirth string `json:"date_of_birth"`
-	PhoneNumber string `json:"phone_number"`
-	Gender      int    `json:"gender"`
+	UserId            int       `json:"user_id"`
+	Email             string    `json:"email"`
+	Password          string    `json:"password"`
+	NewPassword       string    `json:"new_password"`
+	FullName          string    `json:"full_name"`
+	DateOfBirth       time.Time `json:"date_of_birth"`
+	DateOfBirthString string    `json:"date_of_birth_string"`
+	PhoneNumber       string    `json:"phone_number"`
+	Gender            int       `json:"gender"`
 }
 
 type Address struct {
@@ -38,7 +39,7 @@ func Authenticate(account User, db *sql.DB) error {
 			password = ?
 		`, account.Email, account.Password)
 	if err != nil {
-		return fmt.Errorf("%v", err)
+		return err
 	}
 	defer rows.Close()
 
@@ -47,10 +48,10 @@ func Authenticate(account User, db *sql.DB) error {
 	if rows.Next() {
 		return nil
 	}
-	return fmt.Errorf("%v", err)
+	return err
 }
 
-func CreateNew(newUser User, db *sql.DB) error {
+func Create(newUser User, db *sql.DB) error {
 	_, err := db.Exec(`	
 		INSERT INTO user (email, password) 
 		VALUES (?, ?)
@@ -62,36 +63,39 @@ func CreateNew(newUser User, db *sql.DB) error {
 }
 
 func GetDetails(userID int, db *sql.DB) (*User, *Address, error) {
-	row, err := db.Query(`	
-		SELECT 
+	row, err := db.Query(`
+		SELECT
 			email,
-			full_name, 
+			full_name,
 			phone_number,
-			gender
-		FROM user 
+			gender,
+			date_of_birth
+		FROM user
 		WHERE user_id = ?;
 		`, userID)
 	if err != nil {
 		return nil, nil, err
 	}
+
 	var user User
 	if row.Next() {
-		err := row.Scan(&user.Email, &user.FullName, &user.PhoneNumber, &user.Gender)
+		err := row.Scan(&user.Email, &user.FullName, &user.PhoneNumber, &user.Gender, &user.DateOfBirth)
 		if err != nil {
 			return nil, nil, err
 		}
 	}
+	user.DateOfBirthString = user.DateOfBirth.Format("2006-01-02")
 
-	row, err = db.Query(`	
-		SELECT 
-			city, 
-			district, 
-			ward, 	
-			street, 
-			house_number 
-		FROM address 
-		WHERE 
-			user_id = ? AND 
+	row, err = db.Query(`
+		SELECT
+			city,
+			district,
+			ward,
+			street,
+			house_number
+		FROM address
+		WHERE
+			user_id = ? AND
 			is_default = 1;
 		`, userID)
 	if err != nil {

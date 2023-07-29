@@ -21,8 +21,8 @@ func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
 	router.GET("/users/me", jwt.Authorize(func(c echo.Context) error {
 		return handlers.GetUserDetails(c, db)
 	}))
-	router.PUT("/users/me/password", jwt.Authorize(func(c echo.Context) error {
-		return handlers.ChangePassword(c, db)
+	router.PUT("/users/me", jwt.Authorize(func(c echo.Context) error {
+		return handlers.UpdateUserDetails(c, db)
 	}))
 
 	// Products
@@ -43,16 +43,16 @@ func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
 	router.GET("/cart", jwt.Authorize(func(c echo.Context) error {
 		return handlers.GetAllCartProducts(c, db)
 	}))
-	router.POST("/cart/product/addition", jwt.Authorize(func(c echo.Context) error {
+	router.POST("/cart", jwt.Authorize(func(c echo.Context) error {
 		return handlers.AddProductToCart(c, db)
 	}))
-	router.PUT("/cart/product/quantity", jwt.Authorize(func(c echo.Context) error {
+	router.PUT("/cart/product", jwt.Authorize(func(c echo.Context) error {
 		return handlers.AdjustCartProductQuantity(c, db)
 	}))
-	router.PUT("/cart/selection", jwt.Authorize(func(c echo.Context) error {
+	router.PUT("/cart", jwt.Authorize(func(c echo.Context) error {
 		return handlers.SelectCartProducts(c, db)
 	}))
-	router.DELETE("/cart/product/:productID", jwt.Authorize(func(c echo.Context) error {
+	router.DELETE("/cart/:productID", jwt.Authorize(func(c echo.Context) error {
 		productID := c.Param("productID")
 		return handlers.DeleteCartProduct(productID, c, db)
 	}))

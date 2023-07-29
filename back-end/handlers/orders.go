@@ -34,7 +34,7 @@ func CreateOrder(c echo.Context, db *sql.DB) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
-	return c.JSON(http.StatusOK, "Place an order successfully!")
+	return c.JSON(http.StatusOK, "Place order successfully!")
 }
 
 func GetOrders(c echo.Context, db *sql.DB) error {

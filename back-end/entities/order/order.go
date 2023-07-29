@@ -35,7 +35,6 @@ func Create(user *users.User, address *users.Address, orderedProducts []products
 		return err
 	}
 	defer func() {
-		// Rollback the transaction if there's an error
 		if err != nil {
 			transaction.Rollback()
 		}
@@ -54,21 +53,35 @@ func Create(user *users.User, address *users.Address, orderedProducts []products
 		return err
 	}
 
-	stmt, err := transaction.Prepare(`	
+	orderProduct, err := transaction.Prepare(`	
 		INSERT INTO order_products 
 			(order_id, 
 			product_id, 
 			product_name, 
-			quantity, price, 
+			quantity, 
+			price, 
 			image_url)
 		VALUES (?, ?, ?, ?, ?, ?);`)
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
+	defer orderProduct.Close()
+
+	adjustQuantity, err := transaction.Prepare(`
+		UPDATE product
+		SET in_stock_quantity = in_stock_quantity - ?
+		WHERE product_id = ?;`)
+	if err != nil {
+		return err
+	}
+	defer adjustQuantity.Close()
 
 	for _, product := range orderedProducts {
-		_, err := stmt.Exec(orderID, product.ProductID, product.ProductName, product.Quantity, product.Price, product.ImageURL)
+		_, err := orderProduct.Exec(orderID, product.ProductID, product.ProductName, product.Quantity, product.Price, product.ImageURL)
+		if err != nil {
+			return err
+		}
+		_, err = adjustQuantity.Exec(product.Quantity, product.ProductID)
 		if err != nil {
 			return err
 		}

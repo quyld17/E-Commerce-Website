@@ -19,7 +19,7 @@ func SignUp(c echo.Context, db *sql.DB) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	if err := users.CreateNew(newUser, db); err != nil {
+	if err := users.Create(newUser, db); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, "Account already existed! Please try again")
 	}
 

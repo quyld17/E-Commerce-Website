@@ -26,7 +26,7 @@ func GetUserDetails(c echo.Context, db *sql.DB) error {
 	})
 }
 
-func ChangePassword(c echo.Context, db *sql.DB) error {
+func UpdateUserDetails(c echo.Context, db *sql.DB) error {
 	userID, err := users.GetID(c, db)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
@@ -37,13 +37,17 @@ func ChangePassword(c echo.Context, db *sql.DB) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	if err := middlewares.ValidatePasswordChange(user); err != "" {
+	if user.Password != "" && user.NewPassword != "" {
+		if err := middlewares.ValidatePasswordChange(user); err != "" {
+			return echo.NewHTTPError(http.StatusBadRequest, err)
+		}
+
+		if err := users.ChangePassword(userID, user.Password, user.NewPassword, c, db); err != "" {
+			return echo.NewHTTPError(http.StatusBadRequest, err)
+		}
+	} else {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	if err := users.ChangePassword(userID, user.Password, user.NewPassword, c, db); err != "" {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
-	}
-
-	return c.JSON(http.StatusOK, "Changed password successfully!")
+	return c.JSON(http.StatusOK, "Updated successfully!")
 }
