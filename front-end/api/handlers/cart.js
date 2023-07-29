@@ -27,7 +27,7 @@ export function handleAddToCartAPI(product_id, quantity) {
       quantity,
     };
 
-    const endpoint = "/cart/product/addition";
+    const endpoint = "/cart";
 
     postMethodAPI(
       info,
@@ -50,7 +50,7 @@ export function handleAdjustCartProductQuantityAPI(product_id, quantity) {
       quantity,
     };
 
-    const endpoint = "/cart/product/quantity";
+    const endpoint = "/cart/product";
 
     putMethodAPI(
       info,
@@ -68,7 +68,7 @@ export function handleAdjustCartProductQuantityAPI(product_id, quantity) {
 
 export function handleDeleteCartProductAPI(product_id) {
   return new Promise((resolve, reject) => {
-    const endpoint = `/cart/product/${product_id}`;
+    const endpoint = `/cart/${product_id}`;
 
     deleteMethodAPI(
       endpoint,
@@ -85,7 +85,7 @@ export function handleDeleteCartProductAPI(product_id) {
 
 export function handleSelectCartProductsAPI(selectedProduct) {
   return new Promise((resolve, reject) => {
-    const endpoint = "/cart/selection";
+    const endpoint = "/cart";
 
     putMethodAPI(
       selectedProduct,

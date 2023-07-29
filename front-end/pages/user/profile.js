@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import dayjs from "dayjs";
 
 import NavigationBar from "../../components/navigation-bar";
 import styles from "../../styles/user-profile.module.css";
@@ -13,6 +14,7 @@ export default function PurchaseHistory() {
   const [user, setUser] = useState();
   const [address, setAddress] = useState();
   const router = useRouter();
+  const dateFormat = "YYYY-MM-DD";
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -67,7 +69,10 @@ export default function PurchaseHistory() {
                 </Select>
               </Form.Item>
               <Form.Item label="Date of birth">
-                <DatePicker />
+                <DatePicker
+                  defaultValue={dayjs(user.date_of_birth_string, dateFormat)}
+                  allowClear={false}
+                />
               </Form.Item>
               {address && (
                 <Form.Item label="Address">

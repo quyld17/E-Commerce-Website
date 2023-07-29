@@ -26,7 +26,7 @@ export function handleChangePasswordAPI(user) {
       password: user.password,
       new_password: user.new_password,
     };
-    const endpoint = "/users/me/password";
+    const endpoint = "/users/me";
 
     putMethodAPI(
       info,

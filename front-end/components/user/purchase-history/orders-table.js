@@ -31,21 +31,39 @@ export const columns = [
 ];
 
 export const handleOrders = (orders) => {
-  const data = orders.map((order) => ({
-    key: order.order_id,
-    orderID: <p>#{order.order_id}</p>,
-    orderDate: order.created_at,
-    totalPrice: (
-      <p>
-        {Intl.NumberFormat("vi-VI", {
-          style: "currency",
-          currency: "VND",
-        }).format(order.total_price)}
-      </p>
-    ),
-    paymentMethod: order.payment_method,
-    deliveryStatus: <Badge status="processing" text={order.status} />,
-  }));
+  const data = orders.map((order) => {
+    let badgeStatus = "default";
+
+    switch (order.status) {
+      case "Delivering":
+        badgeStatus = "processing";
+        break;
+      case "Delivered":
+        badgeStatus = "success";
+        break;
+      case "Canceled":
+        badgeStatus = "error";
+        break;
+      default:
+        break;
+    }
+
+    return {
+      key: order.order_id,
+      orderID: <p>#{order.order_id}</p>,
+      orderDate: order.created_at,
+      totalPrice: (
+        <p>
+          {Intl.NumberFormat("vi-VI", {
+            style: "currency",
+            currency: "VND",
+          }).format(order.total_price)}
+        </p>
+      ),
+      paymentMethod: order.payment_method,
+      deliveryStatus: <Badge status={badgeStatus} text={order.status} />,
+    };
+  });
 
   return data;
 };
