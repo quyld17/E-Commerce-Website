@@ -87,7 +87,8 @@ func Create(user *users.User, address *users.Address, orderedProducts []products
 		if err != nil {
 			return err
 		}
-		if err := cart.DeleteProduct(userID, product.ProductID, c, db); err != nil {
+
+		if err, _ = cart.DeleteProduct(userID, product.ProductID, c, db); err != nil {
 			return err
 		}
 	}

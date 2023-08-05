@@ -63,41 +63,45 @@ func AddProductToCart(c echo.Context, db *sql.DB) error {
 	return c.JSON(http.StatusOK, "Add product to cart successfully!")
 }
 
-func AdjustCartProductQuantity(c echo.Context, db *sql.DB) error {
+func UpdateCart(c echo.Context, db *sql.DB, task string) error {
 	userID, err := users.GetID(c, db)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	var product products.Product
-	if err := c.Bind(&product); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
-	}
-
-	if err := cart.AdjustProductQuantity(userID, product.ProductID, product.Quantity, c, db); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to adjust quantity. Please try again")
-	}
-
-	return c.JSON(http.StatusOK, "Adjust quantity successfully!")
-}
-
-func SelectCartProducts(c echo.Context, db *sql.DB) error {
-	userID, err := users.GetID(c, db)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
-	}
-
-	products := []products.Product{}
-	if err := c.Bind(&products); err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
-	}
-	for _, product := range products {
-		if err := cart.SelectProducts(userID, product.ProductID, c, db); err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, err)
+	switch task {
+	case "adjust_quantity":
+		var product products.Product
+		if err := c.Bind(&product); err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, err)
 		}
-	}
+		err, errString := cart.AdjustProductQuantity(userID, product.ProductID, product.Quantity, c, db)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err)
+		} else if errString != "" {
+			return echo.NewHTTPError(http.StatusBadRequest, errString)
+		}
 
-	return c.JSON(http.StatusOK, "Select product successfully!")
+		return c.JSON(http.StatusOK, "Adjust quantity successfully!")
+	case "select_product":
+		products := []products.Product{}
+		if err := c.Bind(&products); err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, err)
+		}
+		for _, product := range products {
+			err, errString := cart.SelectProducts(userID, product.ProductID, c, db)
+			if err != nil {
+				return echo.NewHTTPError(http.StatusInternalServerError, err)
+			} else if errString != "" {
+				return echo.NewHTTPError(http.StatusBadRequest, errString)
+			}
+		}
+
+		return c.JSON(http.StatusOK, "Select product successfully!")
+	default:
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid task")
+
+	}
 }
 
 func DeleteCartProduct(productID string, c echo.Context, db *sql.DB) error {
@@ -108,11 +112,14 @@ func DeleteCartProduct(productID string, c echo.Context, db *sql.DB) error {
 
 	id, err := strconv.Atoi(productID)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid product ID format. Please try again")
 	}
 
-	if err := cart.DeleteProduct(userID, id, c, db); err != nil {
+	err, errString := cart.DeleteProduct(userID, id, c, db)
+	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	} else if errString != "" {
+		return echo.NewHTTPError(http.StatusBadRequest, errString)
 	}
 
 	return c.JSON(http.StatusOK, "Delete product successfully!")
