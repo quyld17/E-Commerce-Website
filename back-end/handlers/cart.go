@@ -11,19 +11,36 @@ import (
 	users "github.com/quyld17/E-Commerce-Website/entities/user"
 )
 
-func GetAllCartProducts(c echo.Context, db *sql.DB) error {
+func GetCartProducts(c echo.Context, db *sql.DB, selected string) error {
 	userID, err := users.GetID(c, db)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	cartProducts, totalPrice, err := cart.GetAllProducts(userID, c, db)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
+	products := []products.Product{}
+	if selected == "1" {
+		products, err = cart.GetSelectedProducts(userID, c, db)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err)
+		}
+	} else if selected == "" {
+		products, err = cart.GetAllProducts(userID, c, db)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err)
+		}
+	} else {
+		return echo.NewHTTPError(http.StatusBadRequest, "Failed get cart's products at the moment. Please try again")
+	}
+
+	totalPrice := 0
+	for _, product := range products {
+		if product.Selected == 1 {
+			totalPrice += product.Quantity * product.Price
+		}
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{
-		"cart_products": cartProducts,
+		"cart_products": products,
 		"total_price":   totalPrice,
 	})
 }
@@ -39,7 +56,7 @@ func AddProductToCart(c echo.Context, db *sql.DB) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	if err := cart.AddProduct(userID, product.ProductID, product.Quantity, c, db); err != nil {
+	if err := cart.UpSertProduct(userID, product.ProductID, product.Quantity, c, db); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to add product to cart. Please try again")
 	}
 
@@ -58,10 +75,10 @@ func AdjustCartProductQuantity(c echo.Context, db *sql.DB) error {
 	}
 
 	if err := cart.AdjustProductQuantity(userID, product.ProductID, product.Quantity, c, db); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to adjust product's quantity. Please try again")
+		return echo.NewHTTPError(http.StatusInternalServerError, "Failed to adjust quantity. Please try again")
 	}
 
-	return c.JSON(http.StatusOK, "Adjust product's quantity successfully!")
+	return c.JSON(http.StatusOK, "Adjust quantity successfully!")
 }
 
 func SelectCartProducts(c echo.Context, db *sql.DB) error {
@@ -81,22 +98,6 @@ func SelectCartProducts(c echo.Context, db *sql.DB) error {
 	}
 
 	return c.JSON(http.StatusOK, "Select product successfully!")
-}
-
-func GetCartSelectedProducts(c echo.Context, db *sql.DB) error {
-	userID, err := users.GetID(c, db)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
-	}
-	products, totalPrice, err := cart.GetSelectedProducts(userID, c, db)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, err)
-	}
-
-	return c.JSON(http.StatusOK, echo.Map{
-		"products":    products,
-		"total_price": totalPrice,
-	})
 }
 
 func DeleteCartProduct(productID string, c echo.Context, db *sql.DB) error {

@@ -1,5 +1,4 @@
 import getMethodAPI from "../methods/get-method-api";
-import postMethodAPI from "../methods/post-method-api";
 import { message } from "antd";
 
 export function handleGetAllProductsAPI(setProducts) {
@@ -7,12 +6,11 @@ export function handleGetAllProductsAPI(setProducts) {
 
   getMethodAPI(
     endpoint,
-    // Success callback
     (data) => {
       setProducts(data);
     },
-    // Error callback
     (error) => {
+      reject(error);
       message.error(error);
     }
   );
@@ -24,11 +22,9 @@ export function handleGetProductDetailsAPI(product_id) {
 
     getMethodAPI(
       endpoint,
-      // Success callback
       (data) => {
         resolve(data);
       },
-      // Error callback
       (error) => {
         reject(error);
         message.error(error);

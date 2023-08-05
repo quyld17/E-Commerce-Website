@@ -2,13 +2,12 @@ package cart
 
 import (
 	"database/sql"
-	"log"
 
 	"github.com/labstack/echo/v4"
 	products "github.com/quyld17/E-Commerce-Website/entities/product"
 )
 
-func GetAllProducts(userID int, c echo.Context, db *sql.DB) ([]products.Product, int, error) {
+func GetAllProducts(userID int, c echo.Context, db *sql.DB) ([]products.Product, error) {
 	rows, err := db.Query(`
 		SELECT 
 			cart_product.product_id, 
@@ -29,7 +28,7 @@ func GetAllProducts(userID int, c echo.Context, db *sql.DB) ([]products.Product,
 			product_image.is_thumbnail = 1;
 	`, userID)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -38,25 +37,19 @@ func GetAllProducts(userID int, c echo.Context, db *sql.DB) ([]products.Product,
 		var product products.Product
 		err := rows.Scan(&product.ProductID, &product.Quantity, &product.Selected, &product.ProductName, &product.Price, &product.InStockQuantity, &product.ImageURL)
 		if err != nil {
-			return nil, 0, err
+			return nil, err
 		}
 		cartProducts = append(cartProducts, product)
 	}
 	err = rows.Err()
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
-	totalPrice := 0
-	for _, product := range cartProducts {
-		if product.Selected == 1 {
-			totalPrice += product.Quantity * product.Price
-		}
-	}
-	return cartProducts, totalPrice, nil
+	return cartProducts, nil
 }
 
-func AddProduct(userID int, productID int, quantity int, c echo.Context, db *sql.DB) error {
+func UpSertProduct(userID int, productID int, quantity int, c echo.Context, db *sql.DB) error {
 	_, err := db.Exec(`
 		INSERT INTO cart_product (user_id, product_id, quantity) 
 		VALUES (?, ?, ?)
@@ -78,7 +71,6 @@ func AdjustProductQuantity(userID int, productID int, quantity int, c echo.Conte
 			product_id = ?;
 	`, quantity, userID, productID)
 	if err != nil {
-		log.Fatal(err)
 		return err
 	}
 
@@ -100,11 +92,12 @@ func SelectProducts(userID, productID int, c echo.Context, db *sql.DB) error {
 	return nil
 }
 
-func GetSelectedProducts(userID int, c echo.Context, db *sql.DB) ([]products.Product, int, error) {
+func GetSelectedProducts(userID int, c echo.Context, db *sql.DB) ([]products.Product, error) {
 	rows, err := db.Query(`
 		SELECT 
 			cart_product.product_id, 
 			cart_product.quantity, 
+			cart_product.selected, 
 			product.product_name, 
 			product.price, 
 			product_image.image_url 
@@ -120,30 +113,25 @@ func GetSelectedProducts(userID int, c echo.Context, db *sql.DB) ([]products.Pro
 			product_image.is_thumbnail = 1;
 	`, userID)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 	defer rows.Close()
 
 	selectedProducts := []products.Product{}
 	for rows.Next() {
 		var product products.Product
-		err := rows.Scan(&product.ProductID, &product.Quantity, &product.ProductName, &product.Price, &product.ImageURL)
+		err := rows.Scan(&product.ProductID, &product.Quantity, &product.Selected, &product.ProductName, &product.Price, &product.ImageURL)
 		if err != nil {
-			return nil, 0, err
+			return nil, err
 		}
 		selectedProducts = append(selectedProducts, product)
 	}
 	err = rows.Err()
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
-	totalPrice := 0
-	for _, product := range selectedProducts {
-		totalPrice += product.Quantity * product.Price
-	}
-
-	return selectedProducts, totalPrice, nil
+	return selectedProducts, nil
 }
 
 func DeleteProduct(userID, productID int, c echo.Context, db *sql.DB) error {

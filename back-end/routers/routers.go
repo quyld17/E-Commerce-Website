@@ -40,24 +40,22 @@ func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
 	})
 
 	// Cart
-	router.GET("/cart", jwt.Authorize(func(c echo.Context) error {
-		return handlers.GetAllCartProducts(c, db)
+	router.GET("/cart-products", jwt.Authorize(func(c echo.Context) error {
+		selected := c.QueryParam("selected")
+		return handlers.GetCartProducts(c, db, selected)
 	}))
-	router.POST("/cart", jwt.Authorize(func(c echo.Context) error {
+	router.POST("/cart-products", jwt.Authorize(func(c echo.Context) error {
 		return handlers.AddProductToCart(c, db)
 	}))
-	router.PUT("/cart/product", jwt.Authorize(func(c echo.Context) error {
+	router.PUT("/cart-products", jwt.Authorize(func(c echo.Context) error {
 		return handlers.AdjustCartProductQuantity(c, db)
 	}))
 	router.PUT("/cart", jwt.Authorize(func(c echo.Context) error {
 		return handlers.SelectCartProducts(c, db)
 	}))
-	router.DELETE("/cart/:productID", jwt.Authorize(func(c echo.Context) error {
+	router.DELETE("/cart-products/:productID", jwt.Authorize(func(c echo.Context) error {
 		productID := c.Param("productID")
 		return handlers.DeleteCartProduct(productID, c, db)
-	}))
-	router.GET("/cart/selected-products", jwt.Authorize(func(c echo.Context) error {
-		return handlers.GetCartSelectedProducts(c, db)
 	}))
 
 	// Orders

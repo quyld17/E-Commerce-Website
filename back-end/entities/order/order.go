@@ -2,6 +2,7 @@ package orders
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/quyld17/E-Commerce-Website/entities/cart"
@@ -10,13 +11,14 @@ import (
 )
 
 type Order struct {
-	OrderID       int            `json:"order_id"`
-	UserID        int            `json:"user_id"`
-	TotalPrice    int            `json:"total_price"`
-	PaymentMethod string         `json:"payment_method"`
-	Status        string         `json:"status"`
-	CreatedAt     string         `json:"created_at"`
-	Products      []OrderProduct `json:"products"`
+	OrderID          int            `json:"order_id"`
+	UserID           int            `json:"user_id"`
+	TotalPrice       int            `json:"total_price"`
+	PaymentMethod    string         `json:"payment_method"`
+	Status           string         `json:"status"`
+	CreatedAt        time.Time      `json:"created_at"`
+	CreatedAtDisplay string         `json:"created_at_display"`
+	Products         []OrderProduct `json:"products"`
 }
 
 type OrderProduct struct {
@@ -121,6 +123,7 @@ func GetAll(userID int, c echo.Context, db *sql.DB) ([]Order, error) {
 		if err != nil {
 			return nil, err
 		}
+		order.CreatedAtDisplay = order.CreatedAt.Format("2006-01-02 15:04:05")
 
 		productRows, err := db.Query(`
 			SELECT * 

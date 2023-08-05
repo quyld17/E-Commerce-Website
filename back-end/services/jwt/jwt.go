@@ -59,8 +59,6 @@ func Authorize(next echo.HandlerFunc) echo.HandlerFunc {
 		if !ok {
 			return echo.NewHTTPError(http.StatusInternalServerError, "Invalid claims")
 		}
-
-		// Store the email claim in a variable for later use
 		email, ok := claims["email"].(string)
 		if !ok {
 			return echo.NewHTTPError(http.StatusInternalServerError, "Invalid claims")

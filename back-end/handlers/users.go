@@ -46,7 +46,7 @@ func UpdateUserDetails(c echo.Context, db *sql.DB) error {
 			return echo.NewHTTPError(http.StatusBadRequest, err)
 		}
 	} else {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
+		return echo.NewHTTPError(http.StatusBadRequest, "Failed to update user. Please try again")
 	}
 
 	return c.JSON(http.StatusOK, "Updated successfully!")

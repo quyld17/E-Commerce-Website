@@ -6,7 +6,7 @@ import { message } from "antd";
 
 export function handleGetAllCartProductsAPI() {
   return new Promise((resolve, reject) => {
-    const endpoint = "/cart";
+    const endpoint = "/cart-products";
 
     getMethodAPI(
       endpoint,
@@ -27,7 +27,7 @@ export function handleAddToCartAPI(product_id, quantity) {
       quantity,
     };
 
-    const endpoint = "/cart";
+    const endpoint = "/cart-products";
 
     postMethodAPI(
       info,
@@ -50,7 +50,7 @@ export function handleAdjustCartProductQuantityAPI(product_id, quantity) {
       quantity,
     };
 
-    const endpoint = "/cart/product";
+    const endpoint = "/cart-products";
 
     putMethodAPI(
       info,
@@ -68,7 +68,7 @@ export function handleAdjustCartProductQuantityAPI(product_id, quantity) {
 
 export function handleDeleteCartProductAPI(product_id) {
   return new Promise((resolve, reject) => {
-    const endpoint = `/cart/${product_id}`;
+    const endpoint = `/cart-products/${product_id}`;
 
     deleteMethodAPI(
       endpoint,
@@ -103,7 +103,7 @@ export function handleSelectCartProductsAPI(selectedProduct) {
 
 export function handleGetCartSelectedProductsAPI() {
   return new Promise((resolve, reject) => {
-    const endpoint = "/cart/selected-products";
+    const endpoint = "/cart-products?selected=1";
 
     getMethodAPI(
       endpoint,

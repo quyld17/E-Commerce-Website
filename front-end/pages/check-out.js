@@ -38,18 +38,18 @@ export default function CheckOut() {
 
     handleGetCartSelectedProductsAPI()
       .then((data) => {
-        if (data.products.length === 0) {
+        if (data.cart_products.length === 0) {
           message.error("You have not selected any products for checkout");
           router.push("/");
         }
-        setCheckOutData(data.products);
+        setCheckOutData(data.cart_products);
         setSubTotal(data.total_price);
       })
       .catch((error) => {
         console.log("Error getting check-out products' details:", error);
       });
 
-      handleGetUserDetailsAPI()
+    handleGetUserDetailsAPI()
       .then((data) => {
         setUserInfo(data.user);
         setAddress(data.address);

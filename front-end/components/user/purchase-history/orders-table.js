@@ -51,7 +51,7 @@ export const handleOrders = (orders) => {
     return {
       key: order.order_id,
       orderID: <p>#{order.order_id}</p>,
-      orderDate: order.created_at,
+      orderDate: order.created_at_display,
       totalPrice: (
         <p>
           {Intl.NumberFormat("vi-VI", {

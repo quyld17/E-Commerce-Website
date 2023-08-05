@@ -42,9 +42,6 @@ func Authenticate(account User, db *sql.DB) error {
 		return err
 	}
 	defer rows.Close()
-
-	//Check if 'rows' stores anything or not
-	//If true, email and password are matched
 	if rows.Next() {
 		return nil
 	}
