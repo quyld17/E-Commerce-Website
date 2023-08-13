@@ -1,27 +1,19 @@
+import getJWT from "../get-jwt";
+
 export default function putMethodAPI(
   credentials,
   endpoint,
   successCallback,
   errorCallback
 ) {
-  const baseURL = "http://localhost:8080";
-  const token = localStorage.getItem("token");
-  let headers = {};
-
-  if (!token) {
-    headers = {
-      "Content-Type": "application/json",
-    };
-  } else {
-    headers = {
-      "Content-Type": "application/json",
-      Authorization: `${token}`,
-    };
-  }
+  const { baseURL, token } = getJWT();
 
   fetch(baseURL + endpoint, {
     method: "PUT",
-    headers: headers,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `${token}` : undefined,
+    },
     body: JSON.stringify(credentials),
   })
     .then((response) => response.json())

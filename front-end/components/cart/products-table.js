@@ -33,7 +33,7 @@ export const cartColumns = [
 export const cartData = (
   cartProducts,
   handleProductRedirect,
-  handleAdjustQuantity
+  adjustedQuantityHandler
 ) => {
   const router = useRouter();
   const data = cartProducts.map((product) => ({
@@ -67,7 +67,7 @@ export const cartData = (
         defaultValue={product.quantity}
         value={product.quantity}
         onChange={(quantity) =>
-          handleAdjustQuantity(product.product_id, quantity)
+          adjustedQuantityHandler(product.product_id, quantity)
         }
       />
     ),
@@ -79,7 +79,7 @@ export const cartData = (
       <Space size="middle">
         <a
           className={styles.deleteButton}
-          onClick={() => handleAdjustQuantity(product.product_id, 0)}
+          onClick={() => adjustedQuantityHandler(product.product_id, 0)}
         >
           Delete
         </a>

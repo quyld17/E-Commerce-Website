@@ -3,13 +3,11 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import NavigationBar from "../components/navigation-bar";
-import {
-  handleAdjustCartProductQuantityAPI,
-  handleSelectCartProductsAPI,
-} from "../api/handlers/cart";
 import { handleGetCartProducts } from "../components/cart/get-products";
 import { cartColumns, cartData } from "../components/cart/products-table";
 import { handleCancel, handleOk } from "../components/cart/delete-confirm";
+import handleAdjustQuantity from "../components/cart/adjust-quantity";
+import { handleSelectProducts } from "../components/cart/select-products";
 import styles from "../styles/cart.module.css";
 
 import { Button, Table, Modal, message } from "antd";
@@ -55,83 +53,40 @@ export default function CartPage() {
     );
   }, []);
 
-  const handleAdjustQuantity = (id, quantity) => {
-    if (quantity === 0) {
-      setIsModalOpen(true);
-      const product = cartProducts.find((product) => product.product_id === id);
-      setDeletingProduct(product);
-    } else {
-      handleAdjustCartProductQuantityAPI(id, quantity)
-        .then(() => {
-          handleGetCartProducts(
-            setCartProducts,
-            setTotal,
-            setSelectedRowKeys,
-            setSelectedRowKeysPrev
-          );
-        })
-        .catch((error) => {
-          console.log("Error: ", error);
-        });
-    }
+  const adjustedQuantityHandler = (id, quantity) => {
+    handleAdjustQuantity(
+      id,
+      quantity,
+      cartProducts,
+      setCartProducts,
+      setTotal,
+      setSelectedRowKeys,
+      setSelectedRowKeysPrev,
+      setIsModalOpen,
+      setDeletingProduct
+    );
   };
 
   const data = cartData(
     cartProducts,
     handleProductRedirect,
-    handleAdjustQuantity
+    adjustedQuantityHandler
   );
 
-  const handleSelectProducts = (selectedRowKeys) => {
-    const newlySelectedProducts = selectedRowKeys.filter(
-      (key) => !selectedRowKeysPrev.includes(key)
+  const handleSelectedProducts = (selectedRowKeys) => {
+    handleSelectProducts(
+      selectedRowKeys,
+      selectedRowKeysPrev,
+      setCartProducts,
+      setTotal,
+      setSelectedRowKeys,
+      setSelectedRowKeysPrev
     );
-    const newlyDeselectedProducts = selectedRowKeysPrev.filter(
-      (key) => !selectedRowKeys.includes(key)
-    );
-
-    setSelectedRowKeys(selectedRowKeys);
-    setSelectedRowKeysPrev(selectedRowKeys);
-
-    const selectedProducts = newlySelectedProducts.map((key) => ({
-      product_id: key,
-    }));
-    const deselectedProducts = newlyDeselectedProducts.map((key) => ({
-      product_id: key,
-    }));
-
-    if (selectedProducts.length !== 0) {
-      handleSelectCartProductsAPI(selectedProducts)
-        .then(() => {
-          handleGetCartProducts(
-            setCartProducts,
-            setTotal,
-            setSelectedRowKeys,
-            setSelectedRowKeysPrev
-          );
-        })
-        .catch((error) => {
-          console.log("Error: ", error);
-        });
-    } else {
-      handleSelectCartProductsAPI(deselectedProducts)
-        .then(() => {
-          handleGetCartProducts(
-            setCartProducts,
-            setTotal,
-            setSelectedRowKeys,
-            setSelectedRowKeysPrev
-          );
-        })
-        .catch((error) => {
-          console.log("Error: ", error);
-        });
-    }
   };
 
   const rowSelection = {
     selectedRowKeys: selectedRowKeys,
-    onChange: handleSelectProducts,
+    onChange: handleSelectedProducts,
   };
 
   return (

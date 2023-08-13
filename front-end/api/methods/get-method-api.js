@@ -1,22 +1,14 @@
-export default function getMethodAPI(endpoint, successCallback, errorCallback) {
-  const baseURL = "http://localhost:8080";
-  const token = localStorage.getItem("token");
-  let headers = {};
+import getJWT from "../get-jwt";
 
-  if (!token) {
-    headers = {
-      "Content-Type": "application/json",
-    };
-  } else {
-    headers = {
-      "Content-Type": "application/json",
-      Authorization: `${token}`,
-    };
-  }
+export default function getMethodAPI(endpoint, successCallback, errorCallback) {
+  const { baseURL, token } = getJWT();
 
   fetch(baseURL + endpoint, {
     method: "GET",
-    headers: headers,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `${token}` : undefined,
+    },
   })
     .then((response) => response.json())
     .then((data) => {

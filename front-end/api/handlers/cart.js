@@ -20,6 +20,23 @@ export function handleGetAllCartProductsAPI() {
   });
 }
 
+export function handleGetCartSelectedProductsAPI() {
+  return new Promise((resolve, reject) => {
+    const endpoint = "/cart-products?selected=1";
+
+    getMethodAPI(
+      endpoint,
+      (data) => {
+        resolve(data);
+      },
+      (error) => {
+        reject(error);
+        message.error(error);
+      }
+    );
+  });
+}
+
 export function handleAddToCartAPI(product_id, quantity) {
   return new Promise((resolve, reject) => {
     const info = {
@@ -45,15 +62,35 @@ export function handleAddToCartAPI(product_id, quantity) {
 
 export function handleAdjustCartProductQuantityAPI(product_id, quantity) {
   return new Promise((resolve, reject) => {
-    const info = {
-      product_id,
-      quantity,
-    };
-
+    const info = [
+      {
+        product_id,
+        quantity,
+        selected: -1,
+      },
+    ];
     const endpoint = "/cart-products";
 
     putMethodAPI(
       info,
+      endpoint,
+      (data) => {
+        resolve(data);
+      },
+      (error) => {
+        reject(error);
+        message.error(error);
+      }
+    );
+  });
+}
+
+export function handleSelectCartProductsAPI(selectedProduct) {
+  return new Promise((resolve, reject) => {
+    const endpoint = "/cart-products";
+
+    putMethodAPI(
+      selectedProduct,
       endpoint,
       (data) => {
         resolve(data);
@@ -71,41 +108,6 @@ export function handleDeleteCartProductAPI(product_id) {
     const endpoint = `/cart-products/${product_id}`;
 
     deleteMethodAPI(
-      endpoint,
-      (data) => {
-        resolve(data);
-      },
-      (error) => {
-        reject(error);
-        message.error(error);
-      }
-    );
-  });
-}
-
-export function handleSelectCartProductsAPI(selectedProduct) {
-  return new Promise((resolve, reject) => {
-    const endpoint = "/cart";
-
-    putMethodAPI(
-      selectedProduct,
-      endpoint,
-      (data) => {
-        resolve(data);
-      },
-      (error) => {
-        reject(error);
-        message.error(error);
-      }
-    );
-  });
-}
-
-export function handleGetCartSelectedProductsAPI() {
-  return new Promise((resolve, reject) => {
-    const endpoint = "/cart-products?selected=1";
-
-    getMethodAPI(
       endpoint,
       (data) => {
         resolve(data);
