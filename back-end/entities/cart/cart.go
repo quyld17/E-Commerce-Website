@@ -62,7 +62,7 @@ func UpSertProduct(userID int, productID int, quantity int, c echo.Context, db *
 	return nil
 }
 
-func AdjustProductQuantity(userID int, productID int, quantity int, c echo.Context, db *sql.DB) (error, string) {
+func Update(userID, productID, quantity, selected int, c echo.Context, db *sql.DB) (string, error) {
 	row, err := db.Query(`	
 		SELECT * 
 		FROM cart_product
@@ -71,69 +71,50 @@ func AdjustProductQuantity(userID int, productID int, quantity int, c echo.Conte
 			product_id = ?;
 		`, userID, productID)
 	if err != nil {
-		return err, ""
+		return "", err
 	}
 	defer row.Close()
 
 	if row.Next() {
-		if quantity == 0 {
-			_, err := db.Exec(`	
-				DELETE FROM cart_product 
-				WHERE 
-					user_id = ? AND 
-					product_id = ?;
-				`, userID, productID)
-			if err != nil {
-				return err, ""
-			}
-		} else {
-			_, err := db.Exec(`	
-				UPDATE cart_product 
-				SET quantity = ? 
-				WHERE 
-					user_id = ? AND 
-					product_id = ?;
-				`, quantity, userID, productID)
-			if err != nil {
-				return err, ""
-			}
-		}
-	} else {
-		return nil, "Product not in cart. Please try again"
-	}
-
-	return nil, ""
-}
-
-func SelectProducts(userID, productID int, c echo.Context, db *sql.DB) (error, string) {
-	row, err := db.Query(`	
-		SELECT * 
-		FROM cart_product
-		WHERE 
-			user_id = ? AND 
-			product_id = ?;
-		`, userID, productID)
-	if err != nil {
-		return err, ""
-	}
-	defer row.Close()
-
-	if row.Next() {
-		_, err := db.Exec(`
-			UPDATE cart_product 
-			SET selected = (1 - selected)
+		if selected == 0 || selected == 1 {
+			_, err := db.Exec(`
+			UPDATE cart_product
+			SET selected = ?
 			WHERE 
 				user_id = ? AND 
 				product_id = ?;
-			`, userID, productID)
-		if err != nil {
-			return err, ""
+		`, selected, userID, productID)
+			if err != nil {
+				return "", err
+			}
+		} else if quantity <= 0 {
+			_, err := db.Exec(`	
+				DELETE FROM cart_product 
+				WHERE 
+					user_id = ? AND
+					product_id = ?;
+				`, userID, productID)
+			if err != nil {
+				return "", err
+			}
+		} else if quantity > 0 {
+			_, err := db.Exec(`
+				UPDATE cart_product
+				SET
+					quantity = ?
+				WHERE
+					user_id = ? AND
+					product_id = ?;
+				`, quantity, userID, productID)
+			if err != nil {
+				return "", err
+			}
 		}
 	} else {
-		return nil, "Product not in cart. Please try again"
+		return "Product not in cart. Please try again", nil
 	}
 
-	return nil, ""
+	return "", nil
 }
 
 func GetSelectedProducts(userID int, c echo.Context, db *sql.DB) ([]products.Product, error) {
@@ -178,7 +159,7 @@ func GetSelectedProducts(userID int, c echo.Context, db *sql.DB) ([]products.Pro
 	return selectedProducts, nil
 }
 
-func DeleteProduct(userID, productID int, c echo.Context, db *sql.DB) (error, string) {
+func DeleteProduct(userID, productID int, c echo.Context, db *sql.DB) (string, error) {
 	row, err := db.Query(`	
 		SELECT * 
 		FROM cart_product
@@ -187,7 +168,7 @@ func DeleteProduct(userID, productID int, c echo.Context, db *sql.DB) (error, st
 			product_id = ?;
 		`, userID, productID)
 	if err != nil {
-		return err, ""
+		return "", err
 	}
 	defer row.Close()
 
@@ -199,11 +180,11 @@ func DeleteProduct(userID, productID int, c echo.Context, db *sql.DB) (error, st
 				product_id = ?;
 			`, userID, productID)
 		if err != nil {
-			return err, ""
+			return "", err
 		}
 	} else {
-		return nil, "Product not in cart. Please try again"
+		return "Product not in cart. Please try again", nil
 	}
 
-	return nil, ""
+	return "", nil
 }

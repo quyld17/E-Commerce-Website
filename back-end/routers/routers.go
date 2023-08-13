@@ -48,8 +48,7 @@ func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
 		return handlers.AddProductToCart(c, db)
 	}))
 	router.PUT("/cart-products", jwt.Authorize(func(c echo.Context) error {
-		task := c.QueryParam("task")
-		return handlers.UpdateCart(c, db, task)
+		return handlers.UpdateCartProducts(c, db)
 	}))
 	router.DELETE("/cart-products/:productID", jwt.Authorize(func(c echo.Context) error {
 		productID := c.Param("productID")

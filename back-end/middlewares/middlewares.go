@@ -9,7 +9,7 @@ import (
 func ValidateEmailAndPassword(user users.User) string {
 	_, err := mail.ParseAddress(user.Email)
 	if err != nil {
-		return "Invalid email address! Email must include '@' and a domain"
+		return "Invalid email address! Please try again"
 	}
 	if user.Password == "" {
 		return "Password must not be empty! Please try again"
