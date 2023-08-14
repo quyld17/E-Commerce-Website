@@ -25,7 +25,7 @@ func CreateOrder(c echo.Context, db *sql.DB) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
-	orderedProducts, err := cart.GetSelectedProducts(userID, c, db)
+	orderedProducts, err := cart.GetProducts("1", userID, c, db)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}

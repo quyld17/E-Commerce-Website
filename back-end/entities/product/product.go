@@ -59,7 +59,7 @@ func GetAll(c echo.Context, db *sql.DB) ([]Product, error) {
 	return productDetails, nil
 }
 
-func GetSingleProductDetails(productID int, c echo.Context, db *sql.DB) (*Product, []ProductImage, error) {
+func GetProductDetails(productID int, c echo.Context, db *sql.DB) (*Product, []ProductImage, error) {
 	rows, err := db.Query(`
 		SELECT 
 			product.product_id, 

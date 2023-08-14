@@ -17,19 +17,9 @@ func GetCartProducts(c echo.Context, db *sql.DB, selected string) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	products := []products.Product{}
-	if selected == "1" {
-		products, err = cart.GetSelectedProducts(userID, c, db)
-		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, err)
-		}
-	} else if selected == "" {
-		products, err = cart.GetAllProducts(userID, c, db)
-		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, err)
-		}
-	} else {
-		return echo.NewHTTPError(http.StatusBadRequest, "Failed to get cart's products at the moment! Please try again")
+	products, err := cart.GetProducts(selected, userID, c, db)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 
 	totalPrice := 0
