@@ -24,7 +24,7 @@ func GetCartProducts(c echo.Context, db *sql.DB, selected string) error {
 
 	totalPrice := 0
 	for _, product := range products {
-		if product.Selected == 1 {
+		if product.Selected {
 			totalPrice += product.Quantity * product.Price
 		}
 	}

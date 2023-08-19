@@ -8,49 +8,37 @@ import (
 )
 
 func GetProducts(selected string, userID int, c echo.Context, db *sql.DB) ([]products.Product, error) {
-	var rows *sql.Rows
-	var err error
-	if selected == "" {
-		rows, err = db.Query(`
-			SELECT 
-				cart_product.product_id, 
-				cart_product.quantity, 
-				cart_product.selected, 
-				product.product_name, 
-				product.price, 
-				product.in_stock_quantity, 
-				product_image.image_url 
-			FROM 
-				cart_product, 
-				product, 
-				product_image 
-			WHERE 
-				cart_product.user_id = ? AND 
-				cart_product.product_id = product.product_id AND 
-				cart_product.product_id = product_image.product_id AND 
-				product_image.is_thumbnail = 1;
-		`, userID)
-	} else if selected == "1" {
-		rows, err = db.Query(`
-			SELECT
-				cart_product.product_id,
-				cart_product.quantity,
-				cart_product.selected,
-				product.product_name,
-				product.price,
-				product_image.image_url
-			FROM
-				cart_product,
-				product,
-				product_image
-			WHERE
-				cart_product.user_id = ? AND
-				cart_product.product_id = product.product_id AND
-				cart_product.selected = 1 AND
-				cart_product.product_id = product_image.product_id AND
-				product_image.is_thumbnail = 1;
-		`, userID)
+	var query string
+	var args []interface{}
+
+	query = `
+		SELECT 
+			cp.product_id, 
+			cp.quantity, 
+			cp.selected, 
+			p.product_name, 
+			p.price, 
+			p.in_stock_quantity, 
+			pi.image_url 
+		FROM 
+			cart_product cp
+		JOIN 
+			product p ON cp.product_id = p.product_id
+		JOIN 
+			product_image pi ON cp.product_id = pi.product_id
+		WHERE 
+			cp.user_id = ? AND 
+			pi.is_thumbnail = 1
+	`
+	args = append(args, userID)
+
+	if selected == "true" {
+		query += " AND cp.selected = ?"
+		args = append(args, true)
 	}
+
+	rows, err := db.Query(query, args...)
+
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +74,7 @@ func UpSertProduct(userID int, productID int, quantity int, c echo.Context, db *
 	return nil
 }
 
-func Update(userID, productID, quantity, selected int, c echo.Context, db *sql.DB) (string, error) {
+func Update(userID, productID, quantity int, selected bool, c echo.Context, db *sql.DB) (string, error) {
 	row, err := db.Query(`	
 		SELECT * 
 		FROM cart_product
@@ -100,18 +88,7 @@ func Update(userID, productID, quantity, selected int, c echo.Context, db *sql.D
 	defer row.Close()
 
 	if row.Next() {
-		if selected == 0 || selected == 1 {
-			_, err := db.Exec(`
-			UPDATE cart_product
-			SET selected = ?
-			WHERE 
-				user_id = ? AND 
-				product_id = ?;
-		`, selected, userID, productID)
-			if err != nil {
-				return "", err
-			}
-		} else if quantity <= 0 {
+		if quantity <= 0 {
 			_, err := db.Exec(`	
 				DELETE FROM cart_product 
 				WHERE 
@@ -121,15 +98,16 @@ func Update(userID, productID, quantity, selected int, c echo.Context, db *sql.D
 			if err != nil {
 				return "", err
 			}
-		} else if quantity > 0 {
+		} else {
 			_, err := db.Exec(`
 				UPDATE cart_product
 				SET
-					quantity = ?
+					quantity = ?,
+					selected = ?
 				WHERE
 					user_id = ? AND
 					product_id = ?;
-				`, quantity, userID, productID)
+				`, quantity, selected, userID, productID)
 			if err != nil {
 				return "", err
 			}
@@ -140,48 +118,6 @@ func Update(userID, productID, quantity, selected int, c echo.Context, db *sql.D
 
 	return "", nil
 }
-
-// func GetSelectedProducts(userID int, c echo.Context, db *sql.DB) ([]products.Product, error) {
-// 	rows, err := db.Query(`
-// 		SELECT
-// 			cart_product.product_id,
-// 			cart_product.quantity,
-// 			cart_product.selected,
-// 			product.product_name,
-// 			product.price,
-// 			product_image.image_url
-// 		FROM
-// 			cart_product,
-// 			product,
-// 			product_image
-// 		WHERE
-// 			cart_product.user_id = ? AND
-// 			cart_product.product_id = product.product_id AND
-// 			cart_product.selected = 1 AND
-// 			cart_product.product_id = product_image.product_id AND
-// 			product_image.is_thumbnail = 1;
-// 	`, userID)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer rows.Close()
-
-// 	selectedProducts := []products.Product{}
-// 	for rows.Next() {
-// 		var product products.Product
-// 		err := rows.Scan(&product.ProductID, &product.Quantity, &product.Selected, &product.ProductName, &product.Price, &product.ImageURL)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		selectedProducts = append(selectedProducts, product)
-// 	}
-// 	err = rows.Err()
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return selectedProducts, nil
-// }
 
 func DeleteProduct(userID, productID int, c echo.Context, db *sql.DB) (string, error) {
 	row, err := db.Query(`	

@@ -9,7 +9,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func SetUpMySQL() *sql.DB {
+func NewMySQL() *sql.DB {
 	err := godotenv.Load("credentials.env")
 	if err != nil {
 		log.Fatal("Failed to retrieve credentials. Please try again")

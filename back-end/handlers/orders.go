@@ -25,13 +25,13 @@ func CreateOrder(c echo.Context, db *sql.DB) error {
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
-	orderedProducts, err := cart.GetProducts("1", userID, c, db)
+	orderedProducts, err := cart.GetProducts("true", userID, c, db)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err)
 	}
 	totalPrice := 0
 	for _, product := range orderedProducts {
-		if product.Selected == 1 {
+		if product.Selected {
 			totalPrice += product.Quantity * product.Price
 		}
 	}

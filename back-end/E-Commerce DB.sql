@@ -61,7 +61,7 @@ CREATE TABLE `cart_product` (
   `user_id` INT NOT NULL,
   `product_id` INT NOT NULL,
   `quantity` INT NOT NULL,
-  `selected` TINYINT DEFAULT 0
+  `selected` BOOLEAN DEFAULT FALSE
 );
 
 CREATE UNIQUE INDEX `order_products_index_0` ON `order_products` (`order_id`, `product_id`);

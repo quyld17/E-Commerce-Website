@@ -14,7 +14,7 @@ type Product struct {
 	InStockQuantity int    `json:"in_stock_quantity"`
 	ImageURL        string `json:"image_url"`
 	Quantity        int    `json:"quantity"`
-	Selected        int    `json:"selected"`
+	Selected        bool   `json:"selected"`
 }
 
 type ProductImage struct {

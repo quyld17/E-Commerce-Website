@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	db := database.SetUpMySQL()
+	db := database.NewMySQL()
 
 	router := echo.New()
 	router.Use(middleware.CORSWithConfig(middleware.CORSConfig{
