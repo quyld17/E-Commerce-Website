@@ -5,7 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/quyld17/E-Commerce-Website/handlers"
-	"github.com/quyld17/E-Commerce-Website/services/jwt"
+	"github.com/quyld17/E-Commerce-Website/middlewares"
 )
 
 func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
@@ -18,10 +18,10 @@ func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
 	})
 
 	// Users
-	router.GET("/users/me", jwt.Authorize(func(c echo.Context) error {
+	router.GET("/users/me", middlewares.JWTAuthorize(func(c echo.Context) error {
 		return handlers.GetUserDetails(c, db)
 	}))
-	router.PUT("/users/me", jwt.Authorize(func(c echo.Context) error {
+	router.PUT("/users/me", middlewares.JWTAuthorize(func(c echo.Context) error {
 		return handlers.UpdateUserDetails(c, db)
 	}))
 
@@ -40,26 +40,26 @@ func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
 	})
 
 	// Cart
-	router.GET("/cart-products", jwt.Authorize(func(c echo.Context) error {
+	router.GET("/cart-products", middlewares.JWTAuthorize(func(c echo.Context) error {
 		selected := c.QueryParam("selected")
 		return handlers.GetCartProducts(c, db, selected)
 	}))
-	router.POST("/cart-products", jwt.Authorize(func(c echo.Context) error {
+	router.POST("/cart-products", middlewares.JWTAuthorize(func(c echo.Context) error {
 		return handlers.AddProductToCart(c, db)
 	}))
-	router.PUT("/cart-products", jwt.Authorize(func(c echo.Context) error {
+	router.PUT("/cart-products", middlewares.JWTAuthorize(func(c echo.Context) error {
 		return handlers.UpdateCartProducts(c, db)
 	}))
-	router.DELETE("/cart-products/:productID", jwt.Authorize(func(c echo.Context) error {
+	router.DELETE("/cart-products/:productID", middlewares.JWTAuthorize(func(c echo.Context) error {
 		productID := c.Param("productID")
 		return handlers.DeleteCartProduct(productID, c, db)
 	}))
 
 	// Orders
-	router.POST("/orders", jwt.Authorize(func(c echo.Context) error {
+	router.POST("/orders", middlewares.JWTAuthorize(func(c echo.Context) error {
 		return handlers.CreateOrder(c, db)
 	}))
-	router.GET("/orders/me", jwt.Authorize(func(c echo.Context) error {
+	router.GET("/orders/me", middlewares.JWTAuthorize(func(c echo.Context) error {
 		return handlers.GetOrders(c, db)
 	}))
 }

@@ -20,8 +20,11 @@ func SignIn(c echo.Context, db *sql.DB) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	if err := users.Authenticate(account, db); err != nil {
+	errStr, err := users.Authenticate(account, db)
+	if err != nil {
 		return echo.NewHTTPError(http.StatusUnauthorized, "Invalid email or password! Please try again")
+	} else if errStr != "" {
+		return echo.NewHTTPError(http.StatusUnauthorized, errStr)
 	}
 
 	token, err := jwt.Generate(account.Email)

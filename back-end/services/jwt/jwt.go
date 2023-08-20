@@ -1,7 +1,6 @@
 package jwt
 
 import (
-	"net/http"
 	"os"
 	"time"
 
@@ -34,37 +33,19 @@ func Generate(email string) (string, error) {
 	return tokenString, nil
 }
 
-func Authorize(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		err := godotenv.Load("credentials.env")
-		if err != nil {
-			return echo.NewHTTPError(http.StatusInternalServerError, err)
-		}
+func GetToken(c echo.Context) string {
+	token := c.Request().Header.Get("Authorization")
+	return token
+}
 
-		// Retrieve the JWT token from the request header
-		tokenString := c.Request().Header.Get("Authorization")
-		if tokenString == "" {
-			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized")
-		}
-
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			return []byte(os.Getenv("JWT_SECRET_KEY")), nil
-		})
-		if err != nil || !token.Valid {
-			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized")
-		}
-
-		// Extract the claims from the JWT token
-		claims, ok := token.Claims.(jwt.MapClaims)
-		if !ok {
-			return echo.NewHTTPError(http.StatusInternalServerError, "Invalid claims")
-		}
-		email, ok := claims["email"].(string)
-		if !ok {
-			return echo.NewHTTPError(http.StatusInternalServerError, "Invalid claims")
-		}
-		c.Set("email", email)
-
-		return next(c)
+func GetClaims(token *jwt.Token, key string) string {
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return ""
 	}
+	email, ok := claims[key].(string)
+	if !ok {
+		return ""
+	}
+	return email
 }

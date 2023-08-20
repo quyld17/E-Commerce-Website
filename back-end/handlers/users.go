@@ -6,7 +6,6 @@ import (
 
 	"github.com/labstack/echo/v4"
 	users "github.com/quyld17/E-Commerce-Website/entities/user"
-	"github.com/quyld17/E-Commerce-Website/middlewares"
 )
 
 func GetUserDetails(c echo.Context, db *sql.DB) error {
@@ -37,16 +36,16 @@ func UpdateUserDetails(c echo.Context, db *sql.DB) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	if user.Password != "" && user.NewPassword != "" {
-		if err := middlewares.ValidatePasswordChange(user); err != "" {
-			return echo.NewHTTPError(http.StatusBadRequest, err)
-		}
+	if user.Password == "" || user.NewPassword == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "All fields must be filled! Please try again")
+	} else if len(user.Password) > 255 || len(user.NewPassword) > 255 {
+		return echo.NewHTTPError(http.StatusBadRequest, "Input exceeds limit! Please try again")
+	} else if user.Password == user.NewPassword {
+		return echo.NewHTTPError(http.StatusBadRequest, "New password must be different from current password! Please try again")
+	}
 
-		if err := users.ChangePassword(userID, user.Password, user.NewPassword, c, db); err != "" {
-			return echo.NewHTTPError(http.StatusBadRequest, err)
-		}
-	} else {
-		return echo.NewHTTPError(http.StatusBadRequest, "Failed to update user. Please try again")
+	if err := users.ChangePassword(userID, user.Password, user.NewPassword, c, db); err != "" {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
 	return c.JSON(http.StatusOK, "Updated successfully!")

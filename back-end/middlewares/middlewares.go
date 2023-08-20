@@ -1,9 +1,15 @@
 package middlewares
 
 import (
+	"net/http"
 	"net/mail"
+	"os"
 
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/joho/godotenv"
+	"github.com/labstack/echo/v4"
 	users "github.com/quyld17/E-Commerce-Website/entities/user"
+	jwtHandler "github.com/quyld17/E-Commerce-Website/services/jwt"
 )
 
 func ValidateEmailAndPassword(user users.User) string {
@@ -19,15 +25,32 @@ func ValidateEmailAndPassword(user users.User) string {
 	return ""
 }
 
-func ValidatePasswordChange(user users.User) string {
-	if user.Password == "" {
-		return "Current password must not be empty! Please try again"
-	} else if user.NewPassword == "" {
-		return "New password must not be empty! Please try again"
-	} else if user.Password == user.NewPassword {
-		return "New password must be different from current password! Please try again"
-	} else if len(user.NewPassword) > 255 {
-		return "Input exceeds limit! Please try again"
+func JWTAuthorize(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		err := godotenv.Load("credentials.env")
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err)
+		}
+
+		// Retrieve the JWT token from the request header
+		tokenString := jwtHandler.GetToken(c)
+		if tokenString == "" {
+			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized")
+		}
+
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			return []byte(os.Getenv("JWT_SECRET_KEY")), nil
+		})
+		if err != nil || !token.Valid {
+			return echo.NewHTTPError(http.StatusUnauthorized, "Unauthorized")
+		}
+
+		email := jwtHandler.GetClaims(token, "email")
+		if email == "" {
+			return echo.NewHTTPError(http.StatusBadRequest, "Invalid claims")
+		}
+		c.Set("email", email)
+
+		return next(c)
 	}
-	return ""
 }

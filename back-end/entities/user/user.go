@@ -28,7 +28,7 @@ type Address struct {
 	IsDefault   int    `json:"is_default"`
 }
 
-func Authenticate(account User, db *sql.DB) error {
+func Authenticate(account User, db *sql.DB) (string, error) {
 	rows, err := db.Query(`	
 		SELECT 
 			email, 
@@ -39,13 +39,13 @@ func Authenticate(account User, db *sql.DB) error {
 			password = ?
 		`, account.Email, account.Password)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer rows.Close()
 	if rows.Next() {
-		return nil
+		return "", nil
 	}
-	return err
+	return "Invalid email or password! Please try again", nil
 }
 
 func Create(newUser User, db *sql.DB) error {
