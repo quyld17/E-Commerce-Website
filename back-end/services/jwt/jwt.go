@@ -43,9 +43,9 @@ func GetClaims(token *jwt.Token, key string) string {
 	if !ok {
 		return ""
 	}
-	email, ok := claims[key].(string)
+	value, ok := claims[key].(string)
 	if !ok {
 		return ""
 	}
-	return email
+	return value
 }

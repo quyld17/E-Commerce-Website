@@ -2,6 +2,7 @@ package users
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -28,7 +29,7 @@ type Address struct {
 	IsDefault   int    `json:"is_default"`
 }
 
-func Authenticate(account User, db *sql.DB) (string, error) {
+func Authenticate(account User, db *sql.DB) error {
 	rows, err := db.Query(`	
 		SELECT 
 			email, 
@@ -39,13 +40,13 @@ func Authenticate(account User, db *sql.DB) (string, error) {
 			password = ?
 		`, account.Email, account.Password)
 	if err != nil {
-		return "", err
+		return err
 	}
 	defer rows.Close()
 	if rows.Next() {
-		return "", nil
+		return nil
 	}
-	return "Invalid email or password! Please try again", nil
+	return fmt.Errorf("Invalid email or password! Please try again")
 }
 
 func Create(newUser User, db *sql.DB) error {
@@ -125,7 +126,7 @@ func GetID(c echo.Context, db *sql.DB) (int, error) {
 	return userID, nil
 }
 
-func ChangePassword(userID int, password, newPassword string, c echo.Context, db *sql.DB) string {
+func ChangePassword(userID int, password, newPassword string, c echo.Context, db *sql.DB) error {
 	row, err := db.Query(`
 		SELECT password
 		FROM user
@@ -134,7 +135,7 @@ func ChangePassword(userID int, password, newPassword string, c echo.Context, db
 			password = ?
 		`, userID, password)
 	if err != nil {
-		return "Error while changing password! Please try again"
+		return fmt.Errorf("Error while changing password! Please try again")
 	}
 	defer row.Close()
 	if row.Next() {
@@ -144,11 +145,11 @@ func ChangePassword(userID int, password, newPassword string, c echo.Context, db
 			WHERE user_id = ?
 			`, newPassword, userID)
 		if err != nil {
-			return "Error while changing password! Please try again"
+			return fmt.Errorf("Error while changing password! Please try again")
 		}
 	} else {
-		return "Wrong password! Plase try again"
+		return fmt.Errorf("Wrong password! Plase try again")
 	}
 
-	return ""
+	return nil
 }

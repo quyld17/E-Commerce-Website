@@ -44,7 +44,7 @@ func UpdateUserDetails(c echo.Context, db *sql.DB) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "New password must be different from current password! Please try again")
 	}
 
-	if err := users.ChangePassword(userID, user.Password, user.NewPassword, c, db); err != "" {
+	if err := users.ChangePassword(userID, user.Password, user.NewPassword, c, db); err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 

@@ -2,16 +2,16 @@ package cart
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/labstack/echo/v4"
 	products "github.com/quyld17/E-Commerce-Website/entities/product"
 )
 
 func GetProducts(selected string, userID int, c echo.Context, db *sql.DB) ([]products.Product, error) {
-	var query string
 	var args []interface{}
 
-	query = `
+	query := `
 		SELECT 
 			cp.product_id, 
 			cp.quantity, 
@@ -29,11 +29,11 @@ func GetProducts(selected string, userID int, c echo.Context, db *sql.DB) ([]pro
 		WHERE 
 			cp.user_id = ? AND 
 			pi.is_thumbnail = 1
-	`
+		`
 	args = append(args, userID)
 
 	if selected == "true" {
-		query += " AND cp.selected = ?"
+		query += "AND cp.selected = ?"
 		args = append(args, true)
 	}
 
@@ -68,13 +68,13 @@ func UpSertProduct(userID int, productID int, quantity int, c echo.Context, db *
 		ON DUPLICATE KEY UPDATE quantity = quantity + ?;
 	`, userID, productID, quantity, quantity)
 	if err != nil {
-		return err
+		return fmt.Errorf("Failed to add product to cart! Please try again")
 	}
 
 	return nil
 }
 
-func Update(userID, productID, quantity int, selected bool, c echo.Context, db *sql.DB) (string, error) {
+func Update(userID, productID, quantity int, selected bool, c echo.Context, db *sql.DB) error {
 	row, err := db.Query(`	
 		SELECT * 
 		FROM cart_product
@@ -83,7 +83,7 @@ func Update(userID, productID, quantity int, selected bool, c echo.Context, db *
 			product_id = ?;
 		`, userID, productID)
 	if err != nil {
-		return "", err
+		return err
 	}
 	defer row.Close()
 
@@ -96,7 +96,7 @@ func Update(userID, productID, quantity int, selected bool, c echo.Context, db *
 					product_id = ?;
 				`, userID, productID)
 			if err != nil {
-				return "", err
+				return err
 			}
 		} else {
 			_, err := db.Exec(`
@@ -109,17 +109,17 @@ func Update(userID, productID, quantity int, selected bool, c echo.Context, db *
 					product_id = ?;
 				`, quantity, selected, userID, productID)
 			if err != nil {
-				return "", err
+				return err
 			}
 		}
 	} else {
-		return "Product not in cart. Please try again", nil
+		return fmt.Errorf("Product not in cart. Please try again")
 	}
 
-	return "", nil
+	return nil
 }
 
-func DeleteProduct(userID, productID int, c echo.Context, db *sql.DB) (string, error) {
+func DeleteProduct(userID, productID int, c echo.Context, db *sql.DB) error {
 	row, err := db.Query(`	
 		SELECT * 
 		FROM cart_product
@@ -128,7 +128,7 @@ func DeleteProduct(userID, productID int, c echo.Context, db *sql.DB) (string, e
 			product_id = ?;
 		`, userID, productID)
 	if err != nil {
-		return "", err
+		return err
 	}
 	defer row.Close()
 
@@ -140,11 +140,11 @@ func DeleteProduct(userID, productID int, c echo.Context, db *sql.DB) (string, e
 				product_id = ?;
 			`, userID, productID)
 		if err != nil {
-			return "", err
+			return err
 		}
 	} else {
-		return "Product not in cart. Please try again", nil
+		return fmt.Errorf("Product not in cart. Please try again")
 	}
 
-	return "", nil
+	return nil
 }
