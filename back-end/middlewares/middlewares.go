@@ -1,9 +1,11 @@
 package middlewares
 
 import (
+	"fmt"
 	"net/http"
 	"net/mail"
 	"os"
+	"strconv"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
@@ -53,4 +55,16 @@ func JWTAuthorize(next echo.HandlerFunc) echo.HandlerFunc {
 
 		return next(c)
 	}
+}
+
+func Pagination(c echo.Context, itemsPerPage int) (int, error) {
+	pageStr := c.QueryParam("page")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		return 0, fmt.Errorf("Invalid page number")
+	}
+
+	offset := (page - 1) * itemsPerPage
+
+	return offset, nil
 }

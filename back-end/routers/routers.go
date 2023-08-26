@@ -27,7 +27,7 @@ func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
 
 	// Products
 	router.GET("/products", func(c echo.Context) error {
-		return handlers.GetAllProducts(c, db)
+		return handlers.GetProductsByPage(c, db)
 	})
 	router.GET("/products/:productID", func(c echo.Context) error {
 		productID := c.Param("productID")
@@ -56,10 +56,10 @@ func RegisterAPIHandlers(router *echo.Echo, db *sql.DB) {
 	}))
 
 	// Orders
-	router.POST("/orders", middlewares.JWTAuthorize(func(c echo.Context) error {
-		return handlers.CreateOrder(c, db)
-	}))
 	router.GET("/orders/me", middlewares.JWTAuthorize(func(c echo.Context) error {
 		return handlers.GetOrders(c, db)
+	}))
+	router.POST("/orders", middlewares.JWTAuthorize(func(c echo.Context) error {
+		return handlers.CreateOrder(c, db)
 	}))
 }

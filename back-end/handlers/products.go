@@ -7,10 +7,17 @@ import (
 
 	"github.com/labstack/echo/v4"
 	products "github.com/quyld17/E-Commerce-Website/entities/product"
+	"github.com/quyld17/E-Commerce-Website/middlewares"
 )
 
-func GetAllProducts(c echo.Context, db *sql.DB) error {
-	productDetails, err := products.GetAll(c, db)
+func GetProductsByPage(c echo.Context, db *sql.DB) error {
+	itemsPerPage := 10
+	offset, err := middlewares.Pagination(c, itemsPerPage)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err)
+	}
+
+	productDetails, err := products.GetByPage(c, db, offset, itemsPerPage)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to retrieve products at the moment. Please try again")
 	}

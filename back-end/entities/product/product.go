@@ -23,20 +23,22 @@ type ProductImage struct {
 	IsThumbnail int    `json:"is_thumbnail"`
 }
 
-func GetAll(c echo.Context, db *sql.DB) ([]Product, error) {
+func GetByPage(c echo.Context, db *sql.DB, offset, limit int) ([]Product, error) {
 	rows, err := db.Query(`
-		SELECT 
-			product.product_id, 
-			product.product_name, 
-			product.price, 
-			product.category_id, 
-			product_image.image_url 
-		FROM 
-			product, 
-			product_image 
-		WHERE 
-			product_image.is_thumbnail = 1 AND 
-			product.product_id = product_image.product_id;`)
+        SELECT 
+            product.product_id, 
+            product.product_name, 
+            product.price, 
+            product.category_id, 
+            product_image.image_url 
+        FROM 
+            product, 
+            product_image 
+        WHERE 
+            product_image.is_thumbnail = 1 AND 
+            product.product_id = product_image.product_id
+        LIMIT ? OFFSET ?;
+		`, limit, offset)
 	if err != nil {
 		return nil, err
 	}
