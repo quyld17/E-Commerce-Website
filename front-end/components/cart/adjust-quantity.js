@@ -12,22 +12,26 @@ export default function handleAdjustQuantity(
   setIsModalOpen,
   setDeletingProduct
 ) {
-  if (quantity === 0 || quantity === null) {
-    setIsModalOpen(true);
-    const product = cartProducts.find((product) => product.product_id === id);
-    setDeletingProduct(product);
+  if (quantity === null) {
+    return;
   } else {
-    handleAdjustCartProductQuantityAPI(id, quantity)
-      .then(() => {
-        handleGetCartProducts(
-          setCartProducts,
-          setTotal,
-          setSelectedRowKeys,
-          setSelectedRowKeysPrev
-        );
-      })
-      .catch((error) => {
-        console.log("Error: ", error);
-      });
+    const product = cartProducts.find((product) => product.product_id === id);
+    if (quantity <= 0) {
+      setIsModalOpen(true);
+      setDeletingProduct(product);
+    } else {
+      handleAdjustCartProductQuantityAPI(id, quantity, product.selected)
+        .then(() => {
+          handleGetCartProducts(
+            setCartProducts,
+            setTotal,
+            setSelectedRowKeys,
+            setSelectedRowKeysPrev
+          );
+        })
+        .catch((error) => {
+          console.log("Error: ", error);
+        });
+    }
   }
 }

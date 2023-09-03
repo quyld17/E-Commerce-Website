@@ -25,7 +25,7 @@ export function handleCreateOrderAPI(paymentMethod) {
 
 export function handleGetOrdersAPI() {
   return new Promise((resolve, reject) => {
-    const endpoint = "/orders/me";
+    const endpoint = "/orders/me?page=1";
 
     getMethodAPI(
       endpoint,

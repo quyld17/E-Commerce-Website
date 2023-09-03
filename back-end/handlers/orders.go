@@ -8,7 +8,6 @@ import (
 	"github.com/quyld17/E-Commerce-Website/entities/cart"
 	orders "github.com/quyld17/E-Commerce-Website/entities/order"
 	users "github.com/quyld17/E-Commerce-Website/entities/user"
-	"github.com/quyld17/E-Commerce-Website/middlewares"
 )
 
 func CreateOrder(c echo.Context, db *sql.DB) error {
@@ -50,16 +49,10 @@ func GetOrders(c echo.Context, db *sql.DB) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	itemsPerPage := 10
-	offset, err := middlewares.Pagination(c, itemsPerPage)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err)
-	}
-
-	allOrders, err := orders.GetByPage(userID, c, db, offset, itemsPerPage)
+	orders, err := orders.GetByPage(userID, c, db)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to retrieve orders at the moment. Please try again")
 	}
 
-	return c.JSON(http.StatusOK, allOrders)
+	return c.JSON(http.StatusOK, orders)
 }

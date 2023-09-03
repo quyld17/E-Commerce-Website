@@ -4,19 +4,30 @@ import { handleGetAllProductsAPI } from "../api/handlers/products";
 import { handleAddToCartAPI } from "../api/handlers/cart";
 
 import styles from "../styles/products-display.module.css";
-import { Card, Button, message } from "antd";
+import { Card, Button, message, Pagination } from "antd";
 const { Meta } = Card;
 
 export default function ProductsDisplay() {
   const [token, setToken] = useState("");
   const [products, setProducts] = useState([]);
+  const [numOfProds, setNumOfProds] = useState(0);
   const router = useRouter();
+
+  const currentPage = parseInt(router.query.page) || 1;
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
-    handleGetAllProductsAPI(setProducts);
-  }, []);
+
+    handleGetAllProductsAPI(currentPage)
+      .then((data) => {
+        setProducts(data.products);
+        setNumOfProds(data.num_of_prods);
+      })
+      .catch((error) => {
+        console.log("Error getting delivery address: ", error);
+      });
+  }, [currentPage]);
 
   const handleClick = (id) => {
     router.push(`/product/${id}`);
@@ -39,39 +50,52 @@ export default function ProductsDisplay() {
       });
   };
 
+  const handlePageChange = (page) => {
+    router.push(`?page=${page}`);
+  };
+
   return (
-    <div className={styles.overall}>
-      {products.map((product) => (
-        <Card
-          className={styles.card}
-          hoverable
-          cover={<img alt="Image ${index}" src={product.image_url}></img>}
-          key={product.product_id}
-          onClick={() => handleClick(product.product_id)}
-        >
-          <Meta
-            title={product.product_name}
-            description={
-              <div>
-                Price:{" "}
-                {Intl.NumberFormat("vi-VI", {
-                  style: "currency",
-                  currency: "VND",
-                }).format(product.price)}
-                <Button
-                  type="primary"
-                  className={styles.addToCartButton}
-                  onClick={(event) =>
-                    handleAddToCartClick(event, product.product_id)
-                  }
-                >
-                  Add to cart
-                </Button>
-              </div>
-            }
-          ></Meta>
-        </Card>
-      ))}
+    <div>
+      <div className={styles.overall}>
+        {products.map((product) => (
+          <Card
+            className={styles.card}
+            hoverable
+            cover={<img alt="Image ${index}" src={product.image_url}></img>}
+            key={product.product_id}
+            onClick={() => handleClick(product.product_id)}
+          >
+            <Meta
+              title={product.product_name}
+              description={
+                <div>
+                  Price:{" "}
+                  {Intl.NumberFormat("vi-VI", {
+                    style: "currency",
+                    currency: "VND",
+                  }).format(product.price)}
+                  <Button
+                    type="primary"
+                    className={styles.addToCartButton}
+                    onClick={(event) =>
+                      handleAddToCartClick(event, product.product_id)
+                    }
+                  >
+                    Add to cart
+                  </Button>
+                </div>
+              }
+            ></Meta>
+          </Card>
+        ))}
+      </div>
+      <Pagination
+        defaultCurrent={1}
+        pageSize={5}
+        total={numOfProds}
+        current={currentPage}
+        onChange={handlePageChange}
+      />
     </div>
   );
 }

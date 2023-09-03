@@ -49,7 +49,7 @@ export default function PurchaseHistory() {
             size="large"
             showHeader={true}
             tableLayout="fixed"
-            pagination={false}
+            pagination={true}
             expandable={{
               expandedRowRender: (record) =>
                 handleOrderProducts(record, orders),

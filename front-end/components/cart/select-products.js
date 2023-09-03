@@ -2,6 +2,7 @@ import { handleSelectCartProductsAPI } from "../../api/handlers/cart";
 import { handleGetCartProducts } from "./get-products";
 
 export const handleSelectProducts = (
+  cartProducts,
   selectedRowKeys,
   selectedRowKeysPrev,
   setCartProducts,
@@ -19,16 +20,23 @@ export const handleSelectProducts = (
   setSelectedRowKeys(selectedRowKeys);
   setSelectedRowKeysPrev(selectedRowKeys);
 
-  const selectedProducts = newlySelectedProducts.map((key) => ({
-    quantity: -1,
-    product_id: key,
-    selected: 1,
-  }));
-  const deselectedProducts = newlyDeselectedProducts.map((key) => ({
-    quantity: -1,
-    product_id: key,
-    selected: 0,
-  }));
+  const selectedProducts = newlySelectedProducts.map((key) => {
+    const product = cartProducts.find((p) => p.product_id === key);
+    return {
+      quantity: product.quantity,
+      product_id: key,
+      selected: true,
+    };
+  });
+
+  const deselectedProducts = newlyDeselectedProducts.map((key) => {
+    const product = cartProducts.find((p) => p.product_id === key);
+    return {
+      quantity: product.quantity,
+      product_id: key,
+      selected: false,
+    };
+  });
 
   if (selectedProducts.length !== 0) {
     handleSelectCartProductsAPI(selectedProducts)

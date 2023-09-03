@@ -22,7 +22,7 @@ export function handleGetAllCartProductsAPI() {
 
 export function handleGetCartSelectedProductsAPI() {
   return new Promise((resolve, reject) => {
-    const endpoint = "/cart-products?selected=1";
+    const endpoint = "/cart-products?selected=true";
 
     getMethodAPI(
       endpoint,
@@ -60,13 +60,17 @@ export function handleAddToCartAPI(product_id, quantity) {
   });
 }
 
-export function handleAdjustCartProductQuantityAPI(product_id, quantity) {
+export function handleAdjustCartProductQuantityAPI(
+  product_id,
+  quantity,
+  selected
+) {
   return new Promise((resolve, reject) => {
     const info = [
       {
         product_id,
         quantity,
-        selected: -1,
+        selected,
       },
     ];
     const endpoint = "/cart-products";

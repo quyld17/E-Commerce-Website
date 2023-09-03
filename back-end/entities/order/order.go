@@ -101,7 +101,7 @@ func Create(user *users.User, address *users.Address, orderedProducts []products
 	return nil
 }
 
-func GetByPage(userID int, c echo.Context, db *sql.DB, offset, limit int) ([]Order, error) {
+func GetByPage(userID int, c echo.Context, db *sql.DB) ([]Order, error) {
 	rows, err := db.Query(`
 		SELECT 
 			order_id,
@@ -110,9 +110,8 @@ func GetByPage(userID int, c echo.Context, db *sql.DB, offset, limit int) ([]Ord
 			created_at,
 			payment_method
 		FROM `+"`order`"+`
-		WHERE user_id = ?
-		LIMIT ? OFFSET ?;
-		`, userID, limit, offset)
+		WHERE user_id = ?;
+		`, userID)
 	if err != nil {
 		return nil, err
 	}

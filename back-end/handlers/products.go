@@ -11,18 +11,21 @@ import (
 )
 
 func GetProductsByPage(c echo.Context, db *sql.DB) error {
-	itemsPerPage := 10
+	itemsPerPage := 5
 	offset, err := middlewares.Pagination(c, itemsPerPage)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, err)
 	}
 
-	productDetails, err := products.GetByPage(c, db, offset, itemsPerPage)
+	products, numOfProds, err := products.GetByPage(c, db, offset, itemsPerPage)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, "Unable to retrieve products at the moment. Please try again")
 	}
 
-	return c.JSON(http.StatusOK, productDetails)
+	return c.JSON(http.StatusOK, echo.Map{
+		"products":     products,
+		"num_of_prods": numOfProds,
+	})
 }
 
 func GetProduct(productID string, c echo.Context, db *sql.DB) error {

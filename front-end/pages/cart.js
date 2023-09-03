@@ -75,6 +75,7 @@ export default function CartPage() {
 
   const handleSelectedProducts = (selectedRowKeys) => {
     handleSelectProducts(
+      cartProducts,
       selectedRowKeys,
       selectedRowKeysPrev,
       setCartProducts,
