@@ -134,7 +134,7 @@ export default function CartPage() {
               {Intl.NumberFormat("vi-VI", {
                 style: "currency",
                 currency: "VND",
-              }).format(total)}
+              }).format(total || 0)}
             </p>
           </div>
           <div className={styles.checkoutButtonField}>

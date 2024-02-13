@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "antd": "^5.5.0",
+    "caniuse-lite": "^1.0.30001587",
     "dayjs": "^1.11.9",
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.3",

@@ -36,7 +36,11 @@ export const cartData = (
   adjustedQuantityHandler
 ) => {
   const router = useRouter();
-  const data = cartProducts.map((product) => ({
+  let data;
+  if (!cartProducts) {
+    return data;
+  }
+  data = cartProducts.map((product) => ({
     key: product.product_id,
     product: (
       <div className={styles.productThumbnailAndName}>

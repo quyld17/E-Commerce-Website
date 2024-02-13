@@ -31,9 +31,12 @@ export const columns = [
 ];
 
 export const handleOrders = (orders) => {
-  const data = orders.map((order) => {
-    let badgeStatus = "default";
-
+  let badgeStatus = "default";
+  let data;
+  if (!orders) {
+    return data;
+  }
+  data = orders.map((order) => {
     switch (order.status) {
       case "Delivering":
         badgeStatus = "processing";
