@@ -10,7 +10,7 @@ import (
 )
 
 func Generate(email string) (string, error) {
-	err := godotenv.Load("credentials.env")
+	err := godotenv.Load(".env")
 	if err != nil {
 		return "", err
 	}

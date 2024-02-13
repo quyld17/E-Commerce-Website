@@ -10,7 +10,7 @@ import (
 )
 
 func NewMySQL() *sql.DB {
-	err := godotenv.Load("credentials.env")
+	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatal("Failed to retrieve credentials. Please try again")
 	}

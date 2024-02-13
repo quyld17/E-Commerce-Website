@@ -29,7 +29,7 @@ func ValidateEmailAndPassword(user users.User) string {
 
 func JWTAuthorize(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		err := godotenv.Load("credentials.env")
+		err := godotenv.Load(".env")
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err)
 		}
