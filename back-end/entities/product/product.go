@@ -26,18 +26,19 @@ type ProductImage struct {
 func GetByPage(c echo.Context, db *sql.DB, offset, limit int) ([]Product, int, error) {
 	rows, err := db.Query(`
         SELECT 
-            product.product_id, 
-            product.product_name, 
-            product.price, 
-            product.category_id, 
-            product_image.image_url 
+            products.product_id, 
+            products.product_name, 
+            products.price, 
+            products.category_id, 
+            product_images.image_url 
         FROM 
-            product, 
-            product_image 
+            products, 
+            product_images
         WHERE 
-            product_image.is_thumbnail = 1 AND 
-            product.product_id = product_image.product_id
-        LIMIT ? OFFSET ?;
+            product_images.is_thumbnail = 1 AND 
+            products.product_id = product_images.product_id
+        LIMIT ? 
+		OFFSET ?;
 		`, limit, offset)
 	if err != nil {
 		return nil, 0, err
@@ -47,7 +48,7 @@ func GetByPage(c echo.Context, db *sql.DB, offset, limit int) ([]Product, int, e
 	var numOfProds int
 	row := db.QueryRow(`
 		SELECT COUNT(*) 
-		FROM product;
+		FROM products;
 		`)
 	if err := row.Scan(&numOfProds); err != nil {
 		return nil, 0, err
@@ -73,16 +74,16 @@ func GetByPage(c echo.Context, db *sql.DB, offset, limit int) ([]Product, int, e
 func GetProductDetails(productID int, c echo.Context, db *sql.DB) (*Product, []ProductImage, error) {
 	rows, err := db.Query(`
 		SELECT 
-			product.product_id, 
-			product.product_name, 
-			product.price, 
-			product.in_stock_quantity, 
-			product_image.image_url, 
-			product_image.is_thumbnail 
-		FROM product 
-		JOIN product_image 
-		ON product.product_id = product_image.product_id 
-		WHERE product.product_id = ?;
+			products.product_id, 
+			products.product_name, 
+			products.price, 
+			products.in_stock_quantity, 
+			product_images.image_url, 
+			product_images.is_thumbnail 
+		FROM products 
+		JOIN product_images 
+		ON products.product_id = product_images.product_id 
+		WHERE products.product_id = ?;
 		`, productID)
 	if err != nil {
 		return nil, nil, err

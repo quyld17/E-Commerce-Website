@@ -21,11 +21,11 @@ func GetProducts(selected string, userID int, c echo.Context, db *sql.DB) ([]pro
 			p.in_stock_quantity, 
 			pi.image_url 
 		FROM 
-			cart_product cp
+			cart_products cp
 		JOIN 
-			product p ON cp.product_id = p.product_id
+			products p ON cp.product_id = p.product_id
 		JOIN 
-			product_image pi ON cp.product_id = pi.product_id
+			product_images pi ON cp.product_id = pi.product_id
 		WHERE 
 			cp.user_id = ? AND 
 			pi.is_thumbnail = 1
@@ -63,7 +63,7 @@ func GetProducts(selected string, userID int, c echo.Context, db *sql.DB) ([]pro
 
 func UpSertProduct(userID int, productID int, quantity int, c echo.Context, db *sql.DB) error {
 	_, err := db.Exec(`
-		INSERT INTO cart_product (user_id, product_id, quantity) 
+		INSERT INTO cart_products (user_id, product_id, quantity) 
 		VALUES (?, ?, ?)
 		ON DUPLICATE KEY UPDATE quantity = quantity + ?;
 	`, userID, productID, quantity, quantity)
@@ -77,7 +77,7 @@ func UpSertProduct(userID int, productID int, quantity int, c echo.Context, db *
 func Update(userID, productID, quantity int, selected bool, c echo.Context, db *sql.DB) error {
 	row, err := db.Query(`	
 		SELECT * 
-		FROM cart_product
+		FROM cart_products
 		WHERE 
 			user_id = ? AND 
 			product_id = ?;
@@ -90,7 +90,7 @@ func Update(userID, productID, quantity int, selected bool, c echo.Context, db *
 	if row.Next() {
 		if quantity <= 0 {
 			_, err := db.Exec(`	
-				DELETE FROM cart_product 
+				DELETE FROM cart_products 
 				WHERE 
 					user_id = ? AND
 					product_id = ?;
@@ -100,7 +100,7 @@ func Update(userID, productID, quantity int, selected bool, c echo.Context, db *
 			}
 		} else {
 			_, err := db.Exec(`
-				UPDATE cart_product
+				UPDATE cart_products
 				SET
 					quantity = ?,
 					selected = ?
@@ -122,7 +122,7 @@ func Update(userID, productID, quantity int, selected bool, c echo.Context, db *
 func DeleteProduct(userID, productID int, c echo.Context, db *sql.DB) error {
 	row, err := db.Query(`	
 		SELECT * 
-		FROM cart_product
+		FROM cart_products
 		WHERE 
 			user_id = ? AND 
 			product_id = ?;
@@ -134,7 +134,7 @@ func DeleteProduct(userID, productID int, c echo.Context, db *sql.DB) error {
 
 	if row.Next() {
 		_, err := db.Exec(`	
-			DELETE FROM cart_product 
+			DELETE FROM cart_products
 			WHERE 
 				user_id = ? AND 
 				product_id = ?;

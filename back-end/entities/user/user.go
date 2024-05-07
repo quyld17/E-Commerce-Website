@@ -34,7 +34,7 @@ func Authenticate(account User, db *sql.DB) error {
 		SELECT 
 			email, 
 			password 
-		FROM user 
+		FROM users
 		WHERE 
 			email = ? AND 
 			password = ?
@@ -51,7 +51,7 @@ func Authenticate(account User, db *sql.DB) error {
 
 func Create(newUser User, db *sql.DB) error {
 	_, err := db.Exec(`	
-		INSERT INTO user (email, password) 
+		INSERT INTO users (email, password) 
 		VALUES (?, ?)
 		`, newUser.Email, newUser.Password)
 	if err != nil {
@@ -68,7 +68,7 @@ func GetDetails(userID int, db *sql.DB) (*User, *Address, error) {
 			phone_number,
 			gender,
 			date_of_birth
-		FROM user
+		FROM users
 		WHERE user_id = ?;
 		`, userID)
 	if err != nil {
@@ -91,7 +91,7 @@ func GetDetails(userID int, db *sql.DB) (*User, *Address, error) {
 			ward,
 			street,
 			house_number
-		FROM address
+		FROM addresses
 		WHERE
 			user_id = ? AND
 			is_default = 1;
@@ -116,7 +116,7 @@ func GetID(c echo.Context, db *sql.DB) (int, error) {
 	email := c.Get("email").(string)
 	row := db.QueryRow(`
 		SELECT user_id 
-		FROM user 
+		FROM users
 		WHERE email = ?
 		`, email)
 	var userID int
@@ -129,7 +129,7 @@ func GetID(c echo.Context, db *sql.DB) (int, error) {
 func ChangePassword(userID int, password, newPassword string, c echo.Context, db *sql.DB) error {
 	row, err := db.Query(`
 		SELECT password
-		FROM user
+		FROM users
 		WHERE
 			user_id = ? AND
 			password = ?
@@ -140,7 +140,7 @@ func ChangePassword(userID int, password, newPassword string, c echo.Context, db
 	defer row.Close()
 	if row.Next() {
 		_, err := db.Exec(`	
-			UPDATE user 
+			UPDATE users
 			SET password = ? 
 			WHERE user_id = ?
 			`, newPassword, userID)

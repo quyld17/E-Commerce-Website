@@ -14,7 +14,7 @@ type Category struct {
 func GetAll(c echo.Context, db *sql.DB) ([]Category, error) {
 	rows, err := db.Query(`	
 		SELECT category_id, category_name 
-		FROM category`)
+		FROM categories`)
 	if err != nil {
 		return nil, err
 	}

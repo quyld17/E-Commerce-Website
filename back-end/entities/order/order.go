@@ -43,7 +43,7 @@ func Create(user *users.User, address *users.Address, orderedProducts []products
 	}()
 
 	result, err := transaction.Exec(`
-		INSERT INTO`+"`order`"+`(user_id, total_price, payment_method, status) 
+		INSERT INTO`+"`orders`"+`(user_id, total_price, payment_method, status) 
 		VALUES (?, ?, ?, ?)
 		`, userID, totalPrice, paymenMethod, "Delivering")
 	if err != nil {
@@ -70,7 +70,7 @@ func Create(user *users.User, address *users.Address, orderedProducts []products
 	defer orderProduct.Close()
 
 	adjustQuantity, err := transaction.Prepare(`
-		UPDATE product
+		UPDATE products
 		SET in_stock_quantity = in_stock_quantity - ?
 		WHERE product_id = ?;`)
 	if err != nil {
@@ -109,7 +109,7 @@ func GetByPage(userID int, c echo.Context, db *sql.DB) ([]Order, error) {
 			status,
 			created_at,
 			payment_method
-		FROM `+"`order`"+`
+		FROM `+"`orders`"+`
 		WHERE user_id = ?;
 		`, userID)
 	if err != nil {
@@ -127,8 +127,8 @@ func GetByPage(userID int, c echo.Context, db *sql.DB) ([]Order, error) {
 		order.CreatedAtDisplay = order.CreatedAt.Format("2006-01-02 15:04:05")
 
 		productRows, err := db.Query(`
-			SELECT * 
-			FROM order_products 
+			SELECT *
+			FROM order_products
 			WHERE order_id = ?;
 			`, order.OrderID)
 		if err != nil {
