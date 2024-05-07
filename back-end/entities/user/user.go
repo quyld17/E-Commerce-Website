@@ -117,7 +117,7 @@ func GetID(c echo.Context, db *sql.DB) (int, error) {
 	row := db.QueryRow(`
 		SELECT user_id 
 		FROM users
-		WHERE email = ?
+		WHERE email = ?;
 		`, email)
 	var userID int
 	if err := row.Scan(&userID); err != nil {
@@ -132,7 +132,7 @@ func ChangePassword(userID int, password, newPassword string, c echo.Context, db
 		FROM users
 		WHERE
 			user_id = ? AND
-			password = ?
+			password = ?;
 		`, userID, password)
 	if err != nil {
 		return fmt.Errorf("Error while changing password! Please try again")
@@ -142,7 +142,7 @@ func ChangePassword(userID int, password, newPassword string, c echo.Context, db
 		_, err := db.Exec(`	
 			UPDATE users
 			SET password = ? 
-			WHERE user_id = ?
+			WHERE user_id = ?;
 			`, newPassword, userID)
 		if err != nil {
 			return fmt.Errorf("Error while changing password! Please try again")
