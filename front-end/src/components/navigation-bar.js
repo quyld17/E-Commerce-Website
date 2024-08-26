@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 
 import styles from "../styles/navigation-bar.module.css";
-import { handleGetAllCartProductsAPI } from "../api/handlers/cart";
+import { handleGetAllCartProductsAPI } from "../../src/api/handlers/cart";
 
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { BiUserCircle } from "react-icons/bi";

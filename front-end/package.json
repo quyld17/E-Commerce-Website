@@ -12,6 +12,7 @@
     "antd": "^5.5.0",
     "caniuse-lite": "^1.0.30001587",
     "dayjs": "^1.11.9",
+    "dotenv": "^16.4.5",
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.3",
     "jwt-decode": "^3.1.2",

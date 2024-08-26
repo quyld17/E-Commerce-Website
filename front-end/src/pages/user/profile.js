@@ -8,7 +8,7 @@ import styles from "../../styles/user-profile.module.css";
 
 import { Form, Input, Select, DatePicker, Button, message } from "antd";
 import UserSideBar from "@/components/user/side-bar";
-import { handleGetUserDetailsAPI } from "@/api/handlers/user";
+import { handleGetUserDetailsAPI } from "@/src/api/handlers/user";
 
 export default function PurchaseHistory() {
   const [user, setUser] = useState();

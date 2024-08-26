@@ -1,4 +1,4 @@
-import { handleDeleteCartProductAPI } from "../../api/handlers/cart";
+import { handleDeleteCartProductAPI } from "../../../src/api/handlers/cart";
 
 import { handleGetCartProducts } from "./get-products";
 

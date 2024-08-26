@@ -1,4 +1,4 @@
-import { handleGetAllCartProductsAPI } from "@/api/handlers/cart";
+import { handleGetAllCartProductsAPI } from "@/src/api/handlers/cart";
 
 export const handleGetCartProducts = (
   setCartProducts,

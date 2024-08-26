@@ -1,0 +1,46 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo Installing dependencies...
+      - sudo apt-get update
+      - sudo apt-get install -y jq
+
+  pre_build:
+    commands:
+      - echo Logging in to Docker Hub...
+      - |
+        # Retrieve Docker credentials from Secrets Manager
+        SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id docker-user --query SecretString --output text)
+        DOCKER_USERNAME=$(echo $SECRET_JSON | jq -r '.username')
+        DOCKER_PASSWORD=$(echo $SECRET_JSON | jq -r '.password')
+
+        # Log in to Docker Hub
+        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+      - echo Retrieving credentials from Secrets Manager
+      - |
+        SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id ecw/FE-BE --query SecretString --output text)
+        echo "DB_USER=$(echo $SECRET_JSON | jq -r '.DB_USER')" >> .env
+        echo "DB_PASSWORD=$(echo $SECRET_JSON | jq -r '.DB_PASSWORD')" >> .env
+        echo "DB_HOST=$(echo $SECRET_JSON | jq -r '.DB_HOST')" >> .env
+        echo "DB_PORT=$(echo $SECRET_JSON | jq -r '.DB_PORT')" >> .env
+        echo "DB_NAME=$(echo $SECRET_JSON | jq -r '.DB_NAME')" >> .env
+        echo "JWT_SECRET_KEY=$(echo $SECRET_JSON | jq -r '.JWT_SECRET_KEY')" >> .env
+        echo "NEXT_PUBLIC_URL=$(echo $SECRET_JSON | jq -r '.NEXT_PUBLIC_URL')" >> .env
+        echo "NEXT_PUBLIC_PORT=$(echo $SECRET_JSON | jq -r '.NEXT_PUBLIC_PORT')" >> .env
+
+   build:
+    commands:
+      - echo Building Docker images...
+      - echo Building Server Docker image...
+      - docker build -t quyld17/ecw-server:latest ./server
+      - echo Building Front-end Docker image...
+      - docker build -t quyld17/ecw-frontend:latest ./front-end
+
+  post_build:
+    commands:
+      - echo Pushing Docker images to Docker Hub...
+      - docker push quyld17/ecw-server:latest
+      - docker push quyld17/ecw-frontend:latest

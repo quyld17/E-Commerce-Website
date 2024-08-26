@@ -10,7 +10,7 @@ import {
   handleOrderProducts,
 } from "../../components/user/purchase-history/orders-table";
 import UserSideBar from "@/components/user/side-bar";
-import { handleGetOrdersAPI } from "@/api/handlers/order";
+import { handleGetOrdersAPI } from "@/src/api/handlers/order";
 
 import { Table } from "antd";
 

@@ -1,4 +1,4 @@
-import { handleAdjustCartProductQuantityAPI } from "@/api/handlers/cart";
+import { handleAdjustCartProductQuantityAPI } from "@/src/api/handlers/cart";
 import { handleGetCartProducts } from "./get-products";
 
 export default function handleAdjustQuantity(
