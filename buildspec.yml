@@ -32,6 +32,9 @@ phases:
         echo "NEXT_PUBLIC_PORT=$(echo $SECRET_JSON | jq -r '.NEXT_PUBLIC_PORT')" >> .env
         cat .env  # Debugging line to check the .env content
 
+      - cp .env ./server/
+      - cp .env ./front-end/
+
   build:
     commands:
       - echo Building Docker images...
