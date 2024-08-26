@@ -7,7 +7,7 @@ import NavigationBar from "../../components/navigation-bar";
 import styles from "../../styles/user-profile.module.css";
 
 import { Form, Input, Select, DatePicker, Button, message } from "antd";
-import UserSideBar from "@/components/user/side-bar";
+import UserSideBar from "@/src/components/user/side-bar";
 import { handleGetUserDetailsAPI } from "@/src/api/handlers/user";
 
 export default function PurchaseHistory() {
@@ -31,7 +31,7 @@ export default function PurchaseHistory() {
       .catch((error) => {
         console.log("Error: ", error);
       });
-  });
+  }, []);
 
   return (
     <div>
@@ -44,7 +44,7 @@ export default function PurchaseHistory() {
         <div className={styles.details}>
           <p className={styles.profileTitle}>My Profile</p>
 
-          {user && (
+          {user ? (
             <Form
               labelCol={{
                 span: 4,
@@ -99,6 +99,52 @@ export default function PurchaseHistory() {
                   onClick={() =>
                     message.success("Updated profile successfully!")
                   }
+                >
+                  Save
+                </Button>
+              </Form.Item>
+            </Form>
+          ) : (
+            <Form
+              labelCol={{
+                span: 4,
+              }}
+              wrapperCol={{
+                span: 10,
+              }}
+              layout="horizontal"
+              style={{ maxWidth: 1000 }}
+            >
+              <Form.Item label="Email">
+                <Input placeholder="Enter your email" />
+              </Form.Item>
+              <Form.Item label="Name">
+                <Input placeholder="Enter your name" />
+              </Form.Item>
+              <Form.Item label="Phone Number">
+                <Input placeholder="Enter your phone number" />
+              </Form.Item>
+              <Form.Item label="Gender">
+                <Select placeholder="Select your gender">
+                  <Select.Option value="male">Male</Select.Option>
+                  <Select.Option value="female">Female</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item label="Date of birth">
+                <DatePicker
+                  placeholder="Select your date of birth"
+                  allowClear={false}
+                />
+              </Form.Item>
+              <Form.Item label="Address">
+                <Input placeholder="Enter your address" />
+              </Form.Item>
+
+              <Form.Item label="">
+                <Button
+                  className={styles.saveChangesButton}
+                  type="primary"
+                  onClick={() => message.success("Profile saved successfully!")}
                 >
                   Save
                 </Button>

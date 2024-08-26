@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 
 import styles from "../styles/navigation-bar.module.css";
-import { handleGetAllCartProductsAPI } from "../../src/api/handlers/cart";
+import { handleGetAllCartProductsAPI } from "../api/handlers/cart";
 
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import { BiUserCircle } from "react-icons/bi";
@@ -44,7 +44,7 @@ export default function NavigationBar() {
           console.log("Error: ", error);
         });
     }
-  }, [handleSignOut]);
+  }, []);
 
   const handleCartLogoClick = () => {
     if (!token) {
@@ -54,6 +54,7 @@ export default function NavigationBar() {
     }
   };
 
+  // Clear the JWT token and user's email local storage after signing out
   const handleSignOut = () => {
     localStorage.removeItem("token");
     setToken("");
@@ -121,11 +122,7 @@ export default function NavigationBar() {
           <p className={styles.userEmail}>{userEmail}</p>
         </Dropdown>
       ) : (
-        <Dropdown
-          menu={{ items }}
-          trigger={["click", "hover"]}
-          placement="bottom"
-        >
+        <Dropdown menu={{ items }} trigger={["click"]} placement="bottom">
           <div className={styles.userLogoWrapper}>
             <BiUserCircle className={styles.userLogo} />
           </div>

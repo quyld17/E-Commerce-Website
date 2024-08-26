@@ -5,7 +5,6 @@ import { handleAddToCartAPI } from "../api/handlers/cart";
 
 import styles from "../styles/products-display.module.css";
 import { Card, Button, message, Pagination } from "antd";
-import { Image } from "next/image";
 const { Meta } = Card;
 
 export default function ProductsDisplay() {
@@ -62,7 +61,7 @@ export default function ProductsDisplay() {
           <Card
             className={styles.card}
             hoverable
-            cover={<Image alt="Image ${index}" src={product.image_url}></Image>}
+            cover={<img alt="Image ${index}" src={product.image_url}></img>}
             key={product.product_id}
             onClick={() => handleClick(product.product_id)}
           >

@@ -51,7 +51,7 @@ export default function CartPage() {
       setSelectedRowKeys,
       setSelectedRowKeysPrev
     );
-  });
+  }, []);
 
   const adjustedQuantityHandler = (id, quantity) => {
     handleAdjustQuantity(
@@ -70,8 +70,7 @@ export default function CartPage() {
   const data = cartData(
     cartProducts,
     handleProductRedirect,
-    adjustedQuantityHandler,
-    router
+    adjustedQuantityHandler
   );
 
   const handleSelectedProducts = (selectedRowKeys) => {

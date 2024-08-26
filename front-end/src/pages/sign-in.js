@@ -103,7 +103,7 @@ export default function SignInPage() {
             </Form.Item>
 
             <p className={styles.createAccount}>
-              Don&apos;t have an account?{" "}
+              Don&#39;t have an account?{" "}
               <Link className={styles.signUp} href="/sign-up">
                 Sign Up
               </Link>

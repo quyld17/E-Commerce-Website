@@ -1,4 +1,4 @@
-import { handleSelectCartProductsAPI } from "../../../src/api/handlers/cart";
+import { handleSelectCartProductsAPI } from "../../api/handlers/cart";
 import { handleGetCartProducts } from "./get-products";
 
 export const handleSelectProducts = (

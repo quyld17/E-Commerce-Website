@@ -37,10 +37,10 @@ phases:
       - echo Building Server Docker image...
       - docker build -t quyld17/ecw-server:latest ./server
       - echo Building Front-end Docker image...
-      - docker build -t quyld17/ecw-frontend:latest ./front-end
+      - docker build -t quyld17/ecw-front-end:latest ./front-end
 
   post_build:
     commands:
       - echo Pushing Docker images to Docker Hub...
       - docker push quyld17/ecw-server:latest
-      - docker push quyld17/ecw-frontend:latest
+      - docker push quyld17/ecw-front-end:latest

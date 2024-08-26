@@ -6,7 +6,7 @@ import NavigationBar from "../../components/navigation-bar";
 import styles from "../../styles/user-change-password.module.css";
 
 import { Form, Input, Button, message } from "antd";
-import UserSideBar from "@/components/user/side-bar";
+import UserSideBar from "@/src/components/user/side-bar";
 import { handleChangePasswordAPI } from "@/src/api/handlers/user";
 
 const credentialsValidate = (user) => {
@@ -45,17 +45,27 @@ export default function PurchaseHistory() {
       router.push("/");
       return;
     }
-  });
+  }, []);
 
   const handlePasswordChange = (e) => {
     e.preventDefault();
     if (!credentialsValidate(user)) {
       handleChangePasswordAPI(user)
         .then((data) => {
-          message.success(data);
+          if (typeof data === "object") {
+            // message.success(data.message || "Password changed successfully!");
+            message.error("Wrong password");
+          } else {
+            message.success(data);
+          }
         })
         .catch((error) => {
-          message.error(error);
+          console.log(error);
+          if (typeof error === "object") {
+            message.error(error.message || "An error occurred.");
+          } else {
+            message.error(error);
+          }
         });
     }
   };
