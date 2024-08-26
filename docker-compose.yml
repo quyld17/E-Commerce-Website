@@ -1,0 +1,20 @@
+services:
+  front-end:
+    image: quyld17/ecw-front-end:latest
+    container_name: ecw-front-end
+    ports:
+      - "80:80"
+    networks:
+      - ecw-network
+
+  server:
+    image: quyld17/ecw-server:latest
+    container_name: ecw-server
+    ports:
+      - "8080:8080" 
+    networks:
+      - ecw-network
+
+networks:
+  ecw-network:
+    driver: bridge
