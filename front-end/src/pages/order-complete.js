@@ -18,7 +18,7 @@ export default function SignUpPage() {
       router.push("/");
       return;
     }
-  }, []);
+  });
 
   return (
     <Layout>

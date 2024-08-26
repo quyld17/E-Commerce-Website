@@ -45,7 +45,7 @@ export default function PurchaseHistory() {
       router.push("/");
       return;
     }
-  }, []);
+  });
 
   const handlePasswordChange = (e) => {
     e.preventDefault();

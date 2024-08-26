@@ -31,7 +31,7 @@ export default function PurchaseHistory() {
       .catch((error) => {
         console.log("Error: ", error);
       });
-  }, []);
+  });
 
   return (
     <div>

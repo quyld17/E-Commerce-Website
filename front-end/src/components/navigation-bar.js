@@ -44,7 +44,7 @@ export default function NavigationBar() {
           console.log("Error: ", error);
         });
     }
-  }, []);
+  });
 
   const handleCartLogoClick = () => {
     if (!token) {
@@ -54,7 +54,6 @@ export default function NavigationBar() {
     }
   };
 
-  // Clear the JWT token and user's email local storage after signing out
   const handleSignOut = () => {
     localStorage.removeItem("token");
     setToken("");

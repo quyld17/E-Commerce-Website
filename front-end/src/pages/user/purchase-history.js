@@ -32,7 +32,7 @@ export default function PurchaseHistory() {
       .catch((error) => {
         console.log("Error getting delivery address: ", error);
       });
-  }, []);
+  });
 
   const orderData = handleOrders(orders);
 

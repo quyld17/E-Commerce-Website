@@ -13,7 +13,7 @@ export default function SideBarMaterials() {
 
   useEffect(() => {
     handleGetAllCategoriesAPI(setCategories);
-  }, []);
+  });
 
   function getItem(label, key, icon, items) {
     return {

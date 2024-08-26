@@ -33,7 +33,8 @@ export const cartColumns = [
 export const cartData = (
   cartProducts,
   handleProductRedirect,
-  adjustedQuantityHandler
+  adjustedQuantityHandler,
+  router
 ) => {
   const router = useRouter();
   let data;

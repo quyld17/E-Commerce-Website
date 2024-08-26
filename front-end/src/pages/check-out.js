@@ -57,7 +57,7 @@ export default function CheckOut() {
       .catch((error) => {
         console.log("Error getting delivery address: ", error);
       });
-  }, []);
+  });
 
   const handlePlaceOrder = (paymentMethod) => {
     handleCreateOrderAPI(paymentMethod)
