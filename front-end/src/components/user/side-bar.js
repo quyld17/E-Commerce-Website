@@ -12,7 +12,7 @@ export default function UserSideBar() {
     const decodedToken = jwt_decode(storedToken);
     const userEmail = decodedToken.email;
     setEmail(userEmail);
-  });
+  }, []);
 
   return (
     <div className={styles.sideBar}>

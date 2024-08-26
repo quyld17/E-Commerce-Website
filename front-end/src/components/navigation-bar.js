@@ -44,7 +44,7 @@ export default function NavigationBar() {
           console.log("Error: ", error);
         });
     }
-  });
+  }, [handleSignOut]);
 
   const handleCartLogoClick = () => {
     if (!token) {

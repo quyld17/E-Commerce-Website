@@ -36,7 +36,6 @@ export const cartData = (
   adjustedQuantityHandler,
   router
 ) => {
-  const router = useRouter();
   let data;
   if (!cartProducts) {
     return data;
