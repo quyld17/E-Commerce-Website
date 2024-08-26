@@ -3,7 +3,7 @@ services:
     image: quyld17/ecw-front-end:latest
     container_name: ecw-front-end
     ports:
-      - "80:80"
+      - "80:3000"
     networks:
       - ecw-network
 
