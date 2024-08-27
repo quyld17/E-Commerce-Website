@@ -1,10 +1,7 @@
 version: 0.0
 os: linux
-files:
-  - source: /
-    destination: /home/ubuntu
 
 hooks:
   AfterInstall:
-    - location: /deploy.sh
+    - location: deploy.sh
       runas: ubuntu

@@ -1,7 +1,9 @@
-docker-compose -f /home/ubuntu/docker-compose.yml down
+cd /home/ubuntu
+
+docker-compose down
 
 docker system prune -f
 
-docker-compose -f /home/ubuntu/docker-compose.yml pull
+docker-compose pull
 
-docker-compose -f /home/ubuntu/docker-compose.yml up -d
+docker-compose up -d
