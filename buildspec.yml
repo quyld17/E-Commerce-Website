@@ -48,7 +48,7 @@ phases:
       - docker push quyld17/ecw-server:latest
       - docker push quyld17/ecw-front-end:latest
 
-  artifacts:
-    files:
-      - "**/*"
-    discard-paths: yes
+artifacts:
+  files:
+    - "**/*"
+  discard-paths: yes
