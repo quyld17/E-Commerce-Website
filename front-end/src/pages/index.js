@@ -21,6 +21,7 @@ export default function Home() {
         <Layout className={styles.contentLayout}>
           <Content className={styles.content}>
             <ProductsDisplay />
+            <p>Hello</p>
           </Content>
         </Layout>
       </Layout>
