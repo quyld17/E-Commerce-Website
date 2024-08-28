@@ -4,7 +4,9 @@ A fully functional E-Commerce Website built with NextJS, Echo and MySQL.
 
 ## Deployment
 
-![CI/CD Pipeline](CI_CD_pipeline.drawio-1.png)
+![CI/CD Pipeline](CI_CD_pipeline.png)
+
+URL: [URl](http://54.169.50.40/)
 
 ## Installation
 
