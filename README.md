@@ -6,7 +6,7 @@ A fully functional E-Commerce Website built with NextJS, Echo and MySQL.
 
 ![CI/CD Pipeline](CI_CD_pipeline.png)
 
-URL: [URl](http://54.169.50.40/)
+Check out the website: [E-Commerce Website](http://54.169.50.40/)
 
 ## Installation
 
