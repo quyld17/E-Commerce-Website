@@ -93,12 +93,3 @@ export const cartData = (
 
   return data;
 };
-
-// Usage in a React component
-const YourComponent = ({ cartProducts, handleProductRedirect, adjustedQuantityHandler }) => {
-  const router = useRouter();
-
-  const data = cartData(cartProducts, handleProductRedirect, adjustedQuantityHandler, router);
-
-  // Render your table or other components using the `data`
-};
