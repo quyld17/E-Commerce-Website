@@ -6,8 +6,6 @@ A fully functional E-Commerce Website built with NextJS, Echo and MySQL.
 
 ![CI/CD Pipeline](CI_CD_pipeline.png)
 
-Check out the website: [E-Commerce Website](http://54.169.50.40/)
-
 ## Installation
 
 ### Front-end: install the node package manager [npm](https://www.npmjs.com/) and run the command below.
